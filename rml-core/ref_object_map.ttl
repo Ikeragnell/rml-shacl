@@ -1,0 +1,41 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+:RMLRefObjectMapShape
+    a sh:NodeShape ;
+    rdfs:label "RefObjectMap" ;
+    rdfs:comment """
+    Represents a Reference Object Map.
+    """ ;
+    sh:message """
+    rml:RefObjectMap must specify a rml:parentTriplesMap and zero or more 
+    rml:joinConditions.
+    """ ;
+
+    sh:property [
+        sh:path rml:parentTriplesMap ;
+        sh:node :RMLTriplesMapShape ;
+        rdfs:label "parentTriplesMap" ;
+        rdfs:comment """
+        Specifies the Triples Map element corresponding to the parent data
+        source of the foreign key constraint.
+        """ ;
+        sh:message """
+        rml:parentTriplesMap may only be provided once and must be an IRI
+        or Blank Node referring to a Triples Map.
+        """ ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path rml:joinCondition ;
+        sh:node :RMLJoinShape ;
+        rdfs:label "joinCondition" ;
+    ]
+
+.

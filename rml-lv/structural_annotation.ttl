@@ -1,0 +1,34 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+
+
+:StructuralAnnotationShape a sh:NodeShape;
+    rdfs:label "StructuralAnnotation" ;
+    rdfs:comment """
+    Structural annotations provide a mechanism to express relationships between logical views, as well as additional information about fields.
+    """ ;
+    sh:message """
+    Node must have a valid rml:StructuralAnnotationShape description.
+    All structural annotations of a logical view lv MUST have an on fields property (rml:onFields), linking the structural annotation to a list of field names occurring in lv.
+    rml:StructuralAnnotationShape requires:
+    - exactly one rml:onFields property.
+    """ ;
+
+    sh:property [
+        sh:description """
+        property onFields specifies the fields in LogicalView that are involved by the structural annotation. The semantics of this involvement depends on the specific annotation.
+        """ ;
+        sh:message """
+        Exactly one rml:onFields property must be specified for each rml:StructuralAnnotation
+        """ ;
+        sh:path rml:onFields ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        #TODO well formed list
+    ] .

@@ -1,0 +1,24 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+
+# rml-core's :objectMapAlternativeList is the set of paths from an objectMap
+# to further term-map-bearing nodes. A gathered collection (rml:gather ( ... ))
+# reaches its member term maps via the RDF collection encoding of the list
+# passed to rml:gather -- rdf:rest* then rdf:first. Append that path here
+# without editing rml-core's file, same convention as rml-fnml's
+# triples_map.ttl appending rml:functionExecution onto
+# :nonConstantExpressionAlternativeList.
+:objectMapAlternativeList
+    rdf:first [sh:alternativePath :gatherMemberPathList] .
+
+# Named list, not an inline ( ... ) blank-node list -- the sequence path
+# reaching a gathered collection's member term maps: rml:gather to the
+# list head, rdf:rest* down the RDF collection chain, rdf:first onto each
+# member. A single-element list -- sh:alternativePath's one alternative is
+# this whole sequence.
+:gatherMemberPathList
+    a rdf:List ;
+    rdf:first (rml:gather ( [sh:zeroOrMorePath rdf:rest] rdf:first ));
+    rdf:rest rdf:nil .

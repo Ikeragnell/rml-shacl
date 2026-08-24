@@ -1,0 +1,87 @@
+###############################################################################
+# RML Reference Formulation shape                                             #
+###############################################################################
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:RMLReferenceFormulationShape
+    a sh:NodeShape ;
+    sh:or (
+        [ sh:nodeKind sh:IRI ]
+        [ sh:node :RMLXPathReferenceFormulationShape ]
+    ) .
+
+
+:RMLXPathReferenceFormulationShape
+    a sh:NodeShape ;
+    rdfs:label "XPath Reference Formulation" ;
+    rdfs:comment """
+    A structured XPath reference formulation, used when XML namespaces need
+    to be declared for the references. rml:XPath without namespaces is used
+    otherwise.
+    """ ;
+    sh:message """
+    A structured XPath reference formulation must be typed
+    rml:XPathReferenceFormulation, and MAY specify zero or more
+    rml:namespace properties.
+    """ ;
+
+    sh:property [
+        sh:path rml:namespace ;
+        rdfs:label "rml:namespace" ;
+        rdfs:comment """
+        Declares an XML namespace usable in XPath references.
+        """ ;
+        sh:message """
+        rml:namespace must reference a valid RML Namespace.
+        """ ;
+        sh:node :RMLNamespaceShape ;
+    ] ;
+.
+
+:RMLNamespaceShape
+    a sh:NodeShape ;
+    rdfs:label "Namespace" ;
+    rdfs:comment """
+    A rml:Namespace declares the prefix and URL for an XML namespace used in
+    XPath references.
+    """ ;
+    sh:message """
+    A Namespace requires exactly one rml:namespacePrefix and exactly one
+    rml:namespaceURL.
+    """ ;
+
+    sh:property [
+        sh:path rml:namespacePrefix ;
+        rdfs:label "rml:namespacePrefix" ;
+        rdfs:comment """
+        The prefix used for the XML namespace.
+        """ ;
+        sh:message """
+        rml:namespacePrefix must be provided exactly once as a string
+        Literal.
+        """ ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:Literal ;
+        sh:datatype xsd:string ;
+    ] ;
+
+    sh:property [
+        sh:path rml:namespaceURL ;
+        rdfs:label "rml:namespaceURL" ;
+        rdfs:comment """
+        The URL identifying the XML namespace.
+        """ ;
+        sh:message """
+        rml:namespaceURL must be provided exactly once as a Literal.
+        """ ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:Literal ;
+    ] ;
+.

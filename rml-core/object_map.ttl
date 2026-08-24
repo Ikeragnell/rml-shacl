@@ -1,0 +1,81 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+:RMLObjectMapShape
+    a sh:NodeShape ;
+    rdfs:label "ObjectMap" ;
+    rdfs:comment """
+    Represents an Object Map.
+    """ ;
+    sh:message """
+    Object Map must generate a IRI, Blank Node, or Literal which has optionally
+    a language tag or datatype.
+    """ ;
+    sh:node :RMLTermMapShape ;
+
+    sh:property [
+        sh:path [ sh:alternativePath (rml:languageMap rml:datatypeMap
+                                        rml:language rml:datatype) ] ;
+        rdfs:label "languageMap/datatypeMap/language/datatype" ;
+        rdfs:comment """
+        rml:language/rml:languageMap and rml:datatype/rml:datatypeMap
+        may only be provided once and not at the same time.
+        """ ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path rml:languageMap ;
+        sh:node :RMLLanguageMapShape ;
+        rdfs:label "languageMap" ;
+        rdfs:comment """
+        Specified the language map for the object component for the 
+        generated RDF triples.
+        """ ;
+        sh:message """
+        rml:languageMap must point to a rml:LanguageMap specifying the 
+        language tag of the string Literal.
+        """ ;
+    ];
+        
+    sh:property [
+        sh:path rml:datatypeMap ;
+        sh:node :RMLDatatypeMapShape ;
+        rdfs:label "datatypeMap" ;
+        rdfs:comment """
+        Specifies the datatype of the object component for the generated 
+        RDF triples.
+        """ ;
+        sh:message """
+        rml:datatypeMap must point to a rml:DatatypeMap specifying the
+        datatype of the Literal.
+        """ ;
+    ];
+
+    sh:property [
+        sh:path rml:language ;
+        rdfs:label "language" ;
+        rdfs:comment """
+        Language tag for the object.
+        """ ;
+        sh:nodeKind sh:Literal ;
+        xsd:datatype xsd:string ;
+        sh:pattern "^((?:(en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang))|((?:([A-Za-z]{2,3}(-(?:[A-Za-z]{3}(-[A-Za-z]{3}){0,2}))?)|[A-Za-z]{4})(-(?:[A-Za-z]{4}))?(-(?:[A-Za-z]{2}|[0-9]{3}))?(-(?:[A-Za-z0-9]{5,8}|[0-9][A-Za-z0-9]{3}))*(-(?:[0-9A-WY-Za-wy-z](-[A-Za-z0-9]{2,8})+))*(-(?:x(-[A-Za-z0-9]{1,8})+))?)|(?:x(-[A-Za-z0-9]{1,8})+))$" ;
+
+    ];
+
+    sh:property [
+        sh:path rml:datatype ;
+        rdfs:label "datatype" ;
+        rdfs:comment """
+        Datatype for the object.
+        """ ;
+        sh:nodeKind sh:IRI ;
+    ]
+.
+

@@ -1,0 +1,69 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+:RMLLogicalTargetShape
+    a sh:NodeShape ;
+    rdfs:label "RML Logical Target" ;
+    rdfs:comment """
+    A logical target is any target to where generated RDF triples are exported
+    to.
+    """ ;
+    sh:message """
+    RML Logical Target requires one rml:target.
+    """ ;
+
+    # rml:target
+    sh:property [
+        sh:path rml:target ;
+        sh:node :RMLTargetShape;
+        rdfs:label "rml:target" ;
+        rdfs:comment """
+        The target (rml:target) locates the output target. It is a URI
+        that represents the target where it must export generated RDF triples
+        to.
+        """ ;
+        sh:message """
+        rml:target must be provided to locate the target. rml:target must 
+        be provided exactly once as an URI.
+        """ ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    # rml:serialization
+    sh:property [
+        sh:path rml:serialization ;
+        sh:node :RMLFormatShape ;
+        rdfs:label "rml:serialization" ;
+        rdfs:comment """
+        A Target MAY describe the serialization format with
+        rml:serialization to use when exporting RDF triples to a Target.
+        Defaults to N-Quads if unspecified.
+        """ ;
+        sh:message """
+        rml:serialization must be an IRI from the W3C formats namespace,
+        and may be provided at most once.
+        """ ;
+        sh:maxCount 1 ;
+    ] ;
+.
+
+:RMLTermMapShape
+    sh:property [
+        sh:path rml:logicalTarget ;
+        sh:node :RMLLogicalTargetShape ;
+        rdfs:label "rml:logicalTarget" ;
+        rdfs:comment """
+        A Term Map MAY contain one or more rml:logicalTarget properties to
+        export all triples containing the generated term to different
+        targets.
+        """ ;
+        sh:message """
+        rml:logicalTarget must reference a valid RML Logical Target.
+        """ ;
+    ] 
+.

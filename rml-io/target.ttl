@@ -1,0 +1,37 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+:RMLTargetShape
+    a sh:NodeShape ;
+    rdfs:label "RML Target" ;
+    rdfs:comment """
+    A target describes access to a data target. Any data access description
+    is allowed, but rml:Target provides additional properties to complete
+    such descriptions.
+    """ ;
+    sh:message """
+    RML Target accepts one rml:compression, and one rml:encoding.
+    All of them are optional.
+    """ ;
+
+
+    # rml:mode
+    sh:property [
+        sh:path rml:mode ;
+        rdfs:label "rml:mode" ;
+        rdfs:comment """
+        rml:mode specifies in which mode the target is opened such as read-only,
+        write-only, both, etc.
+        """ ;
+        sh:message """
+        rml:mode must be specified by any of the modes from rml:Mode class.
+        """ ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:node :RMLModeShape ;
+    ] ;
+.

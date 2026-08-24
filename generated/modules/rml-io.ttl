@@ -1,0 +1,229 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix csvw: <http://www.w3.org/ns/csvw#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcam: <http://purl.org/dc/dcam/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcmitype: <http://purl.org/dc/dcmitype/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prof: <http://www.w3.org/ns/dx/prof/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix qb: <http://purl.org/linked-data/cube#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix wgs: <https://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> sh:or <http://w3id.org/rml/shapes/RMLLogicalSourceOrList> .
+
+<http://w3id.org/rml/shapes/RMLTermMapShape> sh:property [ rdfs:label "rml:logicalTarget" ;
+            rdfs:comment """
+        A Term Map MAY contain one or more rml:logicalTarget properties to
+        export all triples containing the generated term to different
+        targets.
+        """ ;
+            sh:message """
+        rml:logicalTarget must reference a valid RML Logical Target.
+        """ ;
+            sh:node <http://w3id.org/rml/shapes/RMLLogicalTargetShape> ;
+            sh:path rml:logicalTarget ] .
+
+<http://w3id.org/rml/shapes/RMLCurrentWorkingDirectoryShape> a sh:NodeShape ;
+    sh:hasValue rml:CurrentWorkingDirectory .
+
+<http://w3id.org/rml/shapes/RMLFilePathShape> a sh:NodeShape ;
+    sh:property [ rdfs:label "rml:path" ;
+            rdfs:comment """
+        rml:path specifies the file path, relative to rml:root if
+        provided, or absolute otherwise.
+        """ ;
+            sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:message """
+        rml:path must be provided exactly once as a string Literal.
+        """ ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:Literal ;
+            sh:path rml:path ],
+        [ rdfs:label "rml:root" ;
+            rdfs:comment """
+        rml:root defines the root against which a relative rml:path is
+        resolved: rml:CurrentWorkingDirectory, rml:MappingDirectory, or an
+        absolute path string Literal. Defaults to
+        rml:CurrentWorkingDirectory if not specified.
+        """ ;
+            sh:maxCount 1 ;
+            sh:message """
+        rml:root must be rml:CurrentWorkingDirectory, rml:MappingDirectory,
+        or a string Literal, and may be provided at most once.
+        """ ;
+            sh:path rml:root ;
+            sh:xone ( [ sh:node <http://w3id.org/rml/shapes/RMLCurrentWorkingDirectoryShape> ] [ sh:node <http://w3id.org/rml/shapes/RMLMappingDirectoryShape> ] [ sh:datatype xsd:string ;
+                        sh:nodeKind sh:Literal ] ) ] .
+
+<http://w3id.org/rml/shapes/RMLFormatShape> a sh:NodeShape ;
+    sh:nodeKind sh:IRI .
+
+<http://w3id.org/rml/shapes/RMLLogicalSourceOrList> a rdf:List ;
+    rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLLogicalSourceShape> ] ;
+    rdf:rest () .
+
+<http://w3id.org/rml/shapes/RMLLogicalSourceShape> a sh:NodeShape ;
+    rdfs:label "RML Logical Source" ;
+    rdfs:comment """
+    A logical source is any source that is mapped to RDF triples.
+    """ ;
+    sh:message """
+    RML Logical Source requires one rml:source and requires everyting
+    an Abstract Logical Source requires.
+    """ ;
+    sh:property [ rdfs:label "rml:source" ;
+            rdfs:comment """
+        The source (rml:source) locates the input data source. It is a URI
+        that represents the data source where the data source is.
+        """ ;
+            sh:maxCount 1 ;
+            sh:message """
+        rml:source must be provided to locate the data source.
+        rml:source must be provided exactly once as an URI.
+        """ ;
+            sh:minCount 1 ;
+            sh:node <http://w3id.org/rml/shapes/RMLSourceShape> ;
+            sh:path rml:source ] .
+
+<http://w3id.org/rml/shapes/RMLLogicalTargetShape> a sh:NodeShape ;
+    rdfs:label "RML Logical Target" ;
+    rdfs:comment """
+    A logical target is any target to where generated RDF triples are exported
+    to.
+    """ ;
+    sh:message """
+    RML Logical Target requires one rml:target.
+    """ ;
+    sh:property [ rdfs:label "rml:target" ;
+            rdfs:comment """
+        The target (rml:target) locates the output target. It is a URI
+        that represents the target where it must export generated RDF triples
+        to.
+        """ ;
+            sh:maxCount 1 ;
+            sh:message """
+        rml:target must be provided to locate the target. rml:target must 
+        be provided exactly once as an URI.
+        """ ;
+            sh:minCount 1 ;
+            sh:node <http://w3id.org/rml/shapes/RMLTargetShape> ;
+            sh:path rml:target ],
+        [ rdfs:label "rml:serialization" ;
+            rdfs:comment """
+        A Target MAY describe the serialization format with
+        rml:serialization to use when exporting RDF triples to a Target.
+        Defaults to N-Quads if unspecified.
+        """ ;
+            sh:maxCount 1 ;
+            sh:message """
+        rml:serialization must be an IRI from the W3C formats namespace,
+        and may be provided at most once.
+        """ ;
+            sh:node <http://w3id.org/rml/shapes/RMLFormatShape> ;
+            sh:path rml:serialization ] .
+
+<http://w3id.org/rml/shapes/RMLMappingDirectoryShape> a sh:NodeShape ;
+    sh:hasValue rml:MappingDirectory .
+
+<http://w3id.org/rml/shapes/RMLModeShape> a sh:NodeShape ;
+    sh:in ( rml:Read rml:ReadWrite rml:Write rml:WriteRead rml:Append rml:AppendRead ) .
+
+<http://w3id.org/rml/shapes/RMLSourceShape> a sh:NodeShape ;
+    rdfs:label "RML Source" ;
+    rdfs:comment """
+    A source describes access to a data source. Any data access description
+    is allowed, but rml:Source provides additional properties to complete
+    such descriptions.
+    """ ;
+    sh:message """
+    RML Source accepts one or multiple rml:null, one rml:compression,
+    and one rml:encoding. All of them are optional.
+    """ ;
+    sh:node <http://w3id.org/rml/shapes/RMLSourceTargetShape> ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [ rdfs:label "rml:null" ;
+            rdfs:comment """
+        rml:null specifies how NULL or empty values are exposed by the data 
+        source.
+        """ ;
+            sh:datatype xsd:string ;
+            sh:message """
+        rml:source must be provided as a string Literal.
+        """ ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path rml:null ] .
+
+<http://w3id.org/rml/shapes/RMLSourceTargetShape> a sh:NodeShape ;
+    sh:property [ rdfs:label "rml:compression" ;
+            rdfs:comment """
+        rml:compression specifies the compression algorithm to use when
+        accessing the data source. By default, no compression is applied.
+        """ ;
+            sh:maxCount 1 ;
+            sh:message """
+        rml:compression must be provided as an IRI.
+        """ ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:IRI ;
+            sh:path rml:compression ],
+        [ rdfs:label "rml:encoding" ;
+            rdfs:comment """
+        rml:encoding specifies the encoding to use when accessing the data 
+        source. By default, UTF-8 is used.
+        """ ;
+            sh:maxCount 1 ;
+            sh:message """
+        rml:encoding must be provided as an IRI.
+        """ ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:IRI ;
+            sh:path rml:encoding ] ;
+    sh:xone ( [ sh:property [ sh:maxCount 0 ;
+                        sh:path [ sh:alternativePath ( rml:root rml:path ) ] ] ] [ sh:node <http://w3id.org/rml/shapes/RMLFilePathShape> ] ) .
+
+<http://w3id.org/rml/shapes/RMLTargetShape> a sh:NodeShape ;
+    rdfs:label "RML Target" ;
+    rdfs:comment """
+    A target describes access to a data target. Any data access description
+    is allowed, but rml:Target provides additional properties to complete
+    such descriptions.
+    """ ;
+    sh:message """
+    RML Target accepts one rml:compression, and one rml:encoding.
+    All of them are optional.
+    """ ;
+    sh:property [ rdfs:label "rml:mode" ;
+            rdfs:comment """
+        rml:mode specifies in which mode the target is opened such as read-only,
+        write-only, both, etc.
+        """ ;
+            sh:maxCount 1 ;
+            sh:message """
+        rml:mode must be specified by any of the modes from rml:Mode class.
+        """ ;
+            sh:minCount 0 ;
+            sh:node <http://w3id.org/rml/shapes/RMLModeShape> ;
+            sh:path rml:mode ] .
+

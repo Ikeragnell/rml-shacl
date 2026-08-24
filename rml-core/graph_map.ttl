@@ -1,0 +1,27 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+:RMLGraphMapShape
+    a sh:NodeShape ;
+    rdfs:label "GraphMap" ;
+    rdfs:comment """
+    Represents a Graph Map.
+    """ ;
+    sh:message """
+    rml:GraphMap must specify an rml:template, rml:reference or rml:constant
+    with the IRI of the Named Graph.
+    """ ;
+    sh:node :RMLTermMapShape ;
+    sh:property [
+        sh:path rml:termType;
+        sh:message """
+        rml:termType must be an rml:IRI, rml:UnsafeIRI, rml:URI,
+        rml:UnsafeURI, or rml:BlankNode for a Graph Map.
+        """;
+        sh:in (rml:IRI rml:UnsafeIRI rml:URI rml:UnsafeURI rml:BlankNode);
+    ] ;
+.

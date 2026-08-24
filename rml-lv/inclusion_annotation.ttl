@@ -1,0 +1,46 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+
+:InclusionAnnotationShape a sh:NodeShape;
+    rdfs:label "InclusionAnnotation" ;
+    rdfs:comment """
+    The InclusionAnnotaton annotation (rml:InclusionAnnotation) is analogous to the notion of inclusion dependency in databases.
+    """ ;
+    sh:message """
+    Node must have a valid rml:InclusionAnnotation description.
+    Each InclusionAnnotation annotation requires (additionally to the inherited `rml:onFields` property):
+    - Exactly one `rml:targetView` property
+    - Exactly one `rml:targetFields` property.
+    """ ;
+    sh:property [
+        sh:description """
+        property targetView specifies the LogicalView target of the InclusionAnnotation annotation.
+        """ ;
+        sh:message """
+        Exactly one rml:targetView property must be specified for each rml:InclusionAnnotation.
+        """ ;
+        sh:path rml:targetView ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:node :RMLLogicalViewShape
+    ] , [
+        sh:description """
+        property targetFields specifies the Fields target of the InclusionAnnotation.
+        """ ;
+        sh:message """
+        Exactly one rml:targetFields property must be specified for each rml:InclusionAnnotation.
+        """ ;
+        sh:path rml:targetFields ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        #TODO well formed list
+    ] ;
+
+    sh:node :StructuralAnnotationShape
+.

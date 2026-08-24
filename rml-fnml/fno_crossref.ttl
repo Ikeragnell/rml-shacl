@@ -1,0 +1,153 @@
+# @prefix sh: <http://www.w3.org/ns/shacl#> .
+# @prefix rml: <http://w3id.org/rml/> .
+# @prefix fno: <https://w3id.org/function/ontology#> .
+# @prefix : <http://w3id.org/rml/shapes/> .
+
+# # Cross-document checks against an FnO function-description document,
+# # assumed loaded into the named graph <rml/functions> alongside the
+# # mapping (in the default graph) being validated. This is a different KIND
+# # of check than the rest of shapes_node: it depends on an external graph
+# # rather than being self-contained within the mapping document, so it
+# # deliberately uses independent sh:targetSubjectsOf targeting rather than
+# # the head-attachment/no-independent-targeting convention used elsewhere.
+# # Not part of the structural conformance suite -- exploratory.
+
+# :FnOFunctionExistsShape
+#     a sh:NodeShape ;
+#     sh:targetSubjectsOf rml:function ;
+#     sh:sparql [
+#         a sh:SPARQLConstraint ;
+#         sh:message "rml:function must reference an fno:Function declared in the function library." ;
+#         sh:select """
+#             PREFIX rml: <http://w3id.org/rml/>
+#             PREFIX fno: <https://w3id.org/function/ontology#>
+#             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+#             SELECT $this
+#             WHERE {
+#                 $this rml:function ?func .
+#                 FILTER NOT EXISTS {
+#                     GRAPH <urn:rml:functions> { ?func a fno:Function }
+#                 }
+#             }
+#         """ ;
+#     ] .
+
+# :FnOParameterValidShape
+#     a sh:NodeShape ;
+#     sh:targetSubjectsOf rml:function ;
+#     sh:sparql [
+#         a sh:SPARQLConstraint ;
+#         sh:message "rml:parameter must be one of the function's declared fno:expects parameters." ;
+#         sh:select """
+#             PREFIX rml: <http://w3id.org/rml/>
+#             PREFIX fno: <https://w3id.org/function/ontology#>
+#             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+#             SELECT DISTINCT $this
+#             WHERE {
+#                 $this rml:function ?func ;
+#                       rml:input ?input .
+#                 ?input rml:parameter ?param .
+#                 FILTER NOT EXISTS {
+#                     GRAPH <urn:rml:functions> {
+#                         ?func fno:expects/rdf:rest*/rdf:first ?param .
+#                     }
+#                 }
+#             }
+#         """ ;
+#     ] .
+
+# :FnOReturnValidShape
+#     a sh:NodeShape ;
+#     sh:targetSubjectsOf rml:functionExecution ;
+#     sh:sparql [
+#         a sh:SPARQLConstraint ;
+#         sh:message "rml:return must be one of the function's declared fno:returns outputs." ;
+#         sh:select """
+#             PREFIX rml: <http://w3id.org/rml/>
+#             PREFIX fno: <https://w3id.org/function/ontology#>
+#             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+#             SELECT $this
+#             WHERE {
+#                 $this rml:functionExecution ?exec ;
+#                       rml:return ?ret .
+#                 ?exec rml:function ?func .
+#                 FILTER NOT EXISTS {
+#                     GRAPH <urn:rml:functions> {
+#                         ?func fno:returns/rdf:rest*/rdf:first ?ret .
+#                     }
+#                 }
+#             }
+#         """ ;
+#     ] .
+
+# :FnORequiredParametersSuppliedShape
+#     a sh:NodeShape ;
+#     sh:targetSubjectsOf rml:function ;
+#     sh:sparql [
+#         a sh:SPARQLConstraint ;
+#         sh:message "Every parameter the function declares as fno:required must be supplied via rml:input/rml:parameter." ;
+#         sh:select """
+#             PREFIX rml: <http://w3id.org/rml/>
+#             PREFIX fno: <https://w3id.org/function/ontology#>
+#             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+#             SELECT DISTINCT $this
+#             WHERE {
+#                 $this rml:function ?func .
+#                 GRAPH <urn:rml:functions> {
+#                     ?func fno:expects/rdf:rest*/rdf:first ?reqParam .
+#                     ?reqParam fno:required true .
+#                 }
+#                 FILTER NOT EXISTS {
+#                     $this rml:input ?input .
+#                     ?input rml:parameter ?reqParam .
+#                 }
+#             }
+#         """ ;
+#     ] .
+
+
+## THIS SHAPE IS PROBABLY
+# :FnONoDuplicateParameterShape
+#     a sh:NodeShape ;
+#     sh:targetSubjectsOf rml:function ;
+#     sh:sparql [
+#         a sh:SPARQLConstraint ;
+#         sh:message "The same parameter must not be supplied more than once via rml:input/rml:parameter." ;
+#         sh:select """
+#             PREFIX rml: <http://w3id.org/rml/>
+#             SELECT DISTINCT $this
+#             WHERE {
+#                 $this rml:input ?input1, ?input2 .
+#                 ?input1 rml:parameter ?param .
+#                 ?input2 rml:parameter ?param .
+#                 FILTER (?input1 != ?input2)
+#             }
+#         """ ;
+#     ] .
+
+# # Only checks rml:constant-valued inputs -- rml:reference/rml:template
+# # values depend on source data and are not statically known, so they are
+# # deliberately out of scope here.
+# :FnOConstantParameterTypeShape
+#     a sh:NodeShape ;
+#     sh:targetSubjectsOf rml:function ;
+#     sh:sparql [
+#         a sh:SPARQLConstraint ;
+#         sh:message "A constant-valued parameter input must match the datatype the function declares via fno:type." ;
+#         sh:select """
+#             PREFIX rml: <http://w3id.org/rml/>
+#             PREFIX fno: <https://w3id.org/function/ontology#>
+#             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+#             SELECT $this
+#             WHERE {
+#                 $this rml:input ?input .
+#                 ?input rml:parameter ?param ;
+#                        rml:inputValueMap ?ivm .
+#                 ?ivm rml:constant ?val .
+#                 GRAPH <urn:rml:functions> {
+#                     ?param fno:type ?expectedType .
+#                 }
+#                 FILTER (isLiteral(?val) && datatype(?val) != ?expectedType)
+#             }
+#         """ ;
+#     ] .

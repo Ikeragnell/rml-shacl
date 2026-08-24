@@ -1,0 +1,96 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+:RMLAbstractExpressionMapShape
+    a sh:NodeShape ;
+    rdfs:label "ExpressionMap" ;
+    rdfs:comment """
+    Represents a Expression Map.
+    """ ;
+
+    sh:message """
+    Expression Map must have one of rml:template, rml:constant, or
+    rml:reference, unless rml:termType is rml:BlankNode with no expression.
+    """ ;
+
+    sh:property[
+        sh:path [sh:alternativePath :RMLAbstractExpressionMapValuePath] ;
+        rdfs:label "template/constant/reference" ;
+        rdfs:comment """
+            Only one of rml:template, rml:constant, or rml:reference is
+            allowed.
+        """ ;
+        sh:message """
+        Only one of rml:template, rml:constant, or rml:reference is allowed.
+        """ ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    # rml:template
+    sh:property [
+        sh:path rml:template ;
+        rdfs:label "template" ;
+        rdfs:comment """
+        A template (format string) to specify how to generate a value for a 
+        subject, predicate, or object, using one or more columns from a logical
+        table row or iterator.
+        """ ;
+        sh:message """
+        rml:template must be a string with well-formed brace delimiters:
+        every unescaped '{' must be closed by an unescaped '}' with no
+        unescaped braces in between, and every literal '{', '}', or '\\'
+        (both inside and outside reference expressions) must be
+        backslash-escaped.
+        """ ;
+        sh:nodeKind sh:Literal ;
+        sh:datatype xsd:string ;
+        sh:pattern "^(?:[^\\\\{}]|\\\\.|\\{(?:[^\\\\{}]|\\\\.)*\\})+$" ;
+    ] ;
+
+    # rml:constant
+    sh:property [
+        sh:path rml:constant ;
+        rdfs:label "constant" ;
+        rdfs:comment """
+        A property for indicating whether a term map is a constant-valued term 
+        map.
+        """ ;
+        sh:message """
+        rml:constant must be an IRI or Literal.
+        """ ;
+    ] ;
+
+    # rml:reference
+    sh:property [
+        sh:path rml:reference ;
+        rdfs:label "reference" ;
+        rdfs:comment """
+        A reference rml:reference is used to refer to a column in case of 
+        databases, a record in case of CSV or TSV data source, an element in 
+        case of XML data source, an object in case of a JSON data source, etc.
+
+        A reference must be a valid identifier, considering the reference 
+        formulation (rml:referenceFormulation) specified. The reference can be
+        an absolute path, or a path relative to the iterator specified at the 
+        logical source. 
+        """ ;
+        sh:message """
+        rml:reference must be a string.
+        """ ;
+        sh:nodeKind sh:Literal ;
+        sh:datatype xsd:string ;
+    ] ;
+.
+
+# Named alternativePath list backing branch A above. Starts with the three
+# core paths; extension modules append their own path to this same head
+# (e.g. rml-fnml appends rml:functionExecution) without editing this file.
+:RMLAbstractExpressionMapValuePath
+    a rdf:List ;
+    rdf:first rml:template ;
+    rdf:rest ( rml:constant rml:reference ) .

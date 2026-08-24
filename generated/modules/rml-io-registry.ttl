@@ -1,0 +1,91 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix csvw: <http://www.w3.org/ns/csvw#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcam: <http://purl.org/dc/dcam/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcmitype: <http://purl.org/dc/dcmitype/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prof: <http://www.w3.org/ns/dx/prof/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix qb: <http://purl.org/linked-data/cube#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix wgs: <https://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://w3id.org/rml/shapes/RMLReferenceFormulationShape> a sh:NodeShape ;
+    sh:or ( [ sh:nodeKind sh:IRI ] [ sh:node <http://w3id.org/rml/shapes/RMLXPathReferenceFormulationShape> ] ) .
+
+<http://w3id.org/rml/shapes/RMLNamespaceShape> a sh:NodeShape ;
+    rdfs:label "Namespace" ;
+    rdfs:comment """
+    A rml:Namespace declares the prefix and URL for an XML namespace used in
+    XPath references.
+    """ ;
+    sh:message """
+    A Namespace requires exactly one rml:namespacePrefix and exactly one
+    rml:namespaceURL.
+    """ ;
+    sh:property [ rdfs:label "rml:namespacePrefix" ;
+            rdfs:comment """
+        The prefix used for the XML namespace.
+        """ ;
+            sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:message """
+        rml:namespacePrefix must be provided exactly once as a string
+        Literal.
+        """ ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:Literal ;
+            sh:path rml:namespacePrefix ],
+        [ rdfs:label "rml:namespaceURL" ;
+            rdfs:comment """
+        The URL identifying the XML namespace.
+        """ ;
+            sh:maxCount 1 ;
+            sh:message """
+        rml:namespaceURL must be provided exactly once as a Literal.
+        """ ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:Literal ;
+            sh:path rml:namespaceURL ] .
+
+<http://w3id.org/rml/shapes/RMLXPathReferenceFormulationShape> a sh:NodeShape ;
+    rdfs:label "XPath Reference Formulation" ;
+    rdfs:comment """
+    A structured XPath reference formulation, used when XML namespaces need
+    to be declared for the references. rml:XPath without namespaces is used
+    otherwise.
+    """ ;
+    sh:message """
+    A structured XPath reference formulation must be typed
+    rml:XPathReferenceFormulation, and MAY specify zero or more
+    rml:namespace properties.
+    """ ;
+    sh:property [ rdfs:label "rml:namespace" ;
+            rdfs:comment """
+        Declares an XML namespace usable in XPath references.
+        """ ;
+            sh:message """
+        rml:namespace must reference a valid RML Namespace.
+        """ ;
+            sh:node <http://w3id.org/rml/shapes/RMLNamespaceShape> ;
+            sh:path rml:namespace ] .
+

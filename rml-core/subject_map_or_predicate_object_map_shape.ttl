@@ -1,0 +1,27 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+
+:RMLSubjectMapORPredicateObjectMapShape
+    a sh:NodeShape ;
+
+    sh:property[
+        sh:path [ sh:alternativePath (rml:graph rml:graphMap) ] ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path rml:graphMap ;
+        sh:node :RMLGraphMapShape ;
+    ] ;
+
+    sh:property [
+        sh:path rml:graph ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] ;
+.
+

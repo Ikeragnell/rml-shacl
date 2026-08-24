@@ -1,0 +1,18 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:RMLAbstractLogicalSourceShape
+    a sh:NodeShape ;
+    rdfs:label "Abstract Logical Source" ;
+    rdfs:comment """
+    A sub-class of iterable that can be associated with a triples map such that a data source can be mapped to RDF triples.
+    """ ;
+    sh:message """
+    rml:AbstractLogicalSource must specify how to generate logical iterations on a data source for a triples map.
+    """ ;
+    sh:node :RMLIterableShape ;
+.

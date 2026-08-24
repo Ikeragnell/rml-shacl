@@ -1,0 +1,26 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+:RMLExpressionMapShape
+    a sh:NodeShape ;
+    rdfs:label "ExpressionMap" ;
+
+    sh:property[
+        sh:path [sh:alternativePath :RMLAbstractExpressionMapValuePath] ;
+        rdfs:label "template/constant/reference" ;
+        rdfs:comment """
+            Only one of rml:template, rml:constant, or rml:reference is
+            allowed.
+        """ ;
+        sh:message """
+        Only one of rml:template, rml:constant, or rml:reference is allowed.
+        """ ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:node :RMLAbstractExpressionMapShape;
+.

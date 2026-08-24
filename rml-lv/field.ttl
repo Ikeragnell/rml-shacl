@@ -1,0 +1,51 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+:FieldShape a sh:NodeShape ;
+    rdfs:label "Field" ;
+    rdfs:comment """
+    A field is a construct that gives a name to data derived from an abstract logical source.
+    """ ;
+    sh:message """
+    Node must have a valid rml:Field description.
+    rml:Field requires a rml:fieldName and may have zero or more rml:field properties.
+    Furthermore, subclass rml:ExpressionField requires what an rml:ExpressionMap requires, subclass rml:IterableField requires what an rml:Iterable requires,.
+    """ ;
+
+    sh:property [
+        sh:description """
+        The name of the field.
+        """ ;
+        sh:message """
+        Exactly one rml:fieldName property must be specified for a rml:Field, with a string as its value.
+        """ ;
+        sh:path rml:fieldName ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:nodeKind sh:Literal ;
+    ] , [
+        sh:description """
+        A child field of the field.
+        """ ;
+        sh:message """
+        The value of a rml:field property for a rml:Field must be a resource.
+        """ ;
+        sh:path rml:field ;
+        sh:node :FieldShape;
+    ], [
+        sh:path[ sh:zeroOrMorePath [ sh:inversePath [ sh:alternativePath (rml:viewOn rml:field) ] ] ] ;
+        sh:disjoint rml:field ;
+    ];
+
+    sh:xone (
+        [ sh:node :ExpressionFieldShape ]
+        [ sh:node :IterableFieldShape ]
+    ) ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+.

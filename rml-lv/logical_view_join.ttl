@@ -1,0 +1,53 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+:LogicalViewJoinShape a sh:NodeShape ;
+    rdfs:label "LogicalViewJoin" ;
+    rdfs:comment """
+    A LogicalViewJoin is an operation that adapts the logical iterations of one logical view (the child logical view) with fields from another logical view (the parent logical view).
+    """ ;
+    sh:message """
+    Node must have a valid rml:LogicalViewJoin description.
+    rml:LogicalViewJoin requires:
+    - exactly one rml:parentLogicalView property.
+    - one or more rml:joinCondition properties.
+    - one or more rml:field properties.
+    Furthermore, rml:Field requires what an rml:ExpressionMap requires.
+    """ ;
+    sh:property [
+        sh:description """
+        The parent logical view of the logical view join.
+        """ ;
+        sh:message """
+        Exactly one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.
+        """ ;
+        sh:path rml:parentLogicalView ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:node sh:BlankNodeOrIRI ;
+    ] , [
+        sh:description """
+        A join condition of the logical view join.
+        """ ;
+        sh:message """
+        At least one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.
+        """ ;
+        sh:path rml:joinCondition ;
+        sh:minCount 1 ;
+        sh:node :RMLJoinShape;
+    ] , [
+        sh:description """
+        A field of the logical view join.
+        """ ;
+        sh:message """
+        At least one rml:field property must be specified for a rml:LogicalViewJoin, with a leaf expression field as its value.
+        """ ;
+        sh:path rml:field ;
+        sh:minCount 1 ;
+        sh:node :LeafExpressionFieldShape ;
+    ] .

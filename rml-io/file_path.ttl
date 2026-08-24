@@ -1,0 +1,52 @@
+###############################################################################
+# RML File Path shape                                                         #
+###############################################################################
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:RMLFilePathShape
+    a sh:NodeShape ;
+
+    # rml:path
+    sh:property [
+        sh:path rml:path ;
+        rdfs:label "rml:path" ;
+        rdfs:comment """
+        rml:path specifies the file path, relative to rml:root if
+        provided, or absolute otherwise.
+        """ ;
+        sh:message """
+        rml:path must be provided exactly once as a string Literal.
+        """ ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:Literal ;
+        sh:datatype xsd:string ;
+    ] ;
+
+    # rml:root
+    sh:property [
+        sh:path rml:root ;
+        rdfs:label "rml:root" ;
+        rdfs:comment """
+        rml:root defines the root against which a relative rml:path is
+        resolved: rml:CurrentWorkingDirectory, rml:MappingDirectory, or an
+        absolute path string Literal. Defaults to
+        rml:CurrentWorkingDirectory if not specified.
+        """ ;
+        sh:message """
+        rml:root must be rml:CurrentWorkingDirectory, rml:MappingDirectory,
+        or a string Literal, and may be provided at most once.
+        """ ;
+        sh:maxCount 1 ;
+        sh:xone (
+            [ sh:node :RMLCurrentWorkingDirectoryShape ]
+            [ sh:node :RMLMappingDirectoryShape ]
+            [ sh:nodeKind sh:Literal ; sh:datatype xsd:string ]
+        ) ;
+    ] ;
+.

@@ -1,0 +1,72 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+:RMLTermMapShape
+    a sh:NodeShape ;
+    rdfs:label "TermMap" ;
+    rdfs:comment """
+    Represents a Term Map.
+    """ ;
+    sh:message """
+    Term Map is an Expression Map with optionally a term type specified.
+    """ ;
+    sh:node :RMLAbstractExpressionMapShape ;
+
+    sh:property [
+        sh:path rml:termType ;
+        rdfs:label "termType" ;
+        rdfs:comment """
+        An IRI indicating whether a generated term should be an IRI,
+        Blank Node, or a Literal.
+        """ ;
+        sh:message """
+        rml:termType must be either rml:IRI, rml:UnsafeIRI,
+        rml:URI, rml:UnsafeURI, rml:Literal, or rml:BlankNode for a Term Map.
+        May only be provided once.
+        """ ;
+        sh:maxCount 1 ;
+        sh:in (rml:IRI rml:UnsafeIRI rml:URI rml:UnsafeURI rml:Literal rml:BlankNode) ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    # Named list head, not an inline ( ... ) blank-node list -- extension
+    # modules (e.g. rml-cc's GatherMap) add a new alternative by asserting
+    # :RMLTermMapOrList rdf:first [ ... ] from their own file, without
+    # editing this one. Same convention as :RMLExpressionMapOrList /
+    # :RMLLogicalSourceOrList elsewhere in the shapes_node modules.
+    sh:or :RMLTermMapOrList ;
+
+    sh:or (
+        [ sh:property [ sh:path rml:constant ; sh:maxCount 0 ] ]
+        [ sh:property [ sh:path rml:termType ; sh:maxCount 0 ] ]
+    ) ;
+
+
+.
+
+:RMLTermMapOrList
+    a rdf:List ;
+    rdf:first [
+        sh:property [
+            sh:path [sh:alternativePath :RMLAbstractExpressionMapValuePath] ;
+            rdfs:label "template/constant/reference" ;
+            rdfs:comment """
+                Only one of rml:template, rml:constant, or rml:reference is
+                allowed.
+            """ ;
+            sh:message """
+            Only one of rml:template, rml:constant, or rml:reference is allowed.
+            """ ;
+            sh:minCount 1 ;
+        ]
+    ] ;
+    rdf:rest ( [
+        sh:property [
+            sh:path rml:termType ;
+            sh:hasValue rml:BlankNode ;
+        ]
+    ] ) .

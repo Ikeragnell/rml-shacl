@@ -1,0 +1,46 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+
+:RMLSubjectMapShape
+    a sh:NodeShape ;
+    rdfs:label "SubjectMap" ;
+    rdfs:comment """
+    Represents a Subject Map.
+    """ ;
+    sh:message """
+    Subject Map must generate a resource representing the subject of
+    an RDF triple.
+    """ ;
+    sh:node :RMLTermMapShape ;
+    sh:node :RMLSubjectMapORPredicateObjectMapShape ;
+
+    sh:property [
+        # sh:class rdfs:CLass ; TODO
+        sh:path rml:class ;
+        rdfs:label "class" ;
+        rdfs:comment """
+        The subject value generated will be asserted as an instance of this
+        RDFS class.
+        """ ;
+        sh:message """
+        rml:class must be an IRI and may be specified multiple times.
+        """ ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    sh:property [
+        sh:path rml:termType ;
+        sh:message """
+        rml:termType must be a rml:IRI, rml:UnsafeIRI, rml:URI,
+        rml:UnsafeURI, or rml:BlankNode for a Subject Map.
+        """ ;
+        sh:in (rml:IRI rml:UnsafeIRI rml:URI rml:UnsafeURI rml:BlankNode);
+    ] ;
+
+.
+

@@ -1,0 +1,56 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+:RMLSourceTargetShape
+    a sh:NodeShape ;
+
+    # rml:compression
+    sh:property [
+        sh:path rml:compression ;
+        rdfs:label "rml:compression" ;
+        rdfs:comment """
+        rml:compression specifies the compression algorithm to use when
+        accessing the data source. By default, no compression is applied.
+        """ ;
+        sh:message """
+        rml:compression must be provided as an IRI.
+        """ ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI;
+    ] ; 
+
+    # rml:encoding
+    sh:property [
+        sh:path rml:encoding ;
+        rdfs:label "rml:encoding" ;
+        rdfs:comment """
+        rml:encoding specifies the encoding to use when accessing the data 
+        source. By default, UTF-8 is used.
+        """ ;
+        sh:message """
+        rml:encoding must be provided as an IRI.
+        """ ;
+        sh:minCount 0;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    # rml:root/rml:path only apply when this node is attempting to be a
+    # rml:FilePath (co-typed alongside rml:Source or rml:Target). Gate on
+    # whether either is present at all, rather than sh:node'ing
+    # RMLFilePathShape unconditionally, which would wrongly require
+    # rml:path on every source/target (d2rq:Database, dcat:Distribution,
+    # csvw:Table, ...).
+    sh:xone (
+        [ sh:property [
+            sh:path [ sh:alternativePath (rml:root rml:path) ] ;
+            sh:maxCount 0 ;
+        ] ]
+        [ sh:node :RMLFilePathShape ]
+    ) ;
+.

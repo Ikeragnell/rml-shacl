@@ -1,0 +1,18 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+
+:nonConstantPathAlternativeList
+    rdf:first ([sh:alternativePath :subjectMapOrPredicateObjectMapAlternativeList] [sh:alternativePath :functionExecutionPathAlternativeList] [sh:alternativePath :nonConstantExpressionAlternativeList]) .
+
+
+:functionExecutionPathAlternativeList
+    a rdf:List ;
+    rdf:first [sh:zeroOrMorePath rml:condition] ;
+    rdf:rest ( ([sh:zeroOrMorePath rml:condition] rml:functionExecution [sh:alternativePath (rml:functionMap (rml:input [sh:alternativePath (rml:parameterMap rml:inputValueMap)]))]) ) .
+
+:gatherMemberPathList
+    a rdf:List ;
+    rdf:first (rml:gather ( [sh:zeroOrMorePath rdf:rest] rdf:first :functionExecutionPathAlternativeList));
+    rdf:rest rdf:nil .

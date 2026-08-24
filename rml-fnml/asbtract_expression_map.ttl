@@ -1,0 +1,77 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+:RMLAbstractExpressionMapShape
+    sh:property [
+        sh:path rml:condition ;
+        rdfs:label "rml:condition" ;
+        rdfs:comment """
+        A shortcut on an Expression Map: its value must be a
+        boolean-returning function-valued expression map. If the
+        condition evaluates to true, the enclosing Expression Map's own
+        value is used.
+        """ ;
+        sh:message """
+        rml:condition must reference a valid, function-valued Expression Map.
+        """ ;
+        sh:node :RMLAbstractExpressionMapShape ;
+    ] ;
+
+    sh:or (
+        [ sh:property [
+            sh:path [sh:alternativePath (rml:return rml:returnMap)] ;
+            sh:maxCount 0 ;
+        ] ]
+        [ sh:property [ sh:path rml:functionExecution ; sh:minCount 1 ] ]
+    ) ;
+
+    sh:property [
+        sh:path rml:functionExecution ;
+        sh:node :RMLFunctionExecutionShape ;
+    ] ;
+
+    sh:property [
+        sh:path [sh:alternativePath (rml:return rml:returnMap)] ;
+        rdfs:label "rml:return/rml:returnMap" ;
+        rdfs:comment """
+        At most one of rml:return or rml:returnMap is allowed.
+        """ ;
+        sh:message """
+        At most one of rml:return or rml:returnMap is allowed.
+        """ ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path rml:returnMap ;
+        rdfs:label "rml:returnMap" ;
+        rdfs:comment """
+        Selects which Return of the function's execution to use.
+        """ ;
+        sh:message """
+        rml:returnMap must be an IRI or Blank node.
+        """ ;
+        sh:node :RMLReturnMapShape ;
+    ] ;
+
+    # rml:return shortcut
+    sh:property [
+        sh:path rml:return ;
+        rdfs:label "rml:return" ;
+        rdfs:comment """
+        Constant expression shortcut of rml:returnMap.
+        """ ;
+        sh:message """
+        rml:return must be an IRI.
+        """ ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+.
+
+:RMLAbstractExpressionMapValuePath
+    rdf:first rml:functionExecution .

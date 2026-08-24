@@ -1,0 +1,58 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+
+:RMLIterableShape
+    a sh:NodeShape ;
+    rdfs:label "Iterable" ;
+    rdfs:comment """
+    An abstract construct to describe data access and iteration for a data source.
+    """ ;
+    sh:message """
+    Iterable must specify how to generate logical iterations on a data source.
+    """ ;
+
+    # rml:referenceFormulation
+    sh:property [
+        sh:path rml:referenceFormulation ;
+        rdfs:label "rml:referenceFormulation" ;
+        rdfs:comment """
+        The reference formulation (rml:referenceFormulation) defines how to
+        reference to elements of the data of the input source.
+        """ ;
+        sh:message """
+        rml:referenceFormulation must be a blank node or IRI specifying the
+        reference formulation on how to reference elements of a data source,
+        and may be provided at most once.
+        """ ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+        # RMLReferenceFormulationShape starts with no constraints in
+        # rml-core: it's a named extension point that modules defining
+        # concrete reference formulations (rml-io's CSV/JSONPath/XPath/SQL,
+        # or others) attach sh:or branches to from their own files, the
+        # same pattern as :RMLAbstractLogicalSourceShape. See
+        # use-cases/rml/shape-composition-requirements.md.
+        sh:node :RMLReferenceFormulationShape ;
+    ] ;
+
+    # rml:iterator
+    sh:property [
+        sh:path rml:iterator ;
+        rdfs:label "rml:iterator" ;
+        rdfs:comment """
+        The logical iterator (rml:iterator) defines the iteration loop used to 
+        map the data of the input source. Depends on the reference formulation
+        if an iterator is necessary.  
+        """ ;
+        sh:message """
+        rml:iterator specifies the iterator to iterate over
+        the data source, and may be provided at most once.
+        """ ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:Literal ;
+    ] ;
+.

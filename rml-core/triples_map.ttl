@@ -1,0 +1,166 @@
+@prefix : <http://w3id.org/rml/shapes/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Validate an RML Triples Map
+:RMLTriplesMapShape
+    a sh:NodeShape ;
+    sh:targetClass rml:TriplesMap ;
+    sh:targetSubjectsOf rml:subjectMap ;
+    sh:targetSubjectsOf rml:subject;
+    sh:targetSubjectsOf rml:baseIRI;
+    sh:targetSubjectsOf rml:predicateObjectMap;
+    sh:targetSubjectsOf rml:logicalSource;
+    sh:targetObjectsOf rml:parentTriplesMap;
+
+    rdfs:label "TriplesMap" ;
+    rdfs:comment """
+    Represents a Triples Map.
+    """ ;
+    sh:message """
+    Triples Map requires exactly one rml:subject or one rml:subjectMap and zero
+    or more rml:predicateObjectMaps.
+    """ ;
+
+    sh:property [
+        sh:node :RMLAbstractLogicalSourceShape ;
+        sh:path rml:logicalSource ;
+        rdfs:label "logicalSource" ;
+        rdfs:comment """
+        A logical source is any source that is mapped to RDF triples.
+        """ ;
+        sh:message """
+        Exactly one rml:logicalSource is required to access the data source.
+        """ ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:or([
+        sh:path rml:logicalSource ;
+        sh:minCount 1 ;
+    ] [
+        sh:path [sh:alternativePath :nonConstantPathAlternativeList];
+        sh:maxCount 0;
+    ]);
+
+
+    sh:property [
+
+        sh:path [sh:alternativePath (rml:subjectMap rml:subject)] ;
+        rdfs:label "subjectMap/subject" ;
+        rdfs:comment """
+        Either a rml:subject, rml:subjectMap is required, not multiple.
+        """ ;
+        sh:message """
+        Either a rml:subject, rml:subjectMap is required, not multiple.
+        """ ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:node :RMLSubjectMapShape ;
+        sh:path rml:subjectMap ;
+        rdfs:label "subjectMap" ;
+        rdfs:comment """
+        A Subject Map element to generate a subject for generated RDF triples.
+        """ ;
+        sh:message """
+        rml:SubjectMap must be an IRI or blank node.
+        """ ;
+    ] ;
+
+    # rml:subject
+    sh:property [
+        sh:path rml:subject ;
+        rdfs:label "subject" ;
+        rdfs:comment """
+        An IRI reference for use as subject for all generated RDF triples.
+        """ ;
+        sh:message """
+        rml:subject must be an IRI or blank node.
+        """ ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] ;
+
+    # rml:predicateObjectMap
+    sh:property [
+        sh:node :RMLPredicateObjectMapShape ;
+        sh:path rml:predicateObjectMap ;
+        rdfs:label "predicateObjectMap" ;
+        rdfs:comment """
+        A Predicate Object Map element to generate a (predicate, object) pair.
+        """ ;
+        sh:message """
+        rml:PredicateObjectMap must be an IRI or blank node.
+        """ ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] ;
+
+    # rml:baseIRI
+    sh:property [
+        sh:path rml:baseIRI ;
+        sh:description """
+        Base IRI to use for generating RDF triples or quads.
+        """ ;
+        sh:message """
+        rml:baseIRI must be an IRI.
+        """ ;
+        sh:nodeKind sh:IRI ;
+        sh:maxCount 1 ;
+    ] ;
+.
+
+:nonConstantExpressionAlternativeList
+    a rdf:List ;
+    rdf:first rml:template ;
+    rdf:rest ( rml:reference ) .
+
+# Named list head, not an inline ( ... ) blank-node list -- backs the
+# rml:objectMap step of the logicalSource-optionality path above. Holds
+# alternative paths from an objectMap to further term-map-bearing nodes
+# (languageMap, datatypeMap, joinCondition/childMap, joinCondition/parentMap).
+# Extension modules that add other ways to reach a term map from an
+# objectMap (e.g. rml-cc's rml:gather) append themselves by asserting
+# :objectMapAlternativeList rdf:first ( ... ) from their own file, without
+# editing this one. Same convention as :nonConstantExpressionAlternativeList.
+:objectMapAlternativeList
+    a rdf:List ;
+    rdf:first rml:languageMap ;
+    rdf:rest ( rml:datatypeMap (rml:joinCondition [sh:alternativePath (rml:childMap rml:parentMap)]) ) .
+
+# Named list head, not an inline ( ... ) blank-node list -- backs the
+# top-level branch of the logicalSource-optionality sh:or above. Holds
+# alternative PATHS (each a full subjectMap/predicateObjectMap-style
+# traversal) to check for a non-constant expression anywhere in the
+# TriplesMap. Currently one alternative: the subjectMap-or-
+# predicateObjectMap chain down to :nonConstantExpressionAlternativeList.
+# Extension modules that add a completely different path to a non-constant
+# expression elsewhere in the TriplesMap append themselves by asserting
+# :nonConstantPathAlternativeList rdf:first ( ... ) from their own file,
+# without editing this one. Same convention as
+# :nonConstantExpressionAlternativeList / :objectMapAlternativeList.
+:nonConstantPathAlternativeList
+    a rdf:List ;
+    rdf:first ([sh:alternativePath :subjectMapOrPredicateObjectMapAlternativeList] [sh:alternativePath :nonConstantExpressionAlternativeList]) ;
+    rdf:rest rdf:nil .
+
+# Named list head, not an inline ( ... ) blank-node list -- backs the first
+# step of :nonConstantPathAlternativeList's one path: how to reach a
+# term-map-bearing node from the TriplesMap at all. Currently two
+# alternatives: directly via rml:subjectMap, or via
+# rml:predicateObjectMap and onward through :objectMapAlternativeList.
+# Extension modules that add another way to reach a term map from the
+# TriplesMap itself (e.g. rml-star's rml:quotedTriplesMap) append
+# themselves by asserting
+# :subjectMapOrPredicateObjectMapAlternativeList rdf:first ( ... ) from
+# their own file, without editing this one. Same convention as
+# :nonConstantExpressionAlternativeList / :objectMapAlternativeList /
+# :nonConstantPathAlternativeList.
+:subjectMapOrPredicateObjectMapAlternativeList
+    a rdf:List ;
+    rdf:first rml:subjectMap ;
+    rdf:rest ( (rml:predicateObjectMap [sh:alternativePath (rml:predicateMap rml:objectMap (rml:objectMap [sh:alternativePath :objectMapAlternativeList]))]) ) .
