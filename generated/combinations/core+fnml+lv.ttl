@@ -29,44 +29,37 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://w3id.org/rml/shapes/RMLLogicalSourceOrList> rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] ;
-    rdf:rest () .
-
 <http://w3id.org/rml/shapes/RMLStrategyShape> a sh:NodeShape ;
     rdfs:label "Strategy" .
 
-<http://w3id.org/rml/shapes/gatherMemberPathList> a rdf:List ;
-    rdf:first ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first <http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> ) ) ;
-    rdf:rest () .
-
 <http://w3id.org/rml/shapes/InclusionAnnotationShape> a sh:NodeShape ;
     rdfs:label "InclusionAnnotation" ;
-    rdfs:comment """\r
-    The InclusionAnnotaton annotation (rml:InclusionAnnotation) is analogous to the notion of inclusion dependency in databases.\r
+    rdfs:comment """
+    The InclusionAnnotaton annotation (rml:InclusionAnnotation) is analogous to the notion of inclusion dependency in databases.
     """ ;
-    sh:message """\r
-    Node must have a valid rml:InclusionAnnotation description.\r
-    Each InclusionAnnotation annotation requires (additionally to the inherited `rml:onFields` property):\r
-    - Exactly one `rml:targetView` property\r
-    - Exactly one `rml:targetFields` property.\r
+    sh:message """
+    Node must have a valid rml:InclusionAnnotation description.
+    Each InclusionAnnotation annotation requires (additionally to the inherited `rml:onFields` property):
+    - Exactly one `rml:targetView` property
+    - Exactly one `rml:targetFields` property.
     """ ;
     sh:node <http://w3id.org/rml/shapes/StructuralAnnotationShape> ;
-    sh:property [ sh:description """\r
-        property targetView specifies the LogicalView target of the InclusionAnnotation annotation.\r
+    sh:property [ sh:description """
+        property targetView specifies the LogicalView target of the InclusionAnnotation annotation.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:targetView property must be specified for each rml:InclusionAnnotation.\r
+            sh:message """
+        Exactly one rml:targetView property must be specified for each rml:InclusionAnnotation.
         """ ;
             sh:minCount 1 ;
             sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ;
             sh:path rml:targetView ],
-        [ sh:description """\r
-        property targetFields specifies the Fields target of the InclusionAnnotation.\r
+        [ sh:description """
+        property targetFields specifies the Fields target of the InclusionAnnotation.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:targetFields property must be specified for each rml:InclusionAnnotation.\r
+            sh:message """
+        Exactly one rml:targetFields property must be specified for each rml:InclusionAnnotation.
         """ ;
             sh:minCount 1 ;
             sh:path rml:targetFields ] .
@@ -77,19 +70,19 @@
 
 <http://w3id.org/rml/shapes/LeafExpressionFieldShape> a sh:NodeShape ;
     rdfs:label "Leaf Expression Field" ;
-    rdfs:comment """\r
-    A leaf expression field is an expression field without nested fields.\r
+    rdfs:comment """
+    A leaf expression field is an expression field without nested fields.
     """ ;
-    sh:message """\r
-    Node must have a valid rml:ExpressionField description.\r
+    sh:message """
+    Node must have a valid rml:ExpressionField description.
     """ ;
     sh:node <http://w3id.org/rml/shapes/ExpressionFieldShape> ;
-    sh:property [ sh:description """\r
-        A leaf expression field is an expression field without nested fields.\r
+    sh:property [ sh:description """
+        A leaf expression field is an expression field without nested fields.
         """ ;
             sh:maxCount 0 ;
-            sh:message """\r
-        A leaf expression field has no nested fields.\r
+            sh:message """
+        A leaf expression field has no nested fields.
         """ ;
             sh:path rml:field ] .
 
@@ -476,20 +469,6 @@
         """ ;
             sh:path rml:termType ] .
 
-<http://w3id.org/rml/shapes/RMLTermMapOrList> a rdf:List ;
-    rdf:first [ sh:property [ rdfs:label "template/constant/reference" ;
-                    rdfs:comment """
-                Only one of rml:template, rml:constant, or rml:reference is
-                allowed.
-            """ ;
-                    sh:message """
-            Only one of rml:template, rml:constant, or rml:reference is allowed.
-            """ ;
-                    sh:minCount 1 ;
-                    sh:path [ sh:alternativePath <http://w3id.org/rml/shapes/RMLAbstractExpressionMapValuePath> ] ] ] ;
-    rdf:rest ( [ sh:property [ sh:hasValue rml:BlankNode ;
-                        sh:path rml:termType ] ] ) .
-
 <http://w3id.org/rml/shapes/RMLTriplesMapShape> a sh:NodeShape ;
     rdfs:label "TriplesMap" ;
     rdfs:comment """
@@ -501,7 +480,7 @@
     """ ;
     sh:or ( [ sh:minCount 1 ;
                 sh:path rml:logicalSource ] [ sh:maxCount 0 ;
-                sh:path [ sh:alternativePath <http://w3id.org/rml/shapes/nonConstantPathAlternativeList> ] ] ) ;
+                sh:path [ sh:alternativePath ( ( [ sh:alternativePath _:Na485c74f87b342d384212c15a23d62ef ] [ sh:alternativePath _:N79e5667255fd4c6e85792e50b3611722 ] ) ( [ sh:alternativePath _:Na485c74f87b342d384212c15a23d62ef ] [ sh:alternativePath _:N140b9d840b8f4c91b8b6414325eaaa72 ] [ sh:alternativePath _:N79e5667255fd4c6e85792e50b3611722 ] ) ) ] ] ) ;
     sh:property [ rdfs:label "logicalSource" ;
             rdfs:comment """
         A logical source is any source that is mapped to RDF triples.
@@ -567,44 +546,36 @@
         rml:subject,
         rml:subjectMap .
 
-<http://w3id.org/rml/shapes/nonConstantPathAlternativeList> a rdf:List ;
-    rdf:first ( [ sh:alternativePath <http://w3id.org/rml/shapes/subjectMapOrPredicateObjectMapAlternativeList> ] [ sh:alternativePath <http://w3id.org/rml/shapes/nonConstantExpressionAlternativeList> ] ) ;
-    rdf:rest ( ( [ sh:alternativePath <http://w3id.org/rml/shapes/subjectMapOrPredicateObjectMapAlternativeList> ] [ sh:alternativePath <http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> ] [ sh:alternativePath <http://w3id.org/rml/shapes/nonConstantExpressionAlternativeList> ] ) ) .
-
-<http://w3id.org/rml/shapes/objectMapAlternativeList> a rdf:List ;
-    rdf:first rml:languageMap ;
-    rdf:rest ( rml:datatypeMap ( rml:joinCondition [ sh:alternativePath ( rml:childMap rml:parentMap ) ] ) ) .
-
 <http://w3id.org/rml/shapes/ExpressionFieldShape> a sh:NodeShape ;
     sh:node <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
 
 <http://w3id.org/rml/shapes/FieldShape> a sh:NodeShape ;
     rdfs:label "Field" ;
-    rdfs:comment """\r
-    A field is a construct that gives a name to data derived from an abstract logical source.\r
+    rdfs:comment """
+    A field is a construct that gives a name to data derived from an abstract logical source.
     """ ;
-    sh:message """\r
-    Node must have a valid rml:Field description.\r
-    rml:Field requires a rml:fieldName and may have zero or more rml:field properties.\r
-    Furthermore, subclass rml:ExpressionField requires what an rml:ExpressionMap requires, subclass rml:IterableField requires what an rml:Iterable requires,.\r
+    sh:message """
+    Node must have a valid rml:Field description.
+    rml:Field requires a rml:fieldName and may have zero or more rml:field properties.
+    Furthermore, subclass rml:ExpressionField requires what an rml:ExpressionMap requires, subclass rml:IterableField requires what an rml:Iterable requires,.
     """ ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [ sh:datatype xsd:string ;
-            sh:description """\r
-        The name of the field.\r
+            sh:description """
+        The name of the field.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:fieldName property must be specified for a rml:Field, with a string as its value.\r
+            sh:message """
+        Exactly one rml:fieldName property must be specified for a rml:Field, with a string as its value.
         """ ;
             sh:minCount 1 ;
             sh:nodeKind sh:Literal ;
             sh:path rml:fieldName ],
-        [ sh:description """\r
-        A child field of the field.\r
+        [ sh:description """
+        A child field of the field.
         """ ;
-            sh:message """\r
-        The value of a rml:field property for a rml:Field must be a resource.\r
+            sh:message """
+        The value of a rml:field property for a rml:Field must be a resource.
         """ ;
             sh:node <http://w3id.org/rml/shapes/FieldShape> ;
             sh:path rml:field ],
@@ -614,41 +585,41 @@
 
 <http://w3id.org/rml/shapes/LogicalViewJoinShape> a sh:NodeShape ;
     rdfs:label "LogicalViewJoin" ;
-    rdfs:comment """\r
-    A LogicalViewJoin is an operation that adapts the logical iterations of one logical view (the child logical view) with fields from another logical view (the parent logical view).\r
+    rdfs:comment """
+    A LogicalViewJoin is an operation that adapts the logical iterations of one logical view (the child logical view) with fields from another logical view (the parent logical view).
     """ ;
-    sh:message """\r
-    Node must have a valid rml:LogicalViewJoin description.\r
-    rml:LogicalViewJoin requires:\r
-    - exactly one rml:parentLogicalView property.\r
-    - one or more rml:joinCondition properties.\r
-    - one or more rml:field properties.\r
-    Furthermore, rml:Field requires what an rml:ExpressionMap requires.\r
+    sh:message """
+    Node must have a valid rml:LogicalViewJoin description.
+    rml:LogicalViewJoin requires:
+    - exactly one rml:parentLogicalView property.
+    - one or more rml:joinCondition properties.
+    - one or more rml:field properties.
+    Furthermore, rml:Field requires what an rml:ExpressionMap requires.
     """ ;
-    sh:property [ sh:description """\r
-        The parent logical view of the logical view join.\r
+    sh:property [ sh:description """
+        The parent logical view of the logical view join.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.\r
+            sh:message """
+        Exactly one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.
         """ ;
             sh:minCount 1 ;
             sh:node sh:BlankNodeOrIRI ;
             sh:path rml:parentLogicalView ],
-        [ sh:description """\r
-        A join condition of the logical view join.\r
+        [ sh:description """
+        A join condition of the logical view join.
         """ ;
-            sh:message """\r
-        At least one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.\r
+            sh:message """
+        At least one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.
         """ ;
             sh:minCount 1 ;
             sh:node <http://w3id.org/rml/shapes/RMLJoinShape> ;
             sh:path rml:joinCondition ],
-        [ sh:description """\r
-        A field of the logical view join.\r
+        [ sh:description """
+        A field of the logical view join.
         """ ;
-            sh:message """\r
-        At least one rml:field property must be specified for a rml:LogicalViewJoin, with a leaf expression field as its value.\r
+            sh:message """
+        At least one rml:field property must be specified for a rml:LogicalViewJoin, with a leaf expression field as its value.
         """ ;
             sh:minCount 1 ;
             sh:node <http://w3id.org/rml/shapes/LeafExpressionFieldShape> ;
@@ -656,46 +627,46 @@
 
 <http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> a sh:NodeShape ;
     rdfs:label "Abstract Logical Source" ;
-    rdfs:comment """\r
-    A sub-class of iterable that can be associated with a triples map such that a data source can be mapped to RDF triples.\r
+    rdfs:comment """
+    A sub-class of iterable that can be associated with a triples map such that a data source can be mapped to RDF triples.
     """ ;
-    sh:message """\r
-    rml:AbstractLogicalSource must specify how to generate logical iterations on a data source for a triples map.\r
+    sh:message """
+    rml:AbstractLogicalSource must specify how to generate logical iterations on a data source for a triples map.
     """ ;
     sh:node <http://w3id.org/rml/shapes/RMLIterableShape> .
 
 <http://w3id.org/rml/shapes/RMLIterableShape> a sh:NodeShape ;
     rdfs:label "Iterable" ;
-    rdfs:comment """\r
-    An abstract construct to describe data access and iteration for a data source.\r
+    rdfs:comment """
+    An abstract construct to describe data access and iteration for a data source.
     """ ;
-    sh:message """\r
-    Iterable must specify how to generate logical iterations on a data source.\r
+    sh:message """
+    Iterable must specify how to generate logical iterations on a data source.
     """ ;
     sh:property [ rdfs:label "rml:referenceFormulation" ;
-            rdfs:comment """\r
-        The reference formulation (rml:referenceFormulation) defines how to\r
-        reference to elements of the data of the input source.\r
+            rdfs:comment """
+        The reference formulation (rml:referenceFormulation) defines how to
+        reference to elements of the data of the input source.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        rml:referenceFormulation must be a blank node or IRI specifying the\r
-        reference formulation on how to reference elements of a data source,\r
-        and may be provided at most once.\r
+            sh:message """
+        rml:referenceFormulation must be a blank node or IRI specifying the
+        reference formulation on how to reference elements of a data source,
+        and may be provided at most once.
         """ ;
             sh:node <http://w3id.org/rml/shapes/RMLReferenceFormulationShape> ;
             sh:nodeKind sh:BlankNodeOrIRI ;
             sh:path rml:referenceFormulation ],
         [ rdfs:label "rml:iterator" ;
-            rdfs:comment """\r
-        The logical iterator (rml:iterator) defines the iteration loop used to \r
-        map the data of the input source. Depends on the reference formulation\r
-        if an iterator is necessary.  \r
+            rdfs:comment """
+        The logical iterator (rml:iterator) defines the iteration loop used to 
+        map the data of the input source. Depends on the reference formulation
+        if an iterator is necessary.  
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        rml:iterator specifies the iterator to iterate over\r
-        the data source, and may be provided at most once.\r
+            sh:message """
+        rml:iterator specifies the iterator to iterate over
+        the data source, and may be provided at most once.
         """ ;
             sh:nodeKind sh:Literal ;
             sh:path rml:iterator ] .
@@ -858,36 +829,24 @@
 
 <http://w3id.org/rml/shapes/StructuralAnnotationShape> a sh:NodeShape ;
     rdfs:label "StructuralAnnotation" ;
-    rdfs:comment """\r
-    Structural annotations provide a mechanism to express relationships between logical views, as well as additional information about fields.\r
+    rdfs:comment """
+    Structural annotations provide a mechanism to express relationships between logical views, as well as additional information about fields.
     """ ;
-    sh:message """\r
-    Node must have a valid rml:StructuralAnnotationShape description.\r
-    All structural annotations of a logical view lv MUST have an on fields property (rml:onFields), linking the structural annotation to a list of field names occurring in lv.\r
-    rml:StructuralAnnotationShape requires:\r
-    - exactly one rml:onFields property.\r
+    sh:message """
+    Node must have a valid rml:StructuralAnnotationShape description.
+    All structural annotations of a logical view lv MUST have an on fields property (rml:onFields), linking the structural annotation to a list of field names occurring in lv.
+    rml:StructuralAnnotationShape requires:
+    - exactly one rml:onFields property.
     """ ;
-    sh:property [ sh:description """\r
-        property onFields specifies the fields in LogicalView that are involved by the structural annotation. The semantics of this involvement depends on the specific annotation.\r
+    sh:property [ sh:description """
+        property onFields specifies the fields in LogicalView that are involved by the structural annotation. The semantics of this involvement depends on the specific annotation.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:onFields property must be specified for each rml:StructuralAnnotation\r
+            sh:message """
+        Exactly one rml:onFields property must be specified for each rml:StructuralAnnotation
         """ ;
             sh:minCount 1 ;
             sh:path rml:onFields ] .
-
-<http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> a rdf:List ;
-    rdf:first [ sh:zeroOrMorePath rml:condition ] ;
-    rdf:rest ( ( [ sh:zeroOrMorePath rml:condition ] rml:functionExecution [ sh:alternativePath ( rml:functionMap ( rml:input [ sh:alternativePath ( rml:parameterMap rml:inputValueMap ) ] ) ) ] ) ) .
-
-<http://w3id.org/rml/shapes/nonConstantExpressionAlternativeList> a rdf:List ;
-    rdf:first rml:template ;
-    rdf:rest ( rml:reference ) .
-
-<http://w3id.org/rml/shapes/subjectMapOrPredicateObjectMapAlternativeList> a rdf:List ;
-    rdf:first rml:subjectMap ;
-    rdf:rest ( ( rml:predicateObjectMap [ sh:alternativePath ( rml:predicateMap rml:objectMap ( rml:objectMap [ sh:alternativePath <http://w3id.org/rml/shapes/objectMapAlternativeList> ] ) ) ] ) ) .
 
 <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> a sh:NodeShape ;
     rdfs:label "ExpressionMap" ;
@@ -901,48 +860,7 @@
     sh:or ( [ sh:property [ sh:maxCount 0 ;
                         sh:path [ sh:alternativePath ( rml:return rml:returnMap ) ] ] ] [ sh:property [ sh:minCount 1 ;
                         sh:path rml:functionExecution ] ] ) ;
-    sh:property [ rdfs:label "rml:condition" ;
-            rdfs:comment """
-        A shortcut on an Expression Map: its value must be a
-        boolean-returning function-valued expression map. If the
-        condition evaluates to true, the enclosing Expression Map's own
-        value is used.
-        """ ;
-            sh:message """
-        rml:condition must reference a valid, function-valued Expression Map.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> ;
-            sh:path rml:condition ],
-        [ sh:node <http://w3id.org/rml/shapes/RMLFunctionExecutionShape> ;
-            sh:path rml:functionExecution ],
-        [ rdfs:label "rml:return/rml:returnMap" ;
-            rdfs:comment """
-        At most one of rml:return or rml:returnMap is allowed.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        At most one of rml:return or rml:returnMap is allowed.
-        """ ;
-            sh:path [ sh:alternativePath ( rml:return rml:returnMap ) ] ],
-        [ rdfs:label "rml:returnMap" ;
-            rdfs:comment """
-        Selects which Return of the function's execution to use.
-        """ ;
-            sh:message """
-        rml:returnMap must be an IRI or Blank node.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLReturnMapShape> ;
-            sh:path rml:returnMap ],
-        [ rdfs:label "rml:return" ;
-            rdfs:comment """
-        Constant expression shortcut of rml:returnMap.
-        """ ;
-            sh:message """
-        rml:return must be an IRI.
-        """ ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:return ],
-        [ rdfs:label "template/constant/reference" ;
+    sh:property [ rdfs:label "template/constant/reference" ;
             rdfs:comment """
             Only one of rml:template, rml:constant, or rml:reference is
             allowed.
@@ -952,7 +870,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 0 ;
-            sh:path [ sh:alternativePath <http://w3id.org/rml/shapes/RMLAbstractExpressionMapValuePath> ] ],
+            sh:path [ sh:alternativePath _:N3f51e01a4f8740ed9425aff23fab7224 ] ],
         [ rdfs:label "template" ;
             rdfs:comment """
         A template (format string) to specify how to generate a value for a 
@@ -995,11 +913,48 @@
         rml:reference must be a string.
         """ ;
             sh:nodeKind sh:Literal ;
-            sh:path rml:reference ] .
-
-<http://w3id.org/rml/shapes/RMLAbstractExpressionMapValuePath> a rdf:List ;
-    rdf:first rml:functionExecution ;
-    rdf:rest ( rml:template rml:constant rml:reference ) .
+            sh:path rml:reference ],
+        [ rdfs:label "rml:condition" ;
+            rdfs:comment """
+        A shortcut on an Expression Map: its value must be a
+        boolean-returning function-valued expression map. If the
+        condition evaluates to true, the enclosing Expression Map's own
+        value is used.
+        """ ;
+            sh:message """
+        rml:condition must reference a valid, function-valued Expression Map.
+        """ ;
+            sh:node <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> ;
+            sh:path rml:condition ],
+        [ sh:node <http://w3id.org/rml/shapes/RMLFunctionExecutionShape> ;
+            sh:path rml:functionExecution ],
+        [ rdfs:label "rml:return/rml:returnMap" ;
+            rdfs:comment """
+        At most one of rml:return or rml:returnMap is allowed.
+        """ ;
+            sh:maxCount 1 ;
+            sh:message """
+        At most one of rml:return or rml:returnMap is allowed.
+        """ ;
+            sh:path [ sh:alternativePath ( rml:return rml:returnMap ) ] ],
+        [ rdfs:label "rml:returnMap" ;
+            rdfs:comment """
+        Selects which Return of the function's execution to use.
+        """ ;
+            sh:message """
+        rml:returnMap must be an IRI or Blank node.
+        """ ;
+            sh:node <http://w3id.org/rml/shapes/RMLReturnMapShape> ;
+            sh:path rml:returnMap ],
+        [ rdfs:label "rml:return" ;
+            rdfs:comment """
+        Constant expression shortcut of rml:returnMap.
+        """ ;
+            sh:message """
+        rml:return must be an IRI.
+        """ ;
+            sh:nodeKind sh:IRI ;
+            sh:path rml:return ] .
 
 <http://w3id.org/rml/shapes/RMLExpressionMapShape> a sh:NodeShape ;
     rdfs:label "ExpressionMap" ;
@@ -1013,7 +968,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 1 ;
-            sh:path [ sh:alternativePath <http://w3id.org/rml/shapes/RMLAbstractExpressionMapValuePath> ] ] .
+            sh:path [ sh:alternativePath _:N3f51e01a4f8740ed9425aff23fab7224 ] ] .
 
 <http://w3id.org/rml/shapes/RMLTermMapShape> a sh:NodeShape ;
     rdfs:label "TermMap" ;
@@ -1024,10 +979,20 @@
     Term Map is an Expression Map with optionally a term type specified.
     """ ;
     sh:node <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> ;
-    sh:or ( [ sh:property [ sh:maxCount 0 ;
-                        sh:path rml:constant ] ] [ sh:property [ sh:maxCount 0 ;
+    sh:or ( [ sh:property [ rdfs:label "template/constant/reference" ;
+                        rdfs:comment """
+                Only one of rml:template, rml:constant, or rml:reference is
+                allowed.
+            """ ;
+                        sh:message """
+            Only one of rml:template, rml:constant, or rml:reference is allowed.
+            """ ;
+                        sh:minCount 1 ;
+                        sh:path [ sh:alternativePath _:N3f51e01a4f8740ed9425aff23fab7224 ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
                         sh:path rml:termType ] ] ),
-        <http://w3id.org/rml/shapes/RMLTermMapOrList> ;
+        ( [ sh:property [ sh:maxCount 0 ;
+                        sh:path rml:constant ] ] [ sh:property [ sh:maxCount 0 ;
+                        sh:path rml:termType ] ] ) ;
     sh:property [ rdfs:label "termType" ;
             rdfs:comment """
         An IRI indicating whether a generated term should be an IRI,
@@ -1042,4 +1007,42 @@
         """ ;
             sh:nodeKind sh:IRI ;
             sh:path rml:termType ] .
+
+[] rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] ;
+    rdf:rest () .
+
+[] rdf:first ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first _:N140b9d840b8f4c91b8b6414325eaaa72 ) ) ;
+    rdf:rest () .
+
+_:N1ceda5560d174bef98992ad849aa9275 rdf:first rml:reference ;
+    rdf:rest () .
+
+_:N257026a92ec24f47a7abbf244b1daba2 rdf:first rml:languageMap ;
+    rdf:rest ( rml:datatypeMap ( rml:joinCondition [ sh:alternativePath ( rml:childMap rml:parentMap ) ] ) ) .
+
+_:N41504c764a2d4039a86e4362172fff94 rdf:first ( [ sh:zeroOrMorePath rml:condition ] rml:functionExecution [ sh:alternativePath ( rml:functionMap ( rml:input [ sh:alternativePath ( rml:parameterMap rml:inputValueMap ) ] ) ) ] ) ;
+    rdf:rest () .
+
+_:N6c2b770941c747bab6f987746265bcfb rdf:first rml:constant ;
+    rdf:rest ( rml:reference ) .
+
+_:Nd629b23d1e1743828885ae7a76a897b2 rdf:first rml:template ;
+    rdf:rest _:N6c2b770941c747bab6f987746265bcfb .
+
+_:Nde2880d679b445f09f0eb7fd87a5feb1 rdf:first ( rml:predicateObjectMap [ sh:alternativePath ( rml:predicateMap rml:objectMap ( rml:objectMap [ sh:alternativePath _:N257026a92ec24f47a7abbf244b1daba2 ] ) ) ] ) ;
+    rdf:rest () .
+
+_:n9b47306bd54b46e1a2b9450482149807b7 sh:zeroOrMorePath rml:condition .
+
+_:N140b9d840b8f4c91b8b6414325eaaa72 rdf:first _:n9b47306bd54b46e1a2b9450482149807b7 ;
+    rdf:rest _:N41504c764a2d4039a86e4362172fff94 .
+
+_:N79e5667255fd4c6e85792e50b3611722 rdf:first rml:template ;
+    rdf:rest _:N1ceda5560d174bef98992ad849aa9275 .
+
+_:Na485c74f87b342d384212c15a23d62ef rdf:first rml:subjectMap ;
+    rdf:rest _:Nde2880d679b445f09f0eb7fd87a5feb1 .
+
+_:N3f51e01a4f8740ed9425aff23fab7224 rdf:first rml:functionExecution ;
+    rdf:rest _:Nd629b23d1e1743828885ae7a76a897b2 .
 

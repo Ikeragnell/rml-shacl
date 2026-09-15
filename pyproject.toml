@@ -1,0 +1,8 @@
+[project]
+name = "rml-shacl"
+version = "0.1.0"
+description = "SHACL shapes for W3C RML"
+requires-python = ">=3.10"
+dependencies = [
+    "rdflib>=7.0.0",
+]

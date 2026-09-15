@@ -29,129 +29,6 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://w3id.org/rml/shapes/FnOConstantParameterTypeShape> a sh:NodeShape ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:message "A constant-valued parameter input must match the datatype the function declares via fno:type." ;
-            sh:select """
-            PREFIX rml: <http://w3id.org/rml/>
-            PREFIX fno: <https://w3id.org/function/ontology#>
-            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            SELECT $this
-            WHERE {
-                $this rml:input ?input .
-                ?input rml:parameter ?param ;
-                       rml:inputValueMap ?ivm .
-                ?ivm rml:constant ?val .
-                GRAPH <urn:rml:functions> {
-                    ?param fno:type ?expectedType .
-                }
-                FILTER (isLiteral(?val) && datatype(?val) != ?expectedType)
-            }
-        """ ] ;
-    sh:targetSubjectsOf rml:function .
-
-<http://w3id.org/rml/shapes/FnOFunctionExistsShape> a sh:NodeShape ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:message "rml:function must reference an fno:Function declared in the function library." ;
-            sh:select """
-            PREFIX rml: <http://w3id.org/rml/>
-            PREFIX fno: <https://w3id.org/function/ontology#>
-            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            SELECT $this
-            WHERE {
-                $this rml:function ?func .
-                FILTER NOT EXISTS {
-                    GRAPH <urn:rml:functions> { ?func a fno:Function }
-                }
-            }
-        """ ] ;
-    sh:targetSubjectsOf rml:function .
-
-<http://w3id.org/rml/shapes/FnONoDuplicateParameterShape> a sh:NodeShape ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:message "The same parameter must not be supplied more than once via rml:input/rml:parameter." ;
-            sh:select """
-            PREFIX rml: <http://w3id.org/rml/>
-            SELECT DISTINCT $this
-            WHERE {
-                $this rml:input ?input1, ?input2 .
-                ?input1 rml:parameter ?param .
-                ?input2 rml:parameter ?param .
-                FILTER (?input1 != ?input2)
-            }
-        """ ] ;
-    sh:targetSubjectsOf rml:function .
-
-<http://w3id.org/rml/shapes/FnOParameterValidShape> a sh:NodeShape ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:message "rml:parameter must be one of the function's declared fno:expects parameters." ;
-            sh:select """
-            PREFIX rml: <http://w3id.org/rml/>
-            PREFIX fno: <https://w3id.org/function/ontology#>
-            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            SELECT DISTINCT $this
-            WHERE {
-                $this rml:function ?func ;
-                      rml:input ?input .
-                ?input rml:parameter ?param .
-                FILTER NOT EXISTS {
-                    GRAPH <urn:rml:functions> {
-                        ?func fno:expects/rdf:rest*/rdf:first ?param .
-                    }
-                }
-            }
-        """ ] ;
-    sh:targetSubjectsOf rml:function .
-
-<http://w3id.org/rml/shapes/FnORequiredParametersSuppliedShape> a sh:NodeShape ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:message "Every parameter the function declares as fno:required must be supplied via rml:input/rml:parameter." ;
-            sh:select """
-            PREFIX rml: <http://w3id.org/rml/>
-            PREFIX fno: <https://w3id.org/function/ontology#>
-            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            SELECT DISTINCT $this
-            WHERE {
-                $this rml:function ?func .
-                GRAPH <urn:rml:functions> {
-                    ?func fno:expects/rdf:rest*/rdf:first ?reqParam .
-                    ?reqParam fno:required true .
-                }
-                FILTER NOT EXISTS {
-                    $this rml:input ?input .
-                    ?input rml:parameter ?reqParam .
-                }
-            }
-        """ ] ;
-    sh:targetSubjectsOf rml:function .
-
-<http://w3id.org/rml/shapes/FnOReturnValidShape> a sh:NodeShape ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:message "rml:return must be one of the function's declared fno:returns outputs." ;
-            sh:select """
-            PREFIX rml: <http://w3id.org/rml/>
-            PREFIX fno: <https://w3id.org/function/ontology#>
-            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            SELECT $this
-            WHERE {
-                $this rml:functionExecution ?exec ;
-                      rml:return ?ret .
-                ?exec rml:function ?func .
-                FILTER NOT EXISTS {
-                    GRAPH <urn:rml:functions> {
-                        ?func fno:returns/rdf:rest*/rdf:first ?ret .
-                    }
-                }
-            }
-        """ ] ;
-    sh:targetSubjectsOf rml:functionExecution .
-
-<http://w3id.org/rml/shapes/RMLAbstractExpressionMapValuePath> rdf:first rml:functionExecution ;
-    rdf:rest () .
-
-<http://w3id.org/rml/shapes/nonConstantExpressionAlternativeList> rdf:first rml:functionExecution ;
-    rdf:rest () .
-
 <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> sh:or ( [ sh:property [ sh:maxCount 0 ;
                         sh:path [ sh:alternativePath ( rml:return rml:returnMap ) ] ] ] [ sh:property [ sh:minCount 1 ;
                         sh:path rml:functionExecution ] ] ) ;
@@ -324,4 +201,21 @@
     """ ;
     sh:and ( <http://w3id.org/rml/shapes/RMLTermMapShape> <http://w3id.org/rml/shapes/RMLLogicalTargetPropertiesShape> [ ] ) ;
     sh:targetObjectsOf rml:returnMap .
+
+[] rdf:first rml:functionExecution ;
+    rdf:rest () .
+
+[] rdf:first ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first _:Nbf27401b892740b99ac9796b4edbc9fa ) ) ;
+    rdf:rest () .
+
+[] rdf:first ( [ sh:alternativePath <http://w3id.org/rml/shapes/subjectMapOrPredicateObjectMapAlternativeList> ] [ sh:alternativePath _:Nbf27401b892740b99ac9796b4edbc9fa ] [ sh:alternativePath <http://w3id.org/rml/shapes/nonConstantExpressionAlternativeList> ] ) ;
+    rdf:rest () .
+
+_:N58e9d36eb0e947159c4a06e9153259e4 rdf:first ( [ sh:zeroOrMorePath rml:condition ] rml:functionExecution [ sh:alternativePath ( rml:functionMap ( rml:input [ sh:alternativePath ( rml:parameterMap rml:inputValueMap ) ] ) ) ] ) ;
+    rdf:rest () .
+
+_:ne4e9dbd4476e474ba99bcfccb87c3200b7 sh:zeroOrMorePath rml:condition .
+
+_:Nbf27401b892740b99ac9796b4edbc9fa rdf:first _:ne4e9dbd4476e474ba99bcfccb87c3200b7 ;
+    rdf:rest _:N58e9d36eb0e947159c4a06e9153259e4 .
 

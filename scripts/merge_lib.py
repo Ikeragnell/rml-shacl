@@ -79,18 +79,33 @@ def fix_extensible_lists(graph: Graph) -> None:
             graph.remove((n, RDF.first, None))
             graph.remove((n, RDF.rest, None))
 
-        # Rebuild as one standard collection.
+        # Rebuild as one standard anonymous (blank node) collection.
+        # TopBraid SHACL requires sh:path and sh:alternativePath values to be anonymous (blank node)
+        # lists. If a named URI is used as an rdf:List head, TopBraid treats it as a property
+        # IRI rather than a path list, causing ClassCastException.
+        # Therefore, we build the collection with an anonymous blank node head and replace ALL
+        # references to the named head throughout the graph with the new anonymous blank node head.
         if not members:
-            graph.add((head, RDF.rest, RDF.nil))
-            continue
-        graph.add((head, RDF.first, members[0]))
-        current = head
-        for member in members[1:]:
-            nxt = BNode()
-            graph.add((current, RDF.rest, nxt))
-            graph.add((nxt, RDF.first, member))
-            current = nxt
-        graph.add((current, RDF.rest, RDF.nil))
+            bnode_head = RDF.nil
+        else:
+            bnode_head = BNode()
+            graph.add((bnode_head, RDF.first, members[0]))
+            current = bnode_head
+            for member in members[1:]:
+                nxt = BNode()
+                graph.add((current, RDF.rest, nxt))
+                graph.add((nxt, RDF.first, member))
+                current = nxt
+            graph.add((current, RDF.rest, RDF.nil))
+
+        # Remove rdf:type rdf:List on the named head so it is not left as an orphan list
+        graph.remove((head, RDF.type, RDF.List))
+
+        # Replace all references to the named head (as object) across the entire graph
+        # with the anonymous blank node list head
+        for s, p in list(graph.subject_predicates(head)):
+            graph.remove((s, p, head))
+            graph.add((s, p, bnode_head))
 
 
 def write_ttl(graph: Graph, destination: Path) -> None:

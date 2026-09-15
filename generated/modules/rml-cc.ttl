@@ -29,12 +29,6 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://w3id.org/rml/shapes/RMLTermMapOrList> rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLGatherMapShape> ] ;
-    rdf:rest () .
-
-<http://w3id.org/rml/shapes/objectMapAlternativeList> rdf:first ( rml:gather [ sh:zeroOrMorePath rdf:rest ] rdf:first ) ;
-    rdf:rest () .
-
 <http://w3id.org/rml/shapes/RMLGatherMapShape> a sh:NodeShape ;
     rdfs:label "GatherMap" ;
     rdfs:comment """
@@ -101,4 +95,10 @@
     rdfs:label "Strategy" ;
     sh:in ( rml:append rml:cartesianProduct ) ;
     sh:nodeKind sh:IRI .
+
+[] rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLGatherMapShape> ] ;
+    rdf:rest () .
+
+[] rdf:first [ sh:alternativePath ( ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first ) ) ) ] ;
+    rdf:rest () .
 

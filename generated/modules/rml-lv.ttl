@@ -29,37 +29,34 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://w3id.org/rml/shapes/RMLLogicalSourceOrList> rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] ;
-    rdf:rest () .
-
 <http://w3id.org/rml/shapes/InclusionAnnotationShape> a sh:NodeShape ;
     rdfs:label "InclusionAnnotation" ;
-    rdfs:comment """\r
-    The InclusionAnnotaton annotation (rml:InclusionAnnotation) is analogous to the notion of inclusion dependency in databases.\r
+    rdfs:comment """
+    The InclusionAnnotaton annotation (rml:InclusionAnnotation) is analogous to the notion of inclusion dependency in databases.
     """ ;
-    sh:message """\r
-    Node must have a valid rml:InclusionAnnotation description.\r
-    Each InclusionAnnotation annotation requires (additionally to the inherited `rml:onFields` property):\r
-    - Exactly one `rml:targetView` property\r
-    - Exactly one `rml:targetFields` property.\r
+    sh:message """
+    Node must have a valid rml:InclusionAnnotation description.
+    Each InclusionAnnotation annotation requires (additionally to the inherited `rml:onFields` property):
+    - Exactly one `rml:targetView` property
+    - Exactly one `rml:targetFields` property.
     """ ;
     sh:node <http://w3id.org/rml/shapes/StructuralAnnotationShape> ;
-    sh:property [ sh:description """\r
-        property targetView specifies the LogicalView target of the InclusionAnnotation annotation.\r
+    sh:property [ sh:description """
+        property targetView specifies the LogicalView target of the InclusionAnnotation annotation.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:targetView property must be specified for each rml:InclusionAnnotation.\r
+            sh:message """
+        Exactly one rml:targetView property must be specified for each rml:InclusionAnnotation.
         """ ;
             sh:minCount 1 ;
             sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ;
             sh:path rml:targetView ],
-        [ sh:description """\r
-        property targetFields specifies the Fields target of the InclusionAnnotation.\r
+        [ sh:description """
+        property targetFields specifies the Fields target of the InclusionAnnotation.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:targetFields property must be specified for each rml:InclusionAnnotation.\r
+            sh:message """
+        Exactly one rml:targetFields property must be specified for each rml:InclusionAnnotation.
         """ ;
             sh:minCount 1 ;
             sh:path rml:targetFields ] .
@@ -70,19 +67,19 @@
 
 <http://w3id.org/rml/shapes/LeafExpressionFieldShape> a sh:NodeShape ;
     rdfs:label "Leaf Expression Field" ;
-    rdfs:comment """\r
-    A leaf expression field is an expression field without nested fields.\r
+    rdfs:comment """
+    A leaf expression field is an expression field without nested fields.
     """ ;
-    sh:message """\r
-    Node must have a valid rml:ExpressionField description.\r
+    sh:message """
+    Node must have a valid rml:ExpressionField description.
     """ ;
     sh:node <http://w3id.org/rml/shapes/ExpressionFieldShape> ;
-    sh:property [ sh:description """\r
-        A leaf expression field is an expression field without nested fields.\r
+    sh:property [ sh:description """
+        A leaf expression field is an expression field without nested fields.
         """ ;
             sh:maxCount 0 ;
-            sh:message """\r
-        A leaf expression field has no nested fields.\r
+            sh:message """
+        A leaf expression field has no nested fields.
         """ ;
             sh:path rml:field ] .
 
@@ -91,31 +88,31 @@
 
 <http://w3id.org/rml/shapes/FieldShape> a sh:NodeShape ;
     rdfs:label "Field" ;
-    rdfs:comment """\r
-    A field is a construct that gives a name to data derived from an abstract logical source.\r
+    rdfs:comment """
+    A field is a construct that gives a name to data derived from an abstract logical source.
     """ ;
-    sh:message """\r
-    Node must have a valid rml:Field description.\r
-    rml:Field requires a rml:fieldName and may have zero or more rml:field properties.\r
-    Furthermore, subclass rml:ExpressionField requires what an rml:ExpressionMap requires, subclass rml:IterableField requires what an rml:Iterable requires,.\r
+    sh:message """
+    Node must have a valid rml:Field description.
+    rml:Field requires a rml:fieldName and may have zero or more rml:field properties.
+    Furthermore, subclass rml:ExpressionField requires what an rml:ExpressionMap requires, subclass rml:IterableField requires what an rml:Iterable requires,.
     """ ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [ sh:datatype xsd:string ;
-            sh:description """\r
-        The name of the field.\r
+            sh:description """
+        The name of the field.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:fieldName property must be specified for a rml:Field, with a string as its value.\r
+            sh:message """
+        Exactly one rml:fieldName property must be specified for a rml:Field, with a string as its value.
         """ ;
             sh:minCount 1 ;
             sh:nodeKind sh:Literal ;
             sh:path rml:fieldName ],
-        [ sh:description """\r
-        A child field of the field.\r
+        [ sh:description """
+        A child field of the field.
         """ ;
-            sh:message """\r
-        The value of a rml:field property for a rml:Field must be a resource.\r
+            sh:message """
+        The value of a rml:field property for a rml:Field must be a resource.
         """ ;
             sh:node <http://w3id.org/rml/shapes/FieldShape> ;
             sh:path rml:field ],
@@ -125,41 +122,41 @@
 
 <http://w3id.org/rml/shapes/LogicalViewJoinShape> a sh:NodeShape ;
     rdfs:label "LogicalViewJoin" ;
-    rdfs:comment """\r
-    A LogicalViewJoin is an operation that adapts the logical iterations of one logical view (the child logical view) with fields from another logical view (the parent logical view).\r
+    rdfs:comment """
+    A LogicalViewJoin is an operation that adapts the logical iterations of one logical view (the child logical view) with fields from another logical view (the parent logical view).
     """ ;
-    sh:message """\r
-    Node must have a valid rml:LogicalViewJoin description.\r
-    rml:LogicalViewJoin requires:\r
-    - exactly one rml:parentLogicalView property.\r
-    - one or more rml:joinCondition properties.\r
-    - one or more rml:field properties.\r
-    Furthermore, rml:Field requires what an rml:ExpressionMap requires.\r
+    sh:message """
+    Node must have a valid rml:LogicalViewJoin description.
+    rml:LogicalViewJoin requires:
+    - exactly one rml:parentLogicalView property.
+    - one or more rml:joinCondition properties.
+    - one or more rml:field properties.
+    Furthermore, rml:Field requires what an rml:ExpressionMap requires.
     """ ;
-    sh:property [ sh:description """\r
-        The parent logical view of the logical view join.\r
+    sh:property [ sh:description """
+        The parent logical view of the logical view join.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.\r
+            sh:message """
+        Exactly one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.
         """ ;
             sh:minCount 1 ;
             sh:node sh:BlankNodeOrIRI ;
             sh:path rml:parentLogicalView ],
-        [ sh:description """\r
-        A join condition of the logical view join.\r
+        [ sh:description """
+        A join condition of the logical view join.
         """ ;
-            sh:message """\r
-        At least one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.\r
+            sh:message """
+        At least one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.
         """ ;
             sh:minCount 1 ;
             sh:node <http://w3id.org/rml/shapes/RMLJoinShape> ;
             sh:path rml:joinCondition ],
-        [ sh:description """\r
-        A field of the logical view join.\r
+        [ sh:description """
+        A field of the logical view join.
         """ ;
-            sh:message """\r
-        At least one rml:field property must be specified for a rml:LogicalViewJoin, with a leaf expression field as its value.\r
+            sh:message """
+        At least one rml:field property must be specified for a rml:LogicalViewJoin, with a leaf expression field as its value.
         """ ;
             sh:minCount 1 ;
             sh:node <http://w3id.org/rml/shapes/LeafExpressionFieldShape> ;
@@ -255,22 +252,25 @@
 
 <http://w3id.org/rml/shapes/StructuralAnnotationShape> a sh:NodeShape ;
     rdfs:label "StructuralAnnotation" ;
-    rdfs:comment """\r
-    Structural annotations provide a mechanism to express relationships between logical views, as well as additional information about fields.\r
+    rdfs:comment """
+    Structural annotations provide a mechanism to express relationships between logical views, as well as additional information about fields.
     """ ;
-    sh:message """\r
-    Node must have a valid rml:StructuralAnnotationShape description.\r
-    All structural annotations of a logical view lv MUST have an on fields property (rml:onFields), linking the structural annotation to a list of field names occurring in lv.\r
-    rml:StructuralAnnotationShape requires:\r
-    - exactly one rml:onFields property.\r
+    sh:message """
+    Node must have a valid rml:StructuralAnnotationShape description.
+    All structural annotations of a logical view lv MUST have an on fields property (rml:onFields), linking the structural annotation to a list of field names occurring in lv.
+    rml:StructuralAnnotationShape requires:
+    - exactly one rml:onFields property.
     """ ;
-    sh:property [ sh:description """\r
-        property onFields specifies the fields in LogicalView that are involved by the structural annotation. The semantics of this involvement depends on the specific annotation.\r
+    sh:property [ sh:description """
+        property onFields specifies the fields in LogicalView that are involved by the structural annotation. The semantics of this involvement depends on the specific annotation.
         """ ;
             sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:onFields property must be specified for each rml:StructuralAnnotation\r
+            sh:message """
+        Exactly one rml:onFields property must be specified for each rml:StructuralAnnotation
         """ ;
             sh:minCount 1 ;
             sh:path rml:onFields ] .
+
+[] rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] ;
+    rdf:rest () .
 
