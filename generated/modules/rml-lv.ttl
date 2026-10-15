@@ -29,9 +29,6 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://w3id.org/rml/shapes/RMLLogicalSourceOrList> rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] ;
-    rdf:rest () .
-
 <http://w3id.org/rml/shapes/InclusionAnnotationShape> a sh:NodeShape ;
     rdfs:label "InclusionAnnotation" ;
     rdfs:comment """\r
@@ -85,6 +82,11 @@
         A leaf expression field has no nested fields.\r
         """ ;
             sh:path rml:field ] .
+
+<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> sh:or <http://w3id.org/rml/shapes/RMLLogicalSourceOrList> .
+
+<http://w3id.org/rml/shapes/RMLLogicalSourceOrList> rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] ;
+    rdf:rest () .
 
 <http://w3id.org/rml/shapes/ExpressionFieldShape> a sh:NodeShape ;
     sh:node <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
@@ -186,10 +188,6 @@
             sh:minCount 1 ;
             sh:node <http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> ;
             sh:path rml:viewOn ],
-        [ sh:path rml:viewOn ],
-        [ sh:disjoint rml:field,
-                rml:viewOn ;
-            sh:path [ sh:zeroOrMorePath [ sh:inversePath [ sh:alternativePath ( rml:viewOn rml:field ) ] ] ] ],
         [ sh:description """
         A field of the logical view.
         """ ;
@@ -199,6 +197,9 @@
             sh:minCount 1 ;
             sh:node <http://w3id.org/rml/shapes/FieldShape> ;
             sh:path rml:field ],
+        [ sh:disjoint rml:field,
+                rml:viewOn ;
+            sh:path [ sh:zeroOrMorePath [ sh:inversePath [ sh:alternativePath ( rml:viewOn rml:field ) ] ] ] ],
         [ sh:description """
         A left join of the logical view.
         """ ;

@@ -29,7 +29,7 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> sh:or <http://w3id.org/rml/shapes/RMLLogicalSourceOrList> .
+<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLLogicalSourceShape> ] ) .
 
 <http://w3id.org/rml/shapes/RMLTermMapShape> sh:property [ rdfs:label "rml:logicalTarget" ;
             rdfs:comment """
@@ -78,10 +78,6 @@
 
 <http://w3id.org/rml/shapes/RMLFormatShape> a sh:NodeShape ;
     sh:nodeKind sh:IRI .
-
-<http://w3id.org/rml/shapes/RMLLogicalSourceOrList> a rdf:List ;
-    rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLLogicalSourceShape> ] ;
-    rdf:rest () .
 
 <http://w3id.org/rml/shapes/RMLLogicalSourceShape> a sh:NodeShape ;
     rdfs:label "RML Logical Source" ;

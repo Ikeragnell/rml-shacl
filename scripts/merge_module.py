@@ -20,6 +20,9 @@ def main() -> None:
     p.add_argument('module', help='Module folder name, e.g. rml-core, rml-lv')
     p.add_argument('-o', '--output', type=Path, default=None,
                     help='Output file. Defaults to generated/modules/<module>.ttl')
+    p.add_argument('-b', '--blank-lists', action='store_true',
+                    help='Give named list heads a blank node identity instead, '
+                         'for SHACL engines that mishandle a named rdf:List head')
     args = p.parse_args()
 
     module_dir = ROOT / args.module
@@ -38,7 +41,7 @@ def main() -> None:
     for f in ttl_files:
         print(f'\t{f.name}')
 
-    graph = merge_ttl_files(ttl_files)
+    graph = merge_ttl_files(ttl_files, blankify=args.blank_lists)
     write_ttl(graph, destination)
     print(f'Wrote {len(graph)} triples to {destination}')
 

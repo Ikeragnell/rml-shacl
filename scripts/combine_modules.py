@@ -47,13 +47,13 @@ def combo_name(selected: tuple[str, ...]) -> str:
     return 'core' if not selected else 'core+' + '+'.join(selected)
 
 
-def build_one(selected: list[str], destination: Path) -> None:
+def build_one(selected: list[str], destination: Path, blankify: bool = False) -> None:
     dirs = [MODULE_DIR['core']] + [MODULE_DIR[m] for m in selected]
     files = ttl_files_for(dirs)
     if not files:
         print(f'No .ttl files found for combination {selected}', file=sys.stderr)
         return
-    graph = merge_ttl_files(files)
+    graph = merge_ttl_files(files, blankify=blankify)
     write_ttl(graph, destination)
     print(f'{combo_name(tuple(selected)):40s} {len(files):3d} files  '
           f'{len(graph):5d} triples  -> {destination}')
@@ -72,6 +72,9 @@ def main() -> None:
                     help='Generate all 2^5 = 32 combinations of the optional modules')
     p.add_argument('--outdir', type=Path, default=ROOT / 'generated' / 'combinations',
                     help='Output directory when using --all')
+    p.add_argument('-b', '--blank-lists', action='store_true',
+                    help='Give named list heads a blank node identity instead, '
+                         'for SHACL engines that mishandle a named rdf:List head')
     args = p.parse_args()
 
     if args.all:
@@ -80,7 +83,7 @@ def main() -> None:
         for r in range(len(OPTIONAL_MODULES) + 1):
             for combo in itertools.combinations(OPTIONAL_MODULES, r):
                 destination = args.outdir / f'{combo_name(combo)}.ttl'
-                build_one(list(combo), destination)
+                build_one(list(combo), destination, blankify=args.blank_lists)
                 count += 1
         print(f'\nGenerated {count} combinations in {args.outdir}')
         return
@@ -89,7 +92,7 @@ def main() -> None:
     destination = args.output or (
         ROOT / 'generated' / 'combinations' / f'{combo_name(tuple(selected))}.ttl'
     )
-    build_one(selected, destination)
+    build_one(selected, destination, blankify=args.blank_lists)
 
 
 if __name__ == '__main__':

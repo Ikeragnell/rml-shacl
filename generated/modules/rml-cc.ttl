@@ -32,7 +32,7 @@
 <http://w3id.org/rml/shapes/RMLTermMapOrList> rdf:first [ sh:node <http://w3id.org/rml/shapes/RMLGatherMapShape> ] ;
     rdf:rest () .
 
-<http://w3id.org/rml/shapes/objectMapAlternativeList> rdf:first ( rml:gather [ sh:zeroOrMorePath rdf:rest ] rdf:first ) ;
+<http://w3id.org/rml/shapes/objectMapAlternativeList> rdf:first ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first ) ) ;
     rdf:rest () .
 
 <http://w3id.org/rml/shapes/RMLGatherMapShape> a sh:NodeShape ;

@@ -29,11 +29,7 @@
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:node :RMLAbstractLogicalSourceShape ;
-    ] ,[
-
-        sh:path rml:viewOn ;
-
-    ], [
+    ] , [
         sh:description """
         A field of the logical view.
         """ ;
@@ -111,6 +107,8 @@
             }
         """ ;
     ] .
+
+:RMLAbstractLogicalSourceShape sh:or :RMLLogicalSourceOrList .
 
 :RMLLogicalSourceOrList
     rdf:first [ sh:node :RMLLogicalViewShape ] .
