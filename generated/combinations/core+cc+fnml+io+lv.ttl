@@ -298,11 +298,9 @@
             rdfs:comment """
         Parameters to supply to FnO function.
         """ ;
-            sh:datatype xsd:string ;
             sh:message """
         rml:inputValue must be a string Literal.
         """ ;
-            sh:nodeKind sh:Literal ;
             sh:path rml:inputValue ],
         [ rdfs:label "rml:parameterMap" ;
             rdfs:comment """
@@ -734,7 +732,7 @@
     """ ;
     sh:or ( [ sh:minCount 1 ;
                 sh:path rml:logicalSource ] [ sh:maxCount 0 ;
-                sh:path [ sh:alternativePath ( ( [ sh:alternativePath _:N0629c4d461bf4d0ab804ea30f1dadcb2 ] [ sh:alternativePath _:N6e6694df9bd04289baf6ea7927f12ed2 ] [ sh:alternativePath _:Nbe955563990848cebcbad14c43b11b51 ] ) ( [ sh:alternativePath _:N0629c4d461bf4d0ab804ea30f1dadcb2 ] [ sh:alternativePath _:Nbe955563990848cebcbad14c43b11b51 ] ) ) ] ] ) ;
+                sh:path [ sh:alternativePath ( ( [ sh:alternativePath _:N3e034282bc6449d9a8813a9687a28178 ] [ sh:alternativePath _:N36bcf076dd3f4e6ead749a18a40bc8ff ] ) ( [ sh:alternativePath _:N3e034282bc6449d9a8813a9687a28178 ] [ sh:alternativePath _:Nc6107de7266745cf920a07d511061288 ] [ sh:alternativePath _:N36bcf076dd3f4e6ead749a18a40bc8ff ] ) ) ] ] ) ;
     sh:property [ rdfs:label "logicalSource" ;
             rdfs:comment """
         A logical source is any source that is mapped to RDF triples.
@@ -888,7 +886,7 @@
     rml:AbstractLogicalSource must specify how to generate logical iterations on a data source for a triples map.\r
     """ ;
     sh:node <http://w3id.org/rml/shapes/RMLIterableShape> ;
-    sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] [ sh:node <http://w3id.org/rml/shapes/RMLLogicalSourceShape> ] ) .
+    sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLLogicalSourceShape> ] [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] ) .
 
 <http://w3id.org/rml/shapes/RMLIterableShape> a sh:NodeShape ;
     rdfs:label "Iterable" ;
@@ -1124,7 +1122,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 0 ;
-            sh:path [ sh:alternativePath _:N44bc3138e5814903bce7fbdb1b25f61d ] ],
+            sh:path [ sh:alternativePath _:Nb9d3fdecfbb7420c8c6fc09fe2212e7a ] ],
         [ rdfs:label "template" ;
             rdfs:comment """
         A template (format string) to specify how to generate a value for a 
@@ -1222,7 +1220,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 1 ;
-            sh:path [ sh:alternativePath _:N44bc3138e5814903bce7fbdb1b25f61d ] ] .
+            sh:path [ sh:alternativePath _:Nb9d3fdecfbb7420c8c6fc09fe2212e7a ] ] .
 
 <http://w3id.org/rml/shapes/RMLTermMapShape> a sh:NodeShape ;
     rdfs:label "TermMap" ;
@@ -1233,7 +1231,7 @@
     Term Map is an Expression Map with optionally a term type specified.
     """ ;
     sh:node <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> ;
-    sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLGatherMapShape> ] [ sh:property [ rdfs:label "template/constant/reference" ;
+    sh:or ( [ sh:property [ rdfs:label "template/constant/reference" ;
                         rdfs:comment """
                 Only one of rml:template, rml:constant, or rml:reference is
                 allowed.
@@ -1242,23 +1240,12 @@
             Only one of rml:template, rml:constant, or rml:reference is allowed.
             """ ;
                         sh:minCount 1 ;
-                        sh:path [ sh:alternativePath _:N44bc3138e5814903bce7fbdb1b25f61d ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
+                        sh:path [ sh:alternativePath _:Nb9d3fdecfbb7420c8c6fc09fe2212e7a ] ] ] [ sh:node <http://w3id.org/rml/shapes/RMLGatherMapShape> ] [ sh:property [ sh:hasValue rml:BlankNode ;
                         sh:path rml:termType ] ] ),
         ( [ sh:property [ sh:maxCount 0 ;
                         sh:path rml:constant ] ] [ sh:property [ sh:maxCount 0 ;
                         sh:path rml:termType ] ] ) ;
-    sh:property [ rdfs:label "rml:logicalTarget" ;
-            rdfs:comment """
-        A Term Map MAY contain one or more rml:logicalTarget properties to
-        export all triples containing the generated term to different
-        targets.
-        """ ;
-            sh:message """
-        rml:logicalTarget must reference a valid RML Logical Target.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLLogicalTargetShape> ;
-            sh:path rml:logicalTarget ],
-        [ rdfs:label "termType" ;
+    sh:property [ rdfs:label "termType" ;
             rdfs:comment """
         An IRI indicating whether a generated term should be an IRI,
         Blank Node, or a Literal.
@@ -1271,31 +1258,45 @@
         May only be provided once.
         """ ;
             sh:nodeKind sh:IRI ;
-            sh:path rml:termType ] .
+            sh:path rml:termType ],
+        [ rdfs:label "rml:logicalTarget" ;
+            rdfs:comment """
+        A Term Map MAY contain one or more rml:logicalTarget properties to
+        export all triples containing the generated term to different
+        targets.
+        """ ;
+            sh:message """
+        rml:logicalTarget must reference a valid RML Logical Target.
+        """ ;
+            sh:node <http://w3id.org/rml/shapes/RMLLogicalTargetShape> ;
+            sh:path rml:logicalTarget ] .
 
-_:N1b810e76ee584385949cc3637a55b641 rdf:first ( rml:predicateObjectMap [ sh:alternativePath ( rml:predicateMap rml:objectMap ( rml:objectMap [ sh:alternativePath ( rml:languageMap [ sh:alternativePath ( ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first _:N6e6694df9bd04289baf6ea7927f12ed2 ) ) ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first ) ) ) ] rml:datatypeMap ( rml:joinCondition [ sh:alternativePath ( rml:childMap rml:parentMap ) ] ) ) ] ) ) ] ) ;
+_:N321c02c06efc4d699c6c30585ea5f42f rdf:first rml:constant ;
+    rdf:rest ( rml:reference ) .
+
+_:N3e637f4edebd4bae8e969b8923432f53 rdf:first ( rml:predicateObjectMap [ sh:alternativePath ( rml:predicateMap rml:objectMap ( rml:objectMap [ sh:alternativePath ( rml:languageMap [ sh:alternativePath ( ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first ) ) ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first _:Nc6107de7266745cf920a07d511061288 ) ) ) ] rml:datatypeMap ( rml:joinCondition [ sh:alternativePath ( rml:childMap rml:parentMap ) ] ) ) ] ) ) ] ) ;
     rdf:rest () .
 
-_:N50ccd521e1b34d51b9e2c41abb2e5fd3 rdf:first ( [ sh:zeroOrMorePath rml:condition ] rml:functionExecution [ sh:alternativePath ( rml:functionMap ( rml:input [ sh:alternativePath ( rml:parameterMap rml:inputValueMap ) ] ) ) ] ) ;
+_:N6216153acfdb4943ba7621865fb3aa75 rdf:first rml:template ;
+    rdf:rest _:N321c02c06efc4d699c6c30585ea5f42f .
+
+_:N6e6c93ee7c0b4e1f91dcecdc524afde9 rdf:first rml:reference ;
     rdf:rest () .
 
-_:N7351539ac1f045dc9792abe79585653a rdf:first rml:template ;
-    rdf:rest ( rml:constant rml:reference ) .
-
-_:N8c17b7e892a24e50bf0b41e8bf55c832 rdf:first rml:reference ;
+_:Nef86a3aecc1643388909afcbafd59cc7 rdf:first ( [ sh:zeroOrMorePath rml:condition ] rml:functionExecution [ sh:alternativePath ( rml:functionMap ( rml:input [ sh:alternativePath ( rml:parameterMap rml:inputValueMap ) ] ) ) ] ) ;
     rdf:rest () .
 
-_:n1f98aebc369f4bcf8c93bfea403fd717b7 sh:zeroOrMorePath rml:condition .
+_:n90ede19b61bd49c8a5a8df364f4a664eb7 sh:zeroOrMorePath rml:condition .
 
-_:N0629c4d461bf4d0ab804ea30f1dadcb2 rdf:first rml:subjectMap ;
-    rdf:rest _:N1b810e76ee584385949cc3637a55b641 .
+_:N36bcf076dd3f4e6ead749a18a40bc8ff rdf:first rml:template ;
+    rdf:rest _:N6e6c93ee7c0b4e1f91dcecdc524afde9 .
 
-_:N6e6694df9bd04289baf6ea7927f12ed2 rdf:first _:n1f98aebc369f4bcf8c93bfea403fd717b7 ;
-    rdf:rest _:N50ccd521e1b34d51b9e2c41abb2e5fd3 .
+_:N3e034282bc6449d9a8813a9687a28178 rdf:first rml:subjectMap ;
+    rdf:rest _:N3e637f4edebd4bae8e969b8923432f53 .
 
-_:Nbe955563990848cebcbad14c43b11b51 rdf:first rml:template ;
-    rdf:rest _:N8c17b7e892a24e50bf0b41e8bf55c832 .
+_:Nc6107de7266745cf920a07d511061288 rdf:first _:n90ede19b61bd49c8a5a8df364f4a664eb7 ;
+    rdf:rest _:Nef86a3aecc1643388909afcbafd59cc7 .
 
-_:N44bc3138e5814903bce7fbdb1b25f61d rdf:first rml:functionExecution ;
-    rdf:rest _:N7351539ac1f045dc9792abe79585653a .
+_:Nb9d3fdecfbb7420c8c6fc09fe2212e7a rdf:first rml:functionExecution ;
+    rdf:rest _:N6216153acfdb4943ba7621865fb3aa75 .
 

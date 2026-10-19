@@ -802,7 +802,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 0 ;
-            sh:path [ sh:alternativePath _:N435c7d0626664e6192c68f1674202224 ] ],
+            sh:path [ sh:alternativePath _:N128efdbdbb8a4792888fbe747b55aa05 ] ],
         [ rdfs:label "template" ;
             rdfs:comment """
         A template (format string) to specify how to generate a value for a 
@@ -867,7 +867,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 1 ;
-            sh:path [ sh:alternativePath _:N435c7d0626664e6192c68f1674202224 ] ] .
+            sh:path [ sh:alternativePath _:N128efdbdbb8a4792888fbe747b55aa05 ] ] .
 
 <http://w3id.org/rml/shapes/RMLTermMapShape> a sh:NodeShape ;
     rdfs:label "TermMap" ;
@@ -887,7 +887,7 @@
             Only one of rml:template, rml:constant, or rml:reference is allowed.
             """ ;
                         sh:minCount 1 ;
-                        sh:path [ sh:alternativePath _:N435c7d0626664e6192c68f1674202224 ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
+                        sh:path [ sh:alternativePath _:N128efdbdbb8a4792888fbe747b55aa05 ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
                         sh:path rml:termType ] ] ),
         ( [ sh:property [ sh:maxCount 0 ;
                         sh:path rml:constant ] ] [ sh:property [ sh:maxCount 0 ;
@@ -918,9 +918,12 @@
             sh:nodeKind sh:IRI ;
             sh:path rml:termType ] .
 
-_:N38d698bd0f4b48148db84900bf5c8fc9 rdf:first rml:constant ;
-    rdf:rest ( rml:reference ) .
+_:N678c232d7b054820b00bcda541ed467c rdf:first rml:reference ;
+    rdf:rest () .
 
-_:N435c7d0626664e6192c68f1674202224 rdf:first rml:template ;
-    rdf:rest _:N38d698bd0f4b48148db84900bf5c8fc9 .
+_:Ne09b03fcaff9487bbc59d3f16fddaf9c rdf:first rml:constant ;
+    rdf:rest _:N678c232d7b054820b00bcda541ed467c .
+
+_:N128efdbdbb8a4792888fbe747b55aa05 rdf:first rml:template ;
+    rdf:rest _:Ne09b03fcaff9487bbc59d3f16fddaf9c .
 

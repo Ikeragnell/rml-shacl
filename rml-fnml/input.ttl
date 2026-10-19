@@ -91,7 +91,5 @@
         sh:message """
         rml:inputValue must be a string Literal.
         """ ;
-        sh:nodeKind sh:Literal ;
-        sh:datatype xsd:string ;
     ] ;
 .

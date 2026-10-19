@@ -828,7 +828,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 0 ;
-            sh:path [ sh:alternativePath _:Na2a5f8b018234e98afa3f6cf4a838cd7 ] ],
+            sh:path [ sh:alternativePath _:N3b9b54b9e1994839ac50ca47a49c8aab ] ],
         [ rdfs:label "template" ;
             rdfs:comment """
         A template (format string) to specify how to generate a value for a 
@@ -882,7 +882,7 @@
     rml:AbstractLogicalSource must specify how to generate logical iterations on a data source for a triples map.\r
     """ ;
     sh:node <http://w3id.org/rml/shapes/RMLIterableShape> ;
-    sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] [ sh:node <http://w3id.org/rml/shapes/RMLLogicalSourceShape> ] ) .
+    sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLLogicalSourceShape> ] [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] ) .
 
 <http://w3id.org/rml/shapes/RMLIterableShape> a sh:NodeShape ;
     rdfs:label "Iterable" ;
@@ -1108,7 +1108,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 1 ;
-            sh:path [ sh:alternativePath _:Na2a5f8b018234e98afa3f6cf4a838cd7 ] ] .
+            sh:path [ sh:alternativePath _:N3b9b54b9e1994839ac50ca47a49c8aab ] ] .
 
 <http://w3id.org/rml/shapes/RMLTermMapShape> a sh:NodeShape ;
     rdfs:label "TermMap" ;
@@ -1128,23 +1128,12 @@
             Only one of rml:template, rml:constant, or rml:reference is allowed.
             """ ;
                         sh:minCount 1 ;
-                        sh:path [ sh:alternativePath _:Na2a5f8b018234e98afa3f6cf4a838cd7 ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
+                        sh:path [ sh:alternativePath _:N3b9b54b9e1994839ac50ca47a49c8aab ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
                         sh:path rml:termType ] ] ),
         ( [ sh:property [ sh:maxCount 0 ;
                         sh:path rml:constant ] ] [ sh:property [ sh:maxCount 0 ;
                         sh:path rml:termType ] ] ) ;
-    sh:property [ rdfs:label "rml:logicalTarget" ;
-            rdfs:comment """
-        A Term Map MAY contain one or more rml:logicalTarget properties to
-        export all triples containing the generated term to different
-        targets.
-        """ ;
-            sh:message """
-        rml:logicalTarget must reference a valid RML Logical Target.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLLogicalTargetShape> ;
-            sh:path rml:logicalTarget ],
-        [ rdfs:label "termType" ;
+    sh:property [ rdfs:label "termType" ;
             rdfs:comment """
         An IRI indicating whether a generated term should be an IRI,
         Blank Node, or a Literal.
@@ -1157,14 +1146,25 @@
         May only be provided once.
         """ ;
             sh:nodeKind sh:IRI ;
-            sh:path rml:termType ] .
+            sh:path rml:termType ],
+        [ rdfs:label "rml:logicalTarget" ;
+            rdfs:comment """
+        A Term Map MAY contain one or more rml:logicalTarget properties to
+        export all triples containing the generated term to different
+        targets.
+        """ ;
+            sh:message """
+        rml:logicalTarget must reference a valid RML Logical Target.
+        """ ;
+            sh:node <http://w3id.org/rml/shapes/RMLLogicalTargetShape> ;
+            sh:path rml:logicalTarget ] .
 
-_:Nd24a5d986f05444f94207b39c8688378 rdf:first rml:reference ;
+_:N2a0cdeeb85874810a1470ae69be8bf06 rdf:first rml:reference ;
     rdf:rest () .
 
-_:Nd9fb6fd5b19745709a5fe1ea6cdf09d7 rdf:first rml:constant ;
-    rdf:rest _:Nd24a5d986f05444f94207b39c8688378 .
+_:Nb8baf29a57c04a229312a501d643538a rdf:first rml:constant ;
+    rdf:rest _:N2a0cdeeb85874810a1470ae69be8bf06 .
 
-_:Na2a5f8b018234e98afa3f6cf4a838cd7 rdf:first rml:template ;
-    rdf:rest _:Nd9fb6fd5b19745709a5fe1ea6cdf09d7 .
+_:N3b9b54b9e1994839ac50ca47a49c8aab rdf:first rml:template ;
+    rdf:rest _:Nb8baf29a57c04a229312a501d643538a .
 

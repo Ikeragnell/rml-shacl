@@ -706,7 +706,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 0 ;
-            sh:path [ sh:alternativePath _:Nec4550161097484a9be7da55fe11d178 ] ],
+            sh:path [ sh:alternativePath _:Nc1e32b574359409ba09a07266199036d ] ],
         [ rdfs:label "template" ;
             rdfs:comment """
         A template (format string) to specify how to generate a value for a 
@@ -760,7 +760,7 @@
     rml:AbstractLogicalSource must specify how to generate logical iterations on a data source for a triples map.\r
     """ ;
     sh:node <http://w3id.org/rml/shapes/RMLIterableShape> ;
-    sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLLogicalSourceShape> ] [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] ) .
+    sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] [ sh:node <http://w3id.org/rml/shapes/RMLLogicalSourceShape> ] ) .
 
 <http://w3id.org/rml/shapes/RMLIterableShape> a sh:NodeShape ;
     rdfs:label "Iterable" ;
@@ -986,7 +986,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 1 ;
-            sh:path [ sh:alternativePath _:Nec4550161097484a9be7da55fe11d178 ] ] .
+            sh:path [ sh:alternativePath _:Nc1e32b574359409ba09a07266199036d ] ] .
 
 <http://w3id.org/rml/shapes/RMLTermMapShape> a sh:NodeShape ;
     rdfs:label "TermMap" ;
@@ -1006,23 +1006,12 @@
             Only one of rml:template, rml:constant, or rml:reference is allowed.
             """ ;
                         sh:minCount 1 ;
-                        sh:path [ sh:alternativePath _:Nec4550161097484a9be7da55fe11d178 ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
+                        sh:path [ sh:alternativePath _:Nc1e32b574359409ba09a07266199036d ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
                         sh:path rml:termType ] ] ),
         ( [ sh:property [ sh:maxCount 0 ;
                         sh:path rml:constant ] ] [ sh:property [ sh:maxCount 0 ;
                         sh:path rml:termType ] ] ) ;
-    sh:property [ rdfs:label "rml:logicalTarget" ;
-            rdfs:comment """
-        A Term Map MAY contain one or more rml:logicalTarget properties to
-        export all triples containing the generated term to different
-        targets.
-        """ ;
-            sh:message """
-        rml:logicalTarget must reference a valid RML Logical Target.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLLogicalTargetShape> ;
-            sh:path rml:logicalTarget ],
-        [ rdfs:label "termType" ;
+    sh:property [ rdfs:label "termType" ;
             rdfs:comment """
         An IRI indicating whether a generated term should be an IRI,
         Blank Node, or a Literal.
@@ -1035,11 +1024,22 @@
         May only be provided once.
         """ ;
             sh:nodeKind sh:IRI ;
-            sh:path rml:termType ] .
+            sh:path rml:termType ],
+        [ rdfs:label "rml:logicalTarget" ;
+            rdfs:comment """
+        A Term Map MAY contain one or more rml:logicalTarget properties to
+        export all triples containing the generated term to different
+        targets.
+        """ ;
+            sh:message """
+        rml:logicalTarget must reference a valid RML Logical Target.
+        """ ;
+            sh:node <http://w3id.org/rml/shapes/RMLLogicalTargetShape> ;
+            sh:path rml:logicalTarget ] .
 
-_:N4286aecc9b814ab2b1b9debfe9ecd9f9 rdf:first rml:constant ;
+_:Nd0bc3fa118444d33a4ebad948be50da3 rdf:first rml:constant ;
     rdf:rest ( rml:reference ) .
 
-_:Nec4550161097484a9be7da55fe11d178 rdf:first rml:template ;
-    rdf:rest _:N4286aecc9b814ab2b1b9debfe9ecd9f9 .
+_:Nc1e32b574359409ba09a07266199036d rdf:first rml:template ;
+    rdf:rest _:Nd0bc3fa118444d33a4ebad948be50da3 .
 

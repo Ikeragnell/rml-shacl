@@ -764,7 +764,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 0 ;
-            sh:path [ sh:alternativePath _:Nb33f427c853d47fbbb06b1cd73b35335 ] ],
+            sh:path [ sh:alternativePath _:N3899944e4dbf4049a55283f420f0d3c5 ] ],
         [ rdfs:label "template" ;
             rdfs:comment """
         A template (format string) to specify how to generate a value for a 
@@ -1044,7 +1044,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 1 ;
-            sh:path [ sh:alternativePath _:Nb33f427c853d47fbbb06b1cd73b35335 ] ] .
+            sh:path [ sh:alternativePath _:N3899944e4dbf4049a55283f420f0d3c5 ] ] .
 
 <http://w3id.org/rml/shapes/RMLTermMapShape> a sh:NodeShape ;
     rdfs:label "TermMap" ;
@@ -1064,7 +1064,7 @@
             Only one of rml:template, rml:constant, or rml:reference is allowed.
             """ ;
                         sh:minCount 1 ;
-                        sh:path [ sh:alternativePath _:Nb33f427c853d47fbbb06b1cd73b35335 ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
+                        sh:path [ sh:alternativePath _:N3899944e4dbf4049a55283f420f0d3c5 ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
                         sh:path rml:termType ] ] ),
         ( [ sh:property [ sh:maxCount 0 ;
                         sh:path rml:constant ] ] [ sh:property [ sh:maxCount 0 ;
@@ -1095,12 +1095,9 @@
             sh:nodeKind sh:IRI ;
             sh:path rml:termType ] .
 
-_:N712cf947fd5f4a7c9a7a6e36f417e347 rdf:first rml:reference ;
-    rdf:rest () .
+_:N845c2868dd9e48918a95dfd03874afa2 rdf:first rml:constant ;
+    rdf:rest ( rml:reference ) .
 
-_:N751689b33f0440b299812503bf92c097 rdf:first rml:constant ;
-    rdf:rest _:N712cf947fd5f4a7c9a7a6e36f417e347 .
-
-_:Nb33f427c853d47fbbb06b1cd73b35335 rdf:first rml:template ;
-    rdf:rest _:N751689b33f0440b299812503bf92c097 .
+_:N3899944e4dbf4049a55283f420f0d3c5 rdf:first rml:template ;
+    rdf:rest _:N845c2868dd9e48918a95dfd03874afa2 .
 

@@ -32,7 +32,11 @@
 <http://w3id.org/rml/shapes/RMLAbstractExpressionMapValuePath> rdf:first rml:functionExecution ;
     rdf:rest () .
 
-<http://w3id.org/rml/shapes/nonConstantPathAlternativeList> rdf:first ( [ sh:alternativePath <http://w3id.org/rml/shapes/subjectMapOrPredicateObjectMapAlternativeList> ] [ sh:alternativePath _:N967af8ad334a48ff971215ce70ae2ea3 ] [ sh:alternativePath <http://w3id.org/rml/shapes/nonConstantExpressionAlternativeList> ] ) ;
+<http://w3id.org/rml/shapes/gatherMemberPathList> a rdf:List ;
+    rdf:first ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first <http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> ) ) ;
+    rdf:rest () .
+
+<http://w3id.org/rml/shapes/nonConstantPathAlternativeList> rdf:first ( [ sh:alternativePath <http://w3id.org/rml/shapes/subjectMapOrPredicateObjectMapAlternativeList> ] [ sh:alternativePath <http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> ] [ sh:alternativePath <http://w3id.org/rml/shapes/nonConstantExpressionAlternativeList> ] ) ;
     rdf:rest () .
 
 <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> sh:or ( [ sh:property [ sh:maxCount 0 ;
@@ -158,11 +162,9 @@
             rdfs:comment """
         Parameters to supply to FnO function.
         """ ;
-            sh:datatype xsd:string ;
             sh:message """
         rml:inputValue must be a string Literal.
         """ ;
-            sh:nodeKind sh:Literal ;
             sh:path rml:inputValue ],
         [ rdfs:label "rml:parameterMap" ;
             rdfs:comment """
@@ -208,14 +210,7 @@
     sh:and ( <http://w3id.org/rml/shapes/RMLTermMapShape> <http://w3id.org/rml/shapes/RMLLogicalTargetPropertiesShape> [ ] ) ;
     sh:targetObjectsOf rml:returnMap .
 
-[] rdf:first ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first _:N967af8ad334a48ff971215ce70ae2ea3 ) ) ;
-    rdf:rest () .
-
-_:N4f2e67f614a44839ab23d524e943d584 rdf:first ( [ sh:zeroOrMorePath rml:condition ] rml:functionExecution [ sh:alternativePath ( rml:functionMap ( rml:input [ sh:alternativePath ( rml:parameterMap rml:inputValueMap ) ] ) ) ] ) ;
-    rdf:rest () .
-
-_:nfdfb071553b6495f9c8ad98fb1baa661b7 sh:zeroOrMorePath rml:condition .
-
-_:N967af8ad334a48ff971215ce70ae2ea3 rdf:first _:nfdfb071553b6495f9c8ad98fb1baa661b7 ;
-    rdf:rest _:N4f2e67f614a44839ab23d524e943d584 .
+<http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> a rdf:List ;
+    rdf:first [ sh:zeroOrMorePath rml:condition ] ;
+    rdf:rest ( ( [ sh:zeroOrMorePath rml:condition ] rml:functionExecution [ sh:alternativePath ( rml:functionMap ( rml:input [ sh:alternativePath ( rml:parameterMap rml:inputValueMap ) ] ) ) ] ) ) .
 

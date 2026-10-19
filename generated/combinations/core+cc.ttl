@@ -563,7 +563,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 0 ;
-            sh:path [ sh:alternativePath _:N1a5ce97c8c894929ac3aeea53271d16b ] ],
+            sh:path [ sh:alternativePath _:Nf782b2db1d074ab69dc817aff72293dd ] ],
         [ rdfs:label "template" ;
             rdfs:comment """
         A template (format string) to specify how to generate a value for a 
@@ -628,7 +628,7 @@
         Only one of rml:template, rml:constant, or rml:reference is allowed.
         """ ;
             sh:minCount 1 ;
-            sh:path [ sh:alternativePath _:N1a5ce97c8c894929ac3aeea53271d16b ] ] .
+            sh:path [ sh:alternativePath _:Nf782b2db1d074ab69dc817aff72293dd ] ] .
 
 <http://w3id.org/rml/shapes/RMLTermMapShape> a sh:NodeShape ;
     rdfs:label "TermMap" ;
@@ -639,7 +639,7 @@
     Term Map is an Expression Map with optionally a term type specified.
     """ ;
     sh:node <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> ;
-    sh:or ( [ sh:property [ rdfs:label "template/constant/reference" ;
+    sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLGatherMapShape> ] [ sh:property [ rdfs:label "template/constant/reference" ;
                         rdfs:comment """
                 Only one of rml:template, rml:constant, or rml:reference is
                 allowed.
@@ -648,7 +648,7 @@
             Only one of rml:template, rml:constant, or rml:reference is allowed.
             """ ;
                         sh:minCount 1 ;
-                        sh:path [ sh:alternativePath _:N1a5ce97c8c894929ac3aeea53271d16b ] ] ] [ sh:node <http://w3id.org/rml/shapes/RMLGatherMapShape> ] [ sh:property [ sh:hasValue rml:BlankNode ;
+                        sh:path [ sh:alternativePath _:Nf782b2db1d074ab69dc817aff72293dd ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
                         sh:path rml:termType ] ] ),
         ( [ sh:property [ sh:maxCount 0 ;
                         sh:path rml:constant ] ] [ sh:property [ sh:maxCount 0 ;
@@ -668,12 +668,9 @@
             sh:nodeKind sh:IRI ;
             sh:path rml:termType ] .
 
-_:Na1b2cb96e2b245829658e116f5675dd7 rdf:first rml:reference ;
-    rdf:rest () .
+_:N3f97227ef7de45d68fd3ae5f0e8ff30e rdf:first rml:constant ;
+    rdf:rest ( rml:reference ) .
 
-_:Ndd178510300c4080a81a5ddf279e2cf1 rdf:first rml:constant ;
-    rdf:rest _:Na1b2cb96e2b245829658e116f5675dd7 .
-
-_:N1a5ce97c8c894929ac3aeea53271d16b rdf:first rml:template ;
-    rdf:rest _:Ndd178510300c4080a81a5ddf279e2cf1 .
+_:Nf782b2db1d074ab69dc817aff72293dd rdf:first rml:template ;
+    rdf:rest _:N3f97227ef7de45d68fd3ae5f0e8ff30e .
 
