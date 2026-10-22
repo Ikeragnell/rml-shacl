@@ -13,12 +13,14 @@
     """ ;
     sh:targetObjectsOf rml:returnMap ;
 
-    sh:and (
-        # Inherited shapes
-        :RMLTermMapShape
-        :RMLLogicalTargetPropertiesShape
-        # Return Map specific shapes
-        [
-        ]
-    ) ;
+    sh:node :RMLTermMapShape ;
+    sh:not [
+        sh:property [
+            sh:path rml:constant ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:Literal ;
+        ] ;
+
+    ]
 .

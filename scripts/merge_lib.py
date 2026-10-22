@@ -43,19 +43,9 @@ name no longer serves any purpose.
 from pathlib import Path
 
 from rdflib import BNode, Graph, Namespace, RDF
-from rdflib.plugins.serializers.turtle import TurtleSerializer
-from rdflib import plugin
 
 SHACL = Namespace('http://www.w3.org/ns/shacl#')
 RML = Namespace('http://w3id.org/rml/')
-
-
-class TurtleWithPrefixes(TurtleSerializer):
-    """Always emits prefixes. Workaround for RDFLib#1048."""
-    roundtrip_prefixes = True
-
-
-plugin.register('tortoise', plugin.Serializer, 'merge_lib', 'TurtleWithPrefixes')
 
 
 def merge_ttl_files(paths: list[Path], blankify: bool = False) -> Graph:
@@ -198,5 +188,12 @@ def blankify_lists(graph: Graph) -> None:
 
 
 def write_ttl(graph: Graph, destination: Path) -> None:
+    """Write `graph` to `destination` as N-Triples, not Turtle. rdflib's
+    TurtleSerializer has a bug where a blank-node list reachable from more
+    than one place (exactly what blankify_lists() and the named
+    extensible-list pattern both produce) sometimes loses content on the
+    second occurrence, writing a bare `_:label` with nothing defining it.
+    N-Triples has no collection/list sugar to get wrong -- every triple is
+    written explicitly -- so it isn't exposed to that bug."""
     destination.parent.mkdir(parents=True, exist_ok=True)
-    graph.serialize(destination=str(destination), format='tortoise')
+    graph.serialize(destination=str(destination), format='nt', encoding='utf-8')

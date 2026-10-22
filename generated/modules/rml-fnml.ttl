@@ -1,216 +1,204 @@
-@prefix brick: <https://brickschema.org/schema/Brick#> .
-@prefix csvw: <http://www.w3.org/ns/csvw#> .
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
-@prefix dcam: <http://purl.org/dc/dcam/> .
-@prefix dcat: <http://www.w3.org/ns/dcat#> .
-@prefix dcmitype: <http://purl.org/dc/dcmitype/> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix doap: <http://usefulinc.com/ns/doap#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix geo: <http://www.opengis.net/ont/geosparql#> .
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix org: <http://www.w3.org/ns/org#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix prof: <http://www.w3.org/ns/dx/prof/> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix qb: <http://purl.org/linked-data/cube#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix rml: <http://w3id.org/rml/> .
-@prefix schema: <https://schema.org/> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix sosa: <http://www.w3.org/ns/sosa/> .
-@prefix ssn: <http://www.w3.org/ns/ssn/> .
-@prefix time: <http://www.w3.org/2006/time#> .
-@prefix vann: <http://purl.org/vocab/vann/> .
-@prefix void: <http://rdfs.org/ns/void#> .
-@prefix wgs: <https://www.w3.org/2003/01/geo/wgs84_pos#> .
-@prefix xml: <http://www.w3.org/XML/1998/namespace> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-<http://w3id.org/rml/shapes/RMLAbstractExpressionMapValuePath> rdf:first rml:functionExecution ;
-    rdf:rest () .
-
-<http://w3id.org/rml/shapes/gatherMemberPathList> a rdf:List ;
-    rdf:first ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first <http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> ) ) ;
-    rdf:rest () .
-
-<http://w3id.org/rml/shapes/nonConstantPathAlternativeList> rdf:first ( [ sh:alternativePath <http://w3id.org/rml/shapes/subjectMapOrPredicateObjectMapAlternativeList> ] [ sh:alternativePath <http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> ] [ sh:alternativePath <http://w3id.org/rml/shapes/nonConstantExpressionAlternativeList> ] ) ;
-    rdf:rest () .
-
-<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> sh:or ( [ sh:property [ sh:maxCount 0 ;
-                        sh:path [ sh:alternativePath ( rml:return rml:returnMap ) ] ] ] [ sh:property [ sh:minCount 1 ;
-                        sh:path rml:functionExecution ] ] ) ;
-    sh:property [ rdfs:label "rml:condition" ;
-            rdfs:comment """
-        A shortcut on an Expression Map: its value must be a
-        boolean-returning function-valued expression map. If the
-        condition evaluates to true, the enclosing Expression Map's own
-        value is used.
-        """ ;
-            sh:message """
-        rml:condition must reference a valid, function-valued Expression Map.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> ;
-            sh:path rml:condition ],
-        [ sh:node <http://w3id.org/rml/shapes/RMLFunctionExecutionShape> ;
-            sh:path rml:functionExecution ],
-        [ rdfs:label "rml:return/rml:returnMap" ;
-            rdfs:comment """
-        At most one of rml:return or rml:returnMap is allowed.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        At most one of rml:return or rml:returnMap is allowed.
-        """ ;
-            sh:path [ sh:alternativePath ( rml:return rml:returnMap ) ] ],
-        [ rdfs:label "rml:returnMap" ;
-            rdfs:comment """
-        Selects which Return of the function's execution to use.
-        """ ;
-            sh:message """
-        rml:returnMap must be an IRI or Blank node.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLReturnMapShape> ;
-            sh:path rml:returnMap ],
-        [ rdfs:label "rml:return" ;
-            rdfs:comment """
-        Constant expression shortcut of rml:returnMap.
-        """ ;
-            sh:message """
-        rml:return must be an IRI.
-        """ ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:return ] .
-
-<http://w3id.org/rml/shapes/RMLFunctionExecutionShape> a sh:NodeShape ;
-    rdfs:label "rml:FunctionExecution" ;
-    rdfs:comment """
-    Represents a Function Execution.
-    """ ;
-    sh:property [ rdfs:label "rml:function/rml:functionMap" ;
-            rdfs:comment """
-        Exactly one rml:function or rml:functionMap is required.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        Exactly one rml:function or rml:functionMap is required.
-        """ ;
-            sh:minCount 1 ;
-            sh:path [ sh:alternativePath ( rml:function rml:functionMap ) ] ],
-        [ rdfs:label "rml:functionMap" ;
-            rdfs:comment """
-        FnO function to execute.
-        """ ;
-            sh:message """
-        rml:functionMap must be an IRI or Blank node.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLFunctionMapShape> ;
-            sh:path rml:functionMap ],
-        [ rdfs:label "rml:function" ;
-            rdfs:comment """
-        FnO function to execute.
-        """ ;
-            sh:message """
-        rml:function must be an IRI.
-        """ ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:function ],
-        [ rdfs:label "rml:input" ;
-            rdfs:comment """
-        Input parameters for the function.
-        """ ;
-            sh:message """
-        rml:input must be an IRI or Blank node.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLInputShape> ;
-            sh:path rml:input ] .
-
-<http://w3id.org/rml/shapes/RMLFunctionMapShape> a sh:NodeShape ;
-    rdfs:label "FunctionMap" ;
-    rdfs:comment """
-    Represents a Function Map.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLTermMapShape> .
-
-<http://w3id.org/rml/shapes/RMLInputShape> a sh:NodeShape ;
-    rdfs:label "rml:Input" ;
-    rdfs:comment """
-    Represents an Input for a function.
-    """ ;
-    sh:property [ rdfs:label "rml:parameter/rml:parameterMap" ;
-            rdfs:comment """
-        Exactly one rml:parameter or rml:parameterMap is required.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        Exactly one rml:parameter or rml:parameterMap is required.
-        """ ;
-            sh:minCount 1 ;
-            sh:path [ sh:alternativePath ( rml:parameter rml:parameterMap ) ] ],
-        [ rdfs:label "rml:inputValueMap" ;
-            rdfs:comment """
-        Values of the parameters.
-        """ ;
-            sh:message """
-        rml:inputValueMap must be an IRI or Blank node, provided once.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLTermMapShape> ;
-            sh:path rml:inputValueMap ],
-        [ rdfs:label "rml:inputValue" ;
-            rdfs:comment """
-        Parameters to supply to FnO function.
-        """ ;
-            sh:message """
-        rml:inputValue must be a string Literal.
-        """ ;
-            sh:path rml:inputValue ],
-        [ rdfs:label "rml:parameterMap" ;
-            rdfs:comment """
-        Parameters to supply to FnO function.
-        """ ;
-            sh:message """
-        rml:parameterMap must be an IRI or Blank node.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLParameterMapShape> ;
-            sh:path rml:parameterMap ],
-        [ rdfs:label "rml:parameter" ;
-            rdfs:comment """
-        Parameters to supply to FnO function.
-        """ ;
-            sh:message """
-        rml:parameter must be an IRI.
-        """ ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:parameter ],
-        [ rdfs:label "rml:inputValue/rml:inputValueMap" ;
-            rdfs:comment """
-        Exactly one rml:inputValue or rml:inputValueMap is required.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        Exactly one rml:inputValue or rml:inputValueMap is required.
-        """ ;
-            sh:minCount 1 ;
-            sh:path [ sh:alternativePath ( rml:inputValue rml:inputValueMap ) ] ] .
-
-<http://w3id.org/rml/shapes/RMLParameterMapShape> a sh:NodeShape ;
-    rdfs:label "ParameterMap" ;
-    rdfs:comment """
-    Represents a Parameter Map of a function.
-    """ ;
-    sh:nodeKind sh:BlankNodeOrIRI .
-
-<http://w3id.org/rml/shapes/RMLReturnMapShape> a sh:NodeShape ;
-    rdfs:label "ReturnMap" ;
-    rdfs:comment """
-    Represents a Return Map.
-    """ ;
-    sh:and ( <http://w3id.org/rml/shapes/RMLTermMapShape> <http://w3id.org/rml/shapes/RMLLogicalTargetPropertiesShape> [ ] ) ;
-    sh:targetObjectsOf rml:returnMap .
-
-<http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> a rdf:List ;
-    rdf:first [ sh:zeroOrMorePath rml:condition ] ;
-    rdf:rest ( ( [ sh:zeroOrMorePath rml:condition ] rml:functionExecution [ sh:alternativePath ( rml:functionMap ( rml:input [ sh:alternativePath ( rml:parameterMap rml:inputValueMap ) ] ) ) ] ) ) .
-
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b11 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Values of the parameters.\n        " .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b11 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/inputValueMap> .
+_:na4aefca588da4d5893e92f3ec90cff39b16 <http://www.w3.org/2000/01/rdf-schema#label> "rml:returnMap" .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/inputValueMap> .
+_:nee2be8b76a464576a6010893f8405a0bb8 <http://www.w3.org/ns/shacl#zeroOrMorePath> <http://w3id.org/rml/condition> .
+<http://w3id.org/rml/shapes/nonConstantPathAlternativeList> <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb4 .
+_:nee2be8b76a464576a6010893f8405a0bb26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb22 .
+_:nee2be8b76a464576a6010893f8405a0bb7 <http://www.w3.org/ns/shacl#zeroOrMorePath> <http://w3id.org/rml/condition> .
+_:na4aefca588da4d5893e92f3ec90cff39b16 <http://www.w3.org/ns/shacl#message> "\n        rml:returnMap must be an IRI or Blank node.\n        " .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b12 <http://www.w3.org/2000/01/rdf-schema#label> "rml:inputValue" .
+<http://w3id.org/rml/shapes/RMLReturnMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "ReturnMap" .
+<http://w3id.org/rml/shapes/gatherMemberPathList> <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:na4aefca588da4d5893e92f3ec90cff39b15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLInputShape> <http://www.w3.org/ns/shacl#property> _:nf5e068c3e8cd4bfcb612b1f2cf329368b5 .
+<http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#List> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b7 <http://www.w3.org/2000/01/rdf-schema#label> "rml:inputValue/rml:inputValueMap" .
+_:nbd145c4b681b49a9882f7a775f9923e0b1 <http://www.w3.org/ns/shacl#message> "\n        Exactly one rml:function or rml:functionMap is required.\n        " .
+_:nbd145c4b681b49a9882f7a775f9923e0b7 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/input> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/inputValue> .
+_:nee2be8b76a464576a6010893f8405a0bb25 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nee2be8b76a464576a6010893f8405a0bb26 .
+_:nee2be8b76a464576a6010893f8405a0bb3 <http://www.w3.org/ns/shacl#alternativePath> <http://w3id.org/rml/shapes/nonConstantExpressionAlternativeList> .
+<http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb7 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b6 <http://www.w3.org/2000/01/rdf-schema#label> "rml:parameter" .
+_:na4aefca588da4d5893e92f3ec90cff39b10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:na4aefca588da4d5893e92f3ec90cff39b7 .
+_:na4aefca588da4d5893e92f3ec90cff39b16 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/returnMap> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b5 <http://www.w3.org/ns/shacl#message> "\n        rml:parameterMap must be an IRI or Blank node.\n        " .
+_:nee2be8b76a464576a6010893f8405a0bb5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb2 .
+_:na4aefca588da4d5893e92f3ec90cff39b1 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> .
+_:na4aefca588da4d5893e92f3ec90cff39b12 <http://www.w3.org/2000/01/rdf-schema#label> "rml:return/rml:returnMap" .
+<http://w3id.org/rml/shapes/gatherMemberPathList> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#List> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b1 <http://www.w3.org/2000/01/rdf-schema#label> "rml:parameter/rml:parameterMap" .
+_:nbd145c4b681b49a9882f7a775f9923e0b7 <http://www.w3.org/ns/shacl#message> "\n        rml:input must be an IRI or Blank node.\n        " .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nee2be8b76a464576a6010893f8405a0bb24 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> .
+<http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:N5acb8fce6fad4fee89852b7ef9c2a6a9 .
+<http://w3id.org/rml/shapes/RMLReturnMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/RMLFunctionExecutionShape> <http://www.w3.org/ns/shacl#property> _:nbd145c4b681b49a9882f7a775f9923e0b1 .
+_:na4aefca588da4d5893e92f3ec90cff39b9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:na4aefca588da4d5893e92f3ec90cff39b2 .
+_:na4aefca588da4d5893e92f3ec90cff39b14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:na4aefca588da4d5893e92f3ec90cff39b15 .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#property> _:na4aefca588da4d5893e92f3ec90cff39b1 .
+_:nee2be8b76a464576a6010893f8405a0bb13 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/input> .
+_:nee2be8b76a464576a6010893f8405a0bb12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/inputValueMap> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b12 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/inputValue> .
+_:nbd145c4b681b49a9882f7a775f9923e0b5 <http://www.w3.org/2000/01/rdf-schema#label> "rml:functionMap" .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b5 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Parameters to supply to FnO function.\n        " .
+_:n1da1d6b89e304411b971df0fb40de4fab1 <http://www.w3.org/ns/shacl#property> _:n1da1d6b89e304411b971df0fb40de4fab2 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b6 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/parameter> .
+_:nee2be8b76a464576a6010893f8405a0bb19 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb9 .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapValuePath> <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/functionExecution> .
+<http://w3id.org/rml/shapes/RMLFunctionExecutionShape> <http://www.w3.org/2000/01/rdf-schema#label> "rml:FunctionExecution" .
+<http://w3id.org/rml/shapes/RMLReturnMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLTermMapShape> .
+_:na4aefca588da4d5893e92f3ec90cff39b13 <http://www.w3.org/ns/shacl#alternativePath> _:na4aefca588da4d5893e92f3ec90cff39b14 .
+<http://w3id.org/rml/shapes/RMLFunctionExecutionShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Function Execution.\n    " .
+_:na4aefca588da4d5893e92f3ec90cff39b17 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:nee2be8b76a464576a6010893f8405a0bb16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb13 .
+<http://w3id.org/rml/shapes/RMLInputShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:na4aefca588da4d5893e92f3ec90cff39b12 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        At most one of rml:return or rml:returnMap is allowed.\n        " .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b5 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/parameterMap> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b11 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLTermMapShape> .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#property> _:na4aefca588da4d5893e92f3ec90cff39b17 .
+_:na4aefca588da4d5893e92f3ec90cff39b17 <http://www.w3.org/ns/shacl#message> "\n        rml:return must be an IRI.\n        " .
+_:na4aefca588da4d5893e92f3ec90cff39b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/return> .
+_:na4aefca588da4d5893e92f3ec90cff39b12 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLReturnMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Return Map.\n    " .
+_:nee2be8b76a464576a6010893f8405a0bb6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:na4aefca588da4d5893e92f3ec90cff39b1 <http://www.w3.org/ns/shacl#message> "\n        rml:condition must reference a valid, function-valued Expression Map.\n        " .
+_:nee2be8b76a464576a6010893f8405a0bb11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/parameterMap> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b6 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Parameters to supply to FnO function.\n        " .
+<http://w3id.org/rml/shapes/RMLInputShape> <http://www.w3.org/2000/01/rdf-schema#label> "rml:Input" .
+_:nee2be8b76a464576a6010893f8405a0bb26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:na4aefca588da4d5893e92f3ec90cff39b17 <http://www.w3.org/2000/01/rdf-schema#label> "rml:return" .
+<http://w3id.org/rml/shapes/nonConstantPathAlternativeList> <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nbd145c4b681b49a9882f7a775f9923e0b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/functionMap> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nee2be8b76a464576a6010893f8405a0bb19 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nbd145c4b681b49a9882f7a775f9923e0b7 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLInputShape> .
+_:na4aefca588da4d5893e92f3ec90cff39b9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:na4aefca588da4d5893e92f3ec90cff39b10 .
+<http://w3id.org/rml/shapes/RMLFunctionMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapValuePath> <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:N5acb8fce6fad4fee89852b7ef9c2a6a9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:na4aefca588da4d5893e92f3ec90cff39b3 <http://www.w3.org/ns/shacl#maxCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nbd145c4b681b49a9882f7a775f9923e0b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/function> .
+_:nbd145c4b681b49a9882f7a775f9923e0b1 <http://www.w3.org/2000/01/rdf-schema#label> "rml:function/rml:functionMap" .
+_:nee2be8b76a464576a6010893f8405a0bb13 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nee2be8b76a464576a6010893f8405a0bb14 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b8 <http://www.w3.org/ns/shacl#alternativePath> _:nf5e068c3e8cd4bfcb612b1f2cf329368b9 .
+_:na4aefca588da4d5893e92f3ec90cff39b4 <http://www.w3.org/ns/shacl#alternativePath> _:na4aefca588da4d5893e92f3ec90cff39b5 .
+_:nbd145c4b681b49a9882f7a775f9923e0b6 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:nee2be8b76a464576a6010893f8405a0bb25 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/gather> .
+_:nbd145c4b681b49a9882f7a775f9923e0b6 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        FnO function to execute.\n        " .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b12 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Parameters to supply to FnO function.\n        " .
+_:nee2be8b76a464576a6010893f8405a0bb5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nee2be8b76a464576a6010893f8405a0bb6 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b2 <http://www.w3.org/ns/shacl#alternativePath> _:nf5e068c3e8cd4bfcb612b1f2cf329368b3 .
+<http://w3id.org/rml/shapes/RMLFunctionExecutionShape> <http://www.w3.org/ns/shacl#property> _:nbd145c4b681b49a9882f7a775f9923e0b5 .
+_:na4aefca588da4d5893e92f3ec90cff39b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/returnMap> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b6 <http://www.w3.org/ns/shacl#message> "\n        rml:parameter must be an IRI.\n        " .
+_:na4aefca588da4d5893e92f3ec90cff39b7 <http://www.w3.org/ns/shacl#property> _:na4aefca588da4d5893e92f3ec90cff39b8 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b7 <http://www.w3.org/ns/shacl#path> _:nf5e068c3e8cd4bfcb612b1f2cf329368b8 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b6 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+<http://w3id.org/rml/shapes/RMLFunctionMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLTermMapShape> .
+_:na4aefca588da4d5893e92f3ec90cff39b2 <http://www.w3.org/ns/shacl#property> _:na4aefca588da4d5893e92f3ec90cff39b3 .
+<http://w3id.org/rml/shapes/gatherMemberPathList> <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb25 .
+_:na4aefca588da4d5893e92f3ec90cff39b1 <http://www.w3.org/2000/01/rdf-schema#label> "rml:condition" .
+_:n1da1d6b89e304411b971df0fb40de4fab2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/constant> .
+_:nbd145c4b681b49a9882f7a775f9923e0b6 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/function> .
+_:nbd145c4b681b49a9882f7a775f9923e0b7 <http://www.w3.org/2000/01/rdf-schema#label> "rml:input" .
+_:nee2be8b76a464576a6010893f8405a0bb10 <http://www.w3.org/ns/shacl#alternativePath> _:nee2be8b76a464576a6010893f8405a0bb11 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nf5e068c3e8cd4bfcb612b1f2cf329368b10 .
+_:na4aefca588da4d5893e92f3ec90cff39b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        A shortcut on an Expression Map: its value must be a\n        boolean-returning function-valued expression map. If the\n        condition evaluates to true, the enclosing Expression Map's own\n        value is used.\n        " .
+<http://w3id.org/rml/shapes/RMLFunctionExecutionShape> <http://www.w3.org/ns/shacl#property> _:nbd145c4b681b49a9882f7a775f9923e0b6 .
+_:nee2be8b76a464576a6010893f8405a0bb22 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb21 .
+_:n1da1d6b89e304411b971df0fb40de4fab2 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:na4aefca588da4d5893e92f3ec90cff39b12 <http://www.w3.org/ns/shacl#message> "\n        At most one of rml:return or rml:returnMap is allowed.\n        " .
+_:nbd145c4b681b49a9882f7a775f9923e0b2 <http://www.w3.org/ns/shacl#alternativePath> _:nbd145c4b681b49a9882f7a775f9923e0b3 .
+_:nbd145c4b681b49a9882f7a775f9923e0b6 <http://www.w3.org/2000/01/rdf-schema#label> "rml:function" .
+_:nee2be8b76a464576a6010893f8405a0bb12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:na4aefca588da4d5893e92f3ec90cff39b15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/returnMap> .
+_:nee2be8b76a464576a6010893f8405a0bb14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb10 .
+_:nee2be8b76a464576a6010893f8405a0bb18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nee2be8b76a464576a6010893f8405a0bb19 .
+<http://w3id.org/rml/shapes/RMLInputShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents an Input for a function.\n    " .
+_:na4aefca588da4d5893e92f3ec90cff39b3 <http://www.w3.org/ns/shacl#path> _:na4aefca588da4d5893e92f3ec90cff39b4 .
+_:N5acb8fce6fad4fee89852b7ef9c2a6a9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb17 .
+<http://w3id.org/rml/shapes/RMLInputShape> <http://www.w3.org/ns/shacl#property> _:nf5e068c3e8cd4bfcb612b1f2cf329368b11 .
+_:na4aefca588da4d5893e92f3ec90cff39b16 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLReturnMapShape> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#property> _:na4aefca588da4d5893e92f3ec90cff39b16 .
+<http://w3id.org/rml/shapes/RMLFunctionMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "FunctionMap" .
+<http://w3id.org/rml/shapes/RMLParameterMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/RMLFunctionExecutionShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n1da1d6b89e304411b971df0fb40de4fab2 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nbd145c4b681b49a9882f7a775f9923e0b5 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        FnO function to execute.\n        " .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b5 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLParameterMapShape> .
+_:na4aefca588da4d5893e92f3ec90cff39b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/condition> .
+_:nbd145c4b681b49a9882f7a775f9923e0b5 <http://www.w3.org/ns/shacl#message> "\n        rml:functionMap must be an IRI or Blank node.\n        " .
+<http://w3id.org/rml/shapes/RMLInputShape> <http://www.w3.org/ns/shacl#property> _:nf5e068c3e8cd4bfcb612b1f2cf329368b6 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b7 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Exactly one rml:inputValue or rml:inputValueMap is required.\n        " .
+_:nee2be8b76a464576a6010893f8405a0bb14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nbd145c4b681b49a9882f7a775f9923e0b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nbd145c4b681b49a9882f7a775f9923e0b4 .
+<http://w3id.org/rml/shapes/RMLInputShape> <http://www.w3.org/ns/shacl#property> _:nf5e068c3e8cd4bfcb612b1f2cf329368b12 .
+_:nbd145c4b681b49a9882f7a775f9923e0b5 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLFunctionMapShape> .
+_:nee2be8b76a464576a6010893f8405a0bb2 <http://www.w3.org/ns/shacl#alternativePath> <http://w3id.org/rml/shapes/functionExecutionPathAlternativeList> .
+_:nee2be8b76a464576a6010893f8405a0bb11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nee2be8b76a464576a6010893f8405a0bb12 .
+_:na4aefca588da4d5893e92f3ec90cff39b11 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLFunctionExecutionShape> .
+_:nbd145c4b681b49a9882f7a775f9923e0b6 <http://www.w3.org/ns/shacl#message> "\n        rml:function must be an IRI.\n        " .
+_:nbd145c4b681b49a9882f7a775f9923e0b1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nee2be8b76a464576a6010893f8405a0bb17 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nee2be8b76a464576a6010893f8405a0bb18 .
+_:nee2be8b76a464576a6010893f8405a0bb15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nee2be8b76a464576a6010893f8405a0bb16 .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#property> _:na4aefca588da4d5893e92f3ec90cff39b11 .
+_:nbd145c4b681b49a9882f7a775f9923e0b1 <http://www.w3.org/ns/shacl#path> _:nbd145c4b681b49a9882f7a775f9923e0b2 .
+_:nee2be8b76a464576a6010893f8405a0bb23 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> .
+_:na4aefca588da4d5893e92f3ec90cff39b17 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/return> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b12 <http://www.w3.org/ns/shacl#message> "\n        rml:inputValue must be a string Literal.\n        " .
+_:nee2be8b76a464576a6010893f8405a0bb9 <http://www.w3.org/ns/shacl#alternativePath> _:nee2be8b76a464576a6010893f8405a0bb15 .
+_:na4aefca588da4d5893e92f3ec90cff39b8 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/functionExecution> .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#property> _:na4aefca588da4d5893e92f3ec90cff39b12 .
+_:nee2be8b76a464576a6010893f8405a0bb18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/functionExecution> .
+<http://w3id.org/rml/shapes/RMLFunctionExecutionShape> <http://www.w3.org/ns/shacl#property> _:nbd145c4b681b49a9882f7a775f9923e0b7 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b1 <http://www.w3.org/ns/shacl#message> "\n        Exactly one rml:parameter or rml:parameterMap is required.\n        " .
+_:nee2be8b76a464576a6010893f8405a0bb21 <http://www.w3.org/ns/shacl#zeroOrMorePath> <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> .
+_:na4aefca588da4d5893e92f3ec90cff39b10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:na4aefca588da4d5893e92f3ec90cff39b14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/return> .
+_:na4aefca588da4d5893e92f3ec90cff39b17 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Constant expression shortcut of rml:returnMap.\n        " .
+<http://w3id.org/rml/shapes/RMLFunctionMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Function Map.\n    " .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/parameterMap> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b7 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b11 <http://www.w3.org/2000/01/rdf-schema#label> "rml:inputValueMap" .
+_:na4aefca588da4d5893e92f3ec90cff39b16 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Selects which Return of the function's execution to use.\n        " .
+_:nbd145c4b681b49a9882f7a775f9923e0b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Exactly one rml:function or rml:functionMap is required.\n        " .
+_:nee2be8b76a464576a6010893f8405a0bb1 <http://www.w3.org/ns/shacl#alternativePath> <http://w3id.org/rml/shapes/subjectMapOrPredicateObjectMapAlternativeList> .
+_:nee2be8b76a464576a6010893f8405a0bb17 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb8 .
+_:na4aefca588da4d5893e92f3ec90cff39b11 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/functionExecution> .
+_:nee2be8b76a464576a6010893f8405a0bb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb1 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nf5e068c3e8cd4bfcb612b1f2cf329368b4 .
+_:nee2be8b76a464576a6010893f8405a0bb22 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nee2be8b76a464576a6010893f8405a0bb23 .
+<http://w3id.org/rml/shapes/RMLInputShape> <http://www.w3.org/ns/shacl#property> _:nf5e068c3e8cd4bfcb612b1f2cf329368b7 .
+_:n1da1d6b89e304411b971df0fb40de4fab2 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b7 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLReturnMapShape> <http://www.w3.org/ns/shacl#not> _:n1da1d6b89e304411b971df0fb40de4fab1 .
+_:nee2be8b76a464576a6010893f8405a0bb24 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLReturnMapShape> <http://www.w3.org/ns/shacl#targetObjectsOf> <http://w3id.org/rml/returnMap> .
+_:nee2be8b76a464576a6010893f8405a0bb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nee2be8b76a464576a6010893f8405a0bb5 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/parameter> .
+<http://w3id.org/rml/shapes/RMLParameterMapShape> <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#BlankNodeOrIRI> .
+_:na4aefca588da4d5893e92f3ec90cff39b8 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nbd145c4b681b49a9882f7a775f9923e0b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLParameterMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "ParameterMap" .
+<http://w3id.org/rml/shapes/RMLInputShape> <http://www.w3.org/ns/shacl#property> _:nf5e068c3e8cd4bfcb612b1f2cf329368b1 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b5 <http://www.w3.org/2000/01/rdf-schema#label> "rml:parameterMap" .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b7 <http://www.w3.org/ns/shacl#message> "\n        Exactly one rml:inputValue or rml:inputValueMap is required.\n        " .
+_:nee2be8b76a464576a6010893f8405a0bb16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Exactly one rml:parameter or rml:parameterMap is required.\n        " .
+_:nbd145c4b681b49a9882f7a775f9923e0b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLParameterMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Parameter Map of a function.\n    " .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#or> _:na4aefca588da4d5893e92f3ec90cff39b9 .
+_:na4aefca588da4d5893e92f3ec90cff39b12 <http://www.w3.org/ns/shacl#path> _:na4aefca588da4d5893e92f3ec90cff39b13 .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b1 <http://www.w3.org/ns/shacl#path> _:nf5e068c3e8cd4bfcb612b1f2cf329368b2 .
+_:nee2be8b76a464576a6010893f8405a0bb6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nee2be8b76a464576a6010893f8405a0bb3 .
+_:nbd145c4b681b49a9882f7a775f9923e0b5 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/functionMap> .
+_:na4aefca588da4d5893e92f3ec90cff39b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nbd145c4b681b49a9882f7a775f9923e0b7 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Input parameters for the function.\n        " .
+_:nee2be8b76a464576a6010893f8405a0bb23 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nee2be8b76a464576a6010893f8405a0bb24 .
+_:na4aefca588da4d5893e92f3ec90cff39b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:na4aefca588da4d5893e92f3ec90cff39b6 .
+_:nee2be8b76a464576a6010893f8405a0bb15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/functionMap> .
+_:nf5e068c3e8cd4bfcb612b1f2cf329368b11 <http://www.w3.org/ns/shacl#message> "\n        rml:inputValueMap must be an IRI or Blank node, provided once.\n        " .

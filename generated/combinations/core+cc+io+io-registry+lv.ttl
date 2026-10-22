@@ -1,1170 +1,931 @@
-@prefix brick: <https://brickschema.org/schema/Brick#> .
-@prefix csvw: <http://www.w3.org/ns/csvw#> .
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
-@prefix dcam: <http://purl.org/dc/dcam/> .
-@prefix dcat: <http://www.w3.org/ns/dcat#> .
-@prefix dcmitype: <http://purl.org/dc/dcmitype/> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix doap: <http://usefulinc.com/ns/doap#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix geo: <http://www.opengis.net/ont/geosparql#> .
-@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
-@prefix org: <http://www.w3.org/ns/org#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix prof: <http://www.w3.org/ns/dx/prof/> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix qb: <http://purl.org/linked-data/cube#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix rml: <http://w3id.org/rml/> .
-@prefix schema: <https://schema.org/> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix sosa: <http://www.w3.org/ns/sosa/> .
-@prefix ssn: <http://www.w3.org/ns/ssn/> .
-@prefix time: <http://www.w3.org/2006/time#> .
-@prefix vann: <http://purl.org/vocab/vann/> .
-@prefix void: <http://rdfs.org/ns/void#> .
-@prefix wgs: <https://www.w3.org/2003/01/geo/wgs84_pos#> .
-@prefix xml: <http://www.w3.org/XML/1998/namespace> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-<http://w3id.org/rml/shapes/InclusionAnnotationShape> a sh:NodeShape ;
-    rdfs:label "InclusionAnnotation" ;
-    rdfs:comment """\r
-    The InclusionAnnotaton annotation (rml:InclusionAnnotation) is analogous to the notion of inclusion dependency in databases.\r
-    """ ;
-    sh:message """\r
-    Node must have a valid rml:InclusionAnnotation description.\r
-    Each InclusionAnnotation annotation requires (additionally to the inherited `rml:onFields` property):\r
-    - Exactly one `rml:targetView` property\r
-    - Exactly one `rml:targetFields` property.\r
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/StructuralAnnotationShape> ;
-    sh:property [ sh:description """\r
-        property targetView specifies the LogicalView target of the InclusionAnnotation annotation.\r
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:targetView property must be specified for each rml:InclusionAnnotation.\r
-        """ ;
-            sh:minCount 1 ;
-            sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ;
-            sh:path rml:targetView ],
-        [ sh:description """\r
-        property targetFields specifies the Fields target of the InclusionAnnotation.\r
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:targetFields property must be specified for each rml:InclusionAnnotation.\r
-        """ ;
-            sh:minCount 1 ;
-            sh:path rml:targetFields ] .
-
-<http://w3id.org/rml/shapes/IterableFieldShape> a sh:NodeShape ;
-    sh:node <http://w3id.org/rml/shapes/RMLIterableShape> ;
-    sh:not <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
-
-<http://w3id.org/rml/shapes/LeafExpressionFieldShape> a sh:NodeShape ;
-    rdfs:label "Leaf Expression Field" ;
-    rdfs:comment """\r
-    A leaf expression field is an expression field without nested fields.\r
-    """ ;
-    sh:message """\r
-    Node must have a valid rml:ExpressionField description.\r
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/ExpressionFieldShape> ;
-    sh:property [ sh:description """\r
-        A leaf expression field is an expression field without nested fields.\r
-        """ ;
-            sh:maxCount 0 ;
-            sh:message """\r
-        A leaf expression field has no nested fields.\r
-        """ ;
-            sh:path rml:field ] .
-
-<http://w3id.org/rml/shapes/RMLChildMapShape> a sh:NodeShape ;
-    rdfs:label "ChildMap" ;
-    rdfs:comment """
-    Represents a Child Map.
-    """ ;
-    sh:message """
-    rml:ChildMap must specify a literal referencing data in the child data
-    source.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
-
-<http://w3id.org/rml/shapes/RMLCurrentWorkingDirectoryShape> a sh:NodeShape ;
-    sh:hasValue rml:CurrentWorkingDirectory .
-
-<http://w3id.org/rml/shapes/RMLDatatypeMapShape> a sh:NodeShape ;
-    rdfs:label "DatatypeMap" ;
-    rdfs:comment """
-    Represents a Datatype Map.
-    """ ;
-    sh:message """
-    rml:DatatypeMap must specify an rml:template, rml:reference, or rml:constant
-    with the IRI of the datatype.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLTermMapShape> .
-
-<http://w3id.org/rml/shapes/RMLFilePathShape> a sh:NodeShape ;
-    sh:property [ rdfs:label "rml:path" ;
-            rdfs:comment """
-        rml:path specifies the file path, relative to rml:root if
-        provided, or absolute otherwise.
-        """ ;
-            sh:datatype xsd:string ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:path must be provided exactly once as a string Literal.
-        """ ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:path ],
-        [ rdfs:label "rml:root" ;
-            rdfs:comment """
-        rml:root defines the root against which a relative rml:path is
-        resolved: rml:CurrentWorkingDirectory, rml:MappingDirectory, or an
-        absolute path string Literal. Defaults to
-        rml:CurrentWorkingDirectory if not specified.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:root must be rml:CurrentWorkingDirectory, rml:MappingDirectory,
-        or a string Literal, and may be provided at most once.
-        """ ;
-            sh:path rml:root ;
-            sh:xone ( [ sh:node <http://w3id.org/rml/shapes/RMLCurrentWorkingDirectoryShape> ] [ sh:node <http://w3id.org/rml/shapes/RMLMappingDirectoryShape> ] [ sh:datatype xsd:string ;
-                        sh:nodeKind sh:Literal ] ) ] .
-
-<http://w3id.org/rml/shapes/RMLFormatShape> a sh:NodeShape ;
-    sh:nodeKind sh:IRI .
-
-<http://w3id.org/rml/shapes/RMLGatherMapShape> a sh:NodeShape ;
-    rdfs:label "GatherMap" ;
-    rdfs:comment """
-    Represents a Gather Map.
-    """ ;
-    sh:message """
-    Gather Map requires one rml:strategy, one rml:gatherAs, and a list of
-    Term Map with rml:gather.
-    """ ;
-    sh:property [ rdfs:label "strategy" ;
-            rdfs:comment """
-        rml:strategy specifies the collection strategy to use: rml:append
-        or rml:cartesianProduct. rml:append is the default strategy.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        Zero or one rml:strategy is required.
-        """ ;
-            sh:minCount 0 ;
-            sh:node <http://w3id.org/rml/shapes/RMLStrategyShape> ;
-            sh:path rml:strategy ],
-        [ rdfs:label "gatherAs" ;
-            rdfs:comment """
-        rml:gatherAs specifies how to gather the collection e.g. a rdf:Alt,
-        rdf:List, rdf:Bag, or rdf:Seq.
-        """ ;
-            sh:in ( rdf:Alt rdf:List rdf:Bag rdf:Seq ) ;
-            sh:maxCount 1 ;
-            sh:message """
-        One rml:gatherAs is required.
-        """ ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:gatherAs ],
-        [ rdfs:label "allowEmptyListAndContainer" ;
-            rdfs:comment """
-        Defines the behavior when the collection is empty. True will generate
-        a rdf:nil for a RDF collection or a resource with no members for an RDF
-        container. False will not generate any collection or container.
-        Default is false.
-        """ ;
-            sh:datatype xsd:boolean ;
-            sh:maxCount 1 ;
-            sh:message """
-        Zero or one rml:allowEmptyListAndContainer is required with datatype
-        xsd:boolean.
-        """ ;
-            sh:minCount 0 ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:allowEmptyListAndContainer ],
-        [ rdfs:label "gather" ;
-            rdfs:comment """
-        RML Term Maps to gather in the collection or container.
-        """ ;
-            sh:message """
-        one or more rml:gather properties are needed, each pointing to a
-        RML Term Map.
-        """ ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:path rml:gather ] .
-
-<http://w3id.org/rml/shapes/RMLGraphMapShape> a sh:NodeShape ;
-    rdfs:label "GraphMap" ;
-    rdfs:comment """
-    Represents a Graph Map.
-    """ ;
-    sh:message """
-    rml:GraphMap must specify an rml:template, rml:reference or rml:constant
-    with the IRI of the Named Graph.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLTermMapShape> ;
-    sh:property [ sh:in ( rml:IRI rml:UnsafeIRI rml:URI rml:UnsafeURI rml:BlankNode ) ;
-            sh:message """
-        rml:termType must be an rml:IRI, rml:UnsafeIRI, rml:URI,
-        rml:UnsafeURI, or rml:BlankNode for a Graph Map.
-        """ ;
-            sh:path rml:termType ] .
-
-<http://w3id.org/rml/shapes/RMLLanguageMapShape> a sh:NodeShape ;
-    rdfs:label "LanguageMap" ;
-    rdfs:comment """
-    Represents a Language Map.
-    """ ;
-    sh:message """
-    rml:LanguageMap must specify an rml:template, rml:reference, or rml:constant
-    with the BCP47 name of the language as string.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLExpressionMapShape> ;
-    sh:property [ sh:path rml:constant ;
-            sh:pattern "^((?:(en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang))|((?:([A-Za-z]{2,3}(-(?:[A-Za-z]{3}(-[A-Za-z]{3}){0,2}))?)|[A-Za-z]{4})(-(?:[A-Za-z]{4}))?(-(?:[A-Za-z]{2}|[0-9]{3}))?(-(?:[A-Za-z0-9]{5,8}|[0-9][A-Za-z0-9]{3}))*(-(?:[0-9A-WY-Za-wy-z](-[A-Za-z0-9]{2,8})+))*(-(?:x(-[A-Za-z0-9]{1,8})+))?)|(?:x(-[A-Za-z0-9]{1,8})+))$" ;
-            sh:sparql [ a sh:SPARQLConstraint ;
-                    sh:message "rml:constant of a LanguageMap must be a plain string, not a language-tagged literal." ;
-                    sh:select """
-                PREFIX rml: <http://w3id.org/rml/>
-                SELECT $this
-                WHERE {
-                    $this rml:constant ?value .
-                    FILTER (lang(?value) != "")
-                }
-            """ ] ] .
-
-<http://w3id.org/rml/shapes/RMLLogicalSourceShape> a sh:NodeShape ;
-    rdfs:label "RML Logical Source" ;
-    rdfs:comment """
-    A logical source is any source that is mapped to RDF triples.
-    """ ;
-    sh:message """
-    RML Logical Source requires one rml:source and requires everyting
-    an Abstract Logical Source requires.
-    """ ;
-    sh:property [ rdfs:label "rml:source" ;
-            rdfs:comment """
-        The source (rml:source) locates the input data source. It is a URI
-        that represents the data source where the data source is.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:source must be provided to locate the data source.
-        rml:source must be provided exactly once as an URI.
-        """ ;
-            sh:minCount 1 ;
-            sh:node <http://w3id.org/rml/shapes/RMLSourceShape> ;
-            sh:path rml:source ] .
-
-<http://w3id.org/rml/shapes/RMLLogicalTargetShape> a sh:NodeShape ;
-    rdfs:label "RML Logical Target" ;
-    rdfs:comment """
-    A logical target is any target to where generated RDF triples are exported
-    to.
-    """ ;
-    sh:message """
-    RML Logical Target requires one rml:target.
-    """ ;
-    sh:property [ rdfs:label "rml:target" ;
-            rdfs:comment """
-        The target (rml:target) locates the output target. It is a URI
-        that represents the target where it must export generated RDF triples
-        to.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:target must be provided to locate the target. rml:target must 
-        be provided exactly once as an URI.
-        """ ;
-            sh:minCount 1 ;
-            sh:node <http://w3id.org/rml/shapes/RMLTargetShape> ;
-            sh:path rml:target ],
-        [ rdfs:label "rml:serialization" ;
-            rdfs:comment """
-        A Target MAY describe the serialization format with
-        rml:serialization to use when exporting RDF triples to a Target.
-        Defaults to N-Quads if unspecified.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:serialization must be an IRI from the W3C formats namespace,
-        and may be provided at most once.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLFormatShape> ;
-            sh:path rml:serialization ] .
-
-<http://w3id.org/rml/shapes/RMLMappingDirectoryShape> a sh:NodeShape ;
-    sh:hasValue rml:MappingDirectory .
-
-<http://w3id.org/rml/shapes/RMLModeShape> a sh:NodeShape ;
-    sh:in ( rml:Read rml:ReadWrite rml:Write rml:WriteRead rml:Append rml:AppendRead ) .
-
-<http://w3id.org/rml/shapes/RMLNamespaceShape> a sh:NodeShape ;
-    rdfs:label "Namespace" ;
-    rdfs:comment """
-    A rml:Namespace declares the prefix and URL for an XML namespace used in
-    XPath references.
-    """ ;
-    sh:message """
-    A Namespace requires exactly one rml:namespacePrefix and exactly one
-    rml:namespaceURL.
-    """ ;
-    sh:property [ rdfs:label "rml:namespacePrefix" ;
-            rdfs:comment """
-        The prefix used for the XML namespace.
-        """ ;
-            sh:datatype xsd:string ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:namespacePrefix must be provided exactly once as a string
-        Literal.
-        """ ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:namespacePrefix ],
-        [ rdfs:label "rml:namespaceURL" ;
-            rdfs:comment """
-        The URL identifying the XML namespace.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:namespaceURL must be provided exactly once as a Literal.
-        """ ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:namespaceURL ] .
-
-<http://w3id.org/rml/shapes/RMLObjectMapShape> a sh:NodeShape ;
-    rdfs:label "ObjectMap" ;
-    rdfs:comment """
-    Represents an Object Map.
-    """ ;
-    sh:message """
-    Object Map must generate a IRI, Blank Node, or Literal which has optionally
-    a language tag or datatype.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLTermMapShape> ;
-    sh:property [ rdfs:label "languageMap/datatypeMap/language/datatype" ;
-            rdfs:comment """
-        rml:language/rml:languageMap and rml:datatype/rml:datatypeMap
-        may only be provided once and not at the same time.
-        """ ;
-            sh:maxCount 1 ;
-            sh:minCount 0 ;
-            sh:path [ sh:alternativePath ( rml:languageMap rml:datatypeMap rml:language rml:datatype ) ] ],
-        [ rdfs:label "datatype" ;
-            rdfs:comment """
-        Datatype for the object.
-        """ ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:datatype ],
-        [ rdfs:label "languageMap" ;
-            rdfs:comment """
-        Specified the language map for the object component for the 
-        generated RDF triples.
-        """ ;
-            sh:message """
-        rml:languageMap must point to a rml:LanguageMap specifying the 
-        language tag of the string Literal.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLLanguageMapShape> ;
-            sh:path rml:languageMap ],
-        [ rdfs:label "datatypeMap" ;
-            rdfs:comment """
-        Specifies the datatype of the object component for the generated 
-        RDF triples.
-        """ ;
-            sh:message """
-        rml:datatypeMap must point to a rml:DatatypeMap specifying the
-        datatype of the Literal.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLDatatypeMapShape> ;
-            sh:path rml:datatypeMap ],
-        [ rdfs:label "language" ;
-            rdfs:comment """
-        Language tag for the object.
-        """ ;
-            xsd:datatype xsd:string ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:language ;
-            sh:pattern "^((?:(en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang))|((?:([A-Za-z]{2,3}(-(?:[A-Za-z]{3}(-[A-Za-z]{3}){0,2}))?)|[A-Za-z]{4})(-(?:[A-Za-z]{4}))?(-(?:[A-Za-z]{2}|[0-9]{3}))?(-(?:[A-Za-z0-9]{5,8}|[0-9][A-Za-z0-9]{3}))*(-(?:[0-9A-WY-Za-wy-z](-[A-Za-z0-9]{2,8})+))*(-(?:x(-[A-Za-z0-9]{1,8})+))?)|(?:x(-[A-Za-z0-9]{1,8})+))$" ] .
-
-<http://w3id.org/rml/shapes/RMLParentMapShape> a sh:NodeShape ;
-    rdfs:label "ParentMap" ;
-    rdfs:comment """
-    Represents a Parent Map.
-    """ ;
-    sh:message """
-    rml:ParentMap must specify a literal referencing data in the parent data
-    source.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
-
-<http://w3id.org/rml/shapes/RMLPredicateMapShape> a sh:NodeShape ;
-    rdfs:label "PredicateMap" ;
-    rdfs:comment """
-    Represents a Predicate Map.
-    """ ;
-    sh:message """
-    Predicate Object Map must generate an IRI representing the predicate of an
-    RDF triple.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLTermMapShape> ;
-    sh:property [ sh:in ( rml:IRI rml:UnsafeIRI rml:URI rml:UnsafeURI ) ;
-            sh:message """
-        rml:termType for Predicate Map can only be a rml:IRI, rml:UnsafeIRI,
-        rml:URI, or rml:UnsafeURI;
-        """ ;
-            sh:path rml:termType ] .
-
-<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> a sh:NodeShape ;
-    rdfs:label "PredicateObjectMap" ;
-    rdfs:comment """
-    Represents a Predicate Object Map.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLSubjectMapORPredicateObjectMapShape> ;
-    sh:property [ rdfs:label "predicate/predicateMap" ;
-            rdfs:comment """
-        At least one rml:predicate or rml:predicateMap must be provided.
-        """ ;
-            sh:message """
-        At least one rml:predicate or rml:predicateMap must be provided.
-        """ ;
-            sh:minCount 1 ;
-            sh:path [ sh:alternativePath ( rml:predicate rml:predicateMap ) ] ],
-        [ rdfs:label "objectMap" ;
-            rdfs:comment """
-        An ObjectMap element to generate the object component of the 
-        (predicate, object) pair from a logical table row or iterator.
-        """ ;
-            sh:message """
-        rml:objectMap must be an IRI or blank node and be provided once.
-        """ ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLObjectMapShape> ] [ sh:node <http://w3id.org/rml/shapes/RMLRefObjectMapShape> ] ) ;
-            sh:path rml:objectMap ],
-        [ rdfs:label "object" ;
-            rdfs:comment """
-        Specifies the object for the generated RDF triples.
-        """ ;
-            sh:message """
-        rml:object must be an IRI and be provided once.
-        """ ;
-            sh:path rml:object ],
-        [ rdfs:label "predicateMap" ;
-            rdfs:comment """
-        A PredicateMap element to generate the predicate component of the 
-        (predicate, object) pair from a logical table row or iterator.
-        """ ;
-            sh:message """
-        rml:predicateMap must be an IRI or blank node and be provided once.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLPredicateMapShape> ;
-            sh:path rml:predicateMap ],
-        [ rdfs:label "predicate" ;
-            rdfs:comment """
-        Specifies the predicate for the generated triple from the logical table 
-        row or iterator.
-        """ ;
-            sh:message """
-        rml:predicate must be an IRI and be provided once.
-        """ ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:predicate ],
-        [ rdfs:label "object/objectMap" ;
-            rdfs:comment """
-        Either an rml:object or rml:objectMap must be provided, not multiple.
-        """ ;
-            sh:message """
-        Either an rml:object or rml:objectMap must be provided, not multiple
-        """ ;
-            sh:minCount 1 ;
-            sh:path [ sh:alternativePath ( rml:object rml:objectMap ) ] ] .
-
-<http://w3id.org/rml/shapes/RMLRefObjectMapShape> a sh:NodeShape ;
-    rdfs:label "RefObjectMap" ;
-    rdfs:comment """
-    Represents a Reference Object Map.
-    """ ;
-    sh:message """
-    rml:RefObjectMap must specify a rml:parentTriplesMap and zero or more 
-    rml:joinConditions.
-    """ ;
-    sh:property [ rdfs:label "parentTriplesMap" ;
-            rdfs:comment """
-        Specifies the Triples Map element corresponding to the parent data
-        source of the foreign key constraint.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:parentTriplesMap may only be provided once and must be an IRI
-        or Blank Node referring to a Triples Map.
-        """ ;
-            sh:minCount 1 ;
-            sh:node <http://w3id.org/rml/shapes/RMLTriplesMapShape> ;
-            sh:path rml:parentTriplesMap ],
-        [ rdfs:label "joinCondition" ;
-            sh:node <http://w3id.org/rml/shapes/RMLJoinShape> ;
-            sh:path rml:joinCondition ] .
-
-<http://w3id.org/rml/shapes/RMLReferenceFormulationShape> a sh:NodeShape ;
-    sh:or ( [ sh:nodeKind sh:IRI ] [ sh:node <http://w3id.org/rml/shapes/RMLXPathReferenceFormulationShape> ] ) .
-
-<http://w3id.org/rml/shapes/RMLSourceShape> a sh:NodeShape ;
-    rdfs:label "RML Source" ;
-    rdfs:comment """
-    A source describes access to a data source. Any data access description
-    is allowed, but rml:Source provides additional properties to complete
-    such descriptions.
-    """ ;
-    sh:message """
-    RML Source accepts one or multiple rml:null, one rml:compression,
-    and one rml:encoding. All of them are optional.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLSourceTargetShape> ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property [ rdfs:label "rml:null" ;
-            rdfs:comment """
-        rml:null specifies how NULL or empty values are exposed by the data 
-        source.
-        """ ;
-            sh:datatype xsd:string ;
-            sh:message """
-        rml:source must be provided as a string Literal.
-        """ ;
-            sh:minCount 0 ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:null ] .
-
-<http://w3id.org/rml/shapes/RMLSourceTargetShape> a sh:NodeShape ;
-    sh:property [ rdfs:label "rml:compression" ;
-            rdfs:comment """
-        rml:compression specifies the compression algorithm to use when
-        accessing the data source. By default, no compression is applied.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:compression must be provided as an IRI.
-        """ ;
-            sh:minCount 0 ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:compression ],
-        [ rdfs:label "rml:encoding" ;
-            rdfs:comment """
-        rml:encoding specifies the encoding to use when accessing the data 
-        source. By default, UTF-8 is used.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:encoding must be provided as an IRI.
-        """ ;
-            sh:minCount 0 ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:encoding ] ;
-    sh:xone ( [ sh:property [ sh:maxCount 0 ;
-                        sh:path [ sh:alternativePath ( rml:root rml:path ) ] ] ] [ sh:node <http://w3id.org/rml/shapes/RMLFilePathShape> ] ) .
-
-<http://w3id.org/rml/shapes/RMLStrategyShape> a sh:NodeShape ;
-    rdfs:label "Strategy" ;
-    sh:in ( rml:append rml:cartesianProduct ) ;
-    sh:nodeKind sh:IRI .
-
-<http://w3id.org/rml/shapes/RMLSubjectMapShape> a sh:NodeShape ;
-    rdfs:label "SubjectMap" ;
-    rdfs:comment """
-    Represents a Subject Map.
-    """ ;
-    sh:message """
-    Subject Map must generate a resource representing the subject of
-    an RDF triple.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLSubjectMapORPredicateObjectMapShape>,
-        <http://w3id.org/rml/shapes/RMLTermMapShape> ;
-    sh:property [ rdfs:label "class" ;
-            rdfs:comment """
-        The subject value generated will be asserted as an instance of this
-        RDFS class.
-        """ ;
-            sh:message """
-        rml:class must be an IRI and may be specified multiple times.
-        """ ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:class ],
-        [ sh:in ( rml:IRI rml:UnsafeIRI rml:URI rml:UnsafeURI rml:BlankNode ) ;
-            sh:message """
-        rml:termType must be a rml:IRI, rml:UnsafeIRI, rml:URI,
-        rml:UnsafeURI, or rml:BlankNode for a Subject Map.
-        """ ;
-            sh:path rml:termType ] .
-
-<http://w3id.org/rml/shapes/RMLTargetShape> a sh:NodeShape ;
-    rdfs:label "RML Target" ;
-    rdfs:comment """
-    A target describes access to a data target. Any data access description
-    is allowed, but rml:Target provides additional properties to complete
-    such descriptions.
-    """ ;
-    sh:message """
-    RML Target accepts one rml:compression, and one rml:encoding.
-    All of them are optional.
-    """ ;
-    sh:property [ rdfs:label "rml:mode" ;
-            rdfs:comment """
-        rml:mode specifies in which mode the target is opened such as read-only,
-        write-only, both, etc.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:mode must be specified by any of the modes from rml:Mode class.
-        """ ;
-            sh:minCount 0 ;
-            sh:node <http://w3id.org/rml/shapes/RMLModeShape> ;
-            sh:path rml:mode ] .
-
-<http://w3id.org/rml/shapes/RMLTriplesMapShape> a sh:NodeShape ;
-    rdfs:label "TriplesMap" ;
-    rdfs:comment """
-    Represents a Triples Map.
-    """ ;
-    sh:message """
-    Triples Map requires exactly one rml:subject or one rml:subjectMap and zero
-    or more rml:predicateObjectMaps.
-    """ ;
-    sh:or ( [ sh:minCount 1 ;
-                sh:path rml:logicalSource ] [ sh:maxCount 0 ;
-                sh:path ( [ sh:alternativePath ( rml:subjectMap ( rml:predicateObjectMap [ sh:alternativePath ( rml:predicateMap rml:objectMap ( rml:objectMap [ sh:alternativePath ( rml:languageMap ( rml:gather ( [ sh:zeroOrMorePath rdf:rest ] rdf:first ) ) rml:datatypeMap ( rml:joinCondition [ sh:alternativePath ( rml:childMap rml:parentMap ) ] ) ) ] ) ) ] ) ) ] [ sh:alternativePath ( rml:template rml:reference ) ] ) ] ) ;
-    sh:property [ rdfs:label "logicalSource" ;
-            rdfs:comment """
-        A logical source is any source that is mapped to RDF triples.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        Exactly one rml:logicalSource is required to access the data source.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> ;
-            sh:path rml:logicalSource ],
-        [ rdfs:label "subjectMap" ;
-            rdfs:comment """
-        A Subject Map element to generate a subject for generated RDF triples.
-        """ ;
-            sh:message """
-        rml:SubjectMap must be an IRI or blank node.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLSubjectMapShape> ;
-            sh:path rml:subjectMap ],
-        [ rdfs:label "subject" ;
-            rdfs:comment """
-        An IRI reference for use as subject for all generated RDF triples.
-        """ ;
-            sh:message """
-        rml:subject must be an IRI or blank node.
-        """ ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:path rml:subject ],
-        [ rdfs:label "predicateObjectMap" ;
-            rdfs:comment """
-        A Predicate Object Map element to generate a (predicate, object) pair.
-        """ ;
-            sh:message """
-        rml:PredicateObjectMap must be an IRI or blank node.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:path rml:predicateObjectMap ],
-        [ sh:description """
-        Base IRI to use for generating RDF triples or quads.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:baseIRI must be an IRI.
-        """ ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:baseIRI ],
-        [ rdfs:label "subjectMap/subject" ;
-            rdfs:comment """
-        Either a rml:subject, rml:subjectMap is required, not multiple.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        Either a rml:subject, rml:subjectMap is required, not multiple.
-        """ ;
-            sh:minCount 1 ;
-            sh:path [ sh:alternativePath ( rml:subjectMap rml:subject ) ] ] ;
-    sh:targetClass rml:TriplesMap ;
-    sh:targetObjectsOf rml:parentTriplesMap ;
-    sh:targetSubjectsOf rml:baseIRI,
-        rml:logicalSource,
-        rml:predicateObjectMap,
-        rml:subject,
-        rml:subjectMap .
-
-<http://w3id.org/rml/shapes/RMLXPathReferenceFormulationShape> a sh:NodeShape ;
-    rdfs:label "XPath Reference Formulation" ;
-    rdfs:comment """
-    A structured XPath reference formulation, used when XML namespaces need
-    to be declared for the references. rml:XPath without namespaces is used
-    otherwise.
-    """ ;
-    sh:message """
-    A structured XPath reference formulation must be typed
-    rml:XPathReferenceFormulation, and MAY specify zero or more
-    rml:namespace properties.
-    """ ;
-    sh:property [ rdfs:label "rml:namespace" ;
-            rdfs:comment """
-        Declares an XML namespace usable in XPath references.
-        """ ;
-            sh:message """
-        rml:namespace must reference a valid RML Namespace.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLNamespaceShape> ;
-            sh:path rml:namespace ] .
-
-<http://w3id.org/rml/shapes/ExpressionFieldShape> a sh:NodeShape ;
-    sh:node <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
-
-<http://w3id.org/rml/shapes/FieldShape> a sh:NodeShape ;
-    rdfs:label "Field" ;
-    rdfs:comment """\r
-    A field is a construct that gives a name to data derived from an abstract logical source.\r
-    """ ;
-    sh:message """\r
-    Node must have a valid rml:Field description.\r
-    rml:Field requires a rml:fieldName and may have zero or more rml:field properties.\r
-    Furthermore, subclass rml:ExpressionField requires what an rml:ExpressionMap requires, subclass rml:IterableField requires what an rml:Iterable requires,.\r
-    """ ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description """\r
-        The name of the field.\r
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:fieldName property must be specified for a rml:Field, with a string as its value.\r
-        """ ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:fieldName ],
-        [ sh:description """\r
-        A child field of the field.\r
-        """ ;
-            sh:message """\r
-        The value of a rml:field property for a rml:Field must be a resource.\r
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/FieldShape> ;
-            sh:path rml:field ],
-        [ sh:disjoint rml:field ;
-            sh:path [ sh:zeroOrMorePath [ sh:inversePath [ sh:alternativePath ( rml:viewOn rml:field ) ] ] ] ] ;
-    sh:xone ( [ sh:node <http://w3id.org/rml/shapes/ExpressionFieldShape> ] [ sh:node <http://w3id.org/rml/shapes/IterableFieldShape> ] ) .
-
-<http://w3id.org/rml/shapes/LogicalViewJoinShape> a sh:NodeShape ;
-    rdfs:label "LogicalViewJoin" ;
-    rdfs:comment """\r
-    A LogicalViewJoin is an operation that adapts the logical iterations of one logical view (the child logical view) with fields from another logical view (the parent logical view).\r
-    """ ;
-    sh:message """\r
-    Node must have a valid rml:LogicalViewJoin description.\r
-    rml:LogicalViewJoin requires:\r
-    - exactly one rml:parentLogicalView property.\r
-    - one or more rml:joinCondition properties.\r
-    - one or more rml:field properties.\r
-    Furthermore, rml:Field requires what an rml:ExpressionMap requires.\r
-    """ ;
-    sh:property [ sh:description """\r
-        The parent logical view of the logical view join.\r
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.\r
-        """ ;
-            sh:minCount 1 ;
-            sh:node sh:BlankNodeOrIRI ;
-            sh:path rml:parentLogicalView ],
-        [ sh:description """\r
-        A join condition of the logical view join.\r
-        """ ;
-            sh:message """\r
-        At least one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.\r
-        """ ;
-            sh:minCount 1 ;
-            sh:node <http://w3id.org/rml/shapes/RMLJoinShape> ;
-            sh:path rml:joinCondition ],
-        [ sh:description """\r
-        A field of the logical view join.\r
-        """ ;
-            sh:message """\r
-        At least one rml:field property must be specified for a rml:LogicalViewJoin, with a leaf expression field as its value.\r
-        """ ;
-            sh:minCount 1 ;
-            sh:node <http://w3id.org/rml/shapes/LeafExpressionFieldShape> ;
-            sh:path rml:field ] .
-
-<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> a sh:NodeShape ;
-    rdfs:label "ExpressionMap" ;
-    rdfs:comment """
-    Represents a Expression Map.
-    """ ;
-    sh:message """
-    Expression Map must have one of rml:template, rml:constant, or
-    rml:reference, unless rml:termType is rml:BlankNode with no expression.
-    """ ;
-    sh:property [ rdfs:label "template/constant/reference" ;
-            rdfs:comment """
-            Only one of rml:template, rml:constant, or rml:reference is
-            allowed.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        Only one of rml:template, rml:constant, or rml:reference is allowed.
-        """ ;
-            sh:minCount 0 ;
-            sh:path [ sh:alternativePath _:N3b9b54b9e1994839ac50ca47a49c8aab ] ],
-        [ rdfs:label "template" ;
-            rdfs:comment """
-        A template (format string) to specify how to generate a value for a 
-        subject, predicate, or object, using one or more columns from a logical
-        table row or iterator.
-        """ ;
-            sh:datatype xsd:string ;
-            sh:message """
-        rml:template must be a string with well-formed brace delimiters:
-        every unescaped '{' must be closed by an unescaped '}' with no
-        unescaped braces in between, and every literal '{', '}', or '\\'
-        (both inside and outside reference expressions) must be
-        backslash-escaped.
-        """ ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:template ;
-            sh:pattern "^(?:[^\\\\{}]|\\\\.|\\{(?:[^\\\\{}]|\\\\.)*\\})+$" ],
-        [ rdfs:label "constant" ;
-            rdfs:comment """
-        A property for indicating whether a term map is a constant-valued term 
-        map.
-        """ ;
-            sh:message """
-        rml:constant must be an IRI or Literal.
-        """ ;
-            sh:path rml:constant ],
-        [ rdfs:label "reference" ;
-            rdfs:comment """
-        A reference rml:reference is used to refer to a column in case of 
-        databases, a record in case of CSV or TSV data source, an element in 
-        case of XML data source, an object in case of a JSON data source, etc.
-
-        A reference must be a valid identifier, considering the reference 
-        formulation (rml:referenceFormulation) specified. The reference can be
-        an absolute path, or a path relative to the iterator specified at the 
-        logical source. 
-        """ ;
-            sh:datatype xsd:string ;
-            sh:message """
-        rml:reference must be a string.
-        """ ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:reference ] .
-
-<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> a sh:NodeShape ;
-    rdfs:label "Abstract Logical Source" ;
-    rdfs:comment """\r
-    A sub-class of iterable that can be associated with a triples map such that a data source can be mapped to RDF triples.\r
-    """ ;
-    sh:message """\r
-    rml:AbstractLogicalSource must specify how to generate logical iterations on a data source for a triples map.\r
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLIterableShape> ;
-    sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLLogicalSourceShape> ] [ sh:node <http://w3id.org/rml/shapes/RMLLogicalViewShape> ] ) .
-
-<http://w3id.org/rml/shapes/RMLIterableShape> a sh:NodeShape ;
-    rdfs:label "Iterable" ;
-    rdfs:comment """\r
-    An abstract construct to describe data access and iteration for a data source.\r
-    """ ;
-    sh:message """\r
-    Iterable must specify how to generate logical iterations on a data source.\r
-    """ ;
-    sh:property [ rdfs:label "rml:referenceFormulation" ;
-            rdfs:comment """\r
-        The reference formulation (rml:referenceFormulation) defines how to\r
-        reference to elements of the data of the input source.\r
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """\r
-        rml:referenceFormulation must be a blank node or IRI specifying the\r
-        reference formulation on how to reference elements of a data source,\r
-        and may be provided at most once.\r
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLReferenceFormulationShape> ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:path rml:referenceFormulation ],
-        [ rdfs:label "rml:iterator" ;
-            rdfs:comment """\r
-        The logical iterator (rml:iterator) defines the iteration loop used to \r
-        map the data of the input source. Depends on the reference formulation\r
-        if an iterator is necessary.  \r
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """\r
-        rml:iterator specifies the iterator to iterate over\r
-        the data source, and may be provided at most once.\r
-        """ ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:iterator ] .
-
-<http://w3id.org/rml/shapes/RMLJoinShape> a sh:NodeShape ;
-    rdfs:label "Join" ;
-    rdfs:comment """
-    Represents a Join.
-    """ ;
-    sh:message """
-    rml:Join must specify exactly one rml:parent/rml:parentMap 
-    and rml:child/rml:childMap.
-    """ ;
-    sh:property [ rdfs:label "parentMap/parent" ;
-            rdfs:comment """
-        rml:parent/rml:parentMap may only be provided once and 
-        not at the same time.
-        """ ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path [ sh:alternativePath ( rml:parentMap rml:parent ) ] ],
-        [ rdfs:label "childMap" ;
-            rdfs:comment """
-        Specifies the child of the object component for joining.
-        """ ;
-            sh:message """
-        rml:childMap must point to a rml:ChildMap specifying the
-        child of the Literal.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLChildMapShape> ;
-            sh:path rml:childMap ],
-        [ rdfs:label "child" ;
-            rdfs:comment """
-        Specifies the child of the object component for joining.
-        """ ;
-            sh:datatype xsd:string ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:child ],
-        [ rdfs:label "parentMap" ;
-            rdfs:comment """
-        Specifies the parent of the object component for joining.
-        """ ;
-            sh:message """
-        rml:parentMap must point to a rml:ParentMap specifying the 
-        parent tag of the string Literal.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLParentMapShape> ;
-            sh:path rml:parentMap ],
-        [ rdfs:label "parent" ;
-            rdfs:comment """
-        Specifies the parent of the object component for joining.
-        """ ;
-            sh:datatype xsd:string ;
-            sh:nodeKind sh:Literal ;
-            sh:path rml:parent ],
-        [ rdfs:label "childMap/child" ;
-            rdfs:comment """
-        rml:child/rml:childMap may only be provided once and 
-        not at the same time.
-        """ ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path [ sh:alternativePath ( rml:childMap rml:child ) ] ] .
-
-<http://w3id.org/rml/shapes/RMLLogicalViewShape> a sh:NodeShape ;
-    rdfs:label "LogicalView" ;
-    rdfs:comment """
-    A logical view (rml:LogicalView) is a type of abstract logical source that is derived from another abstract logical source by defining fields with data from said abstract logical source.
-    """ ;
-    sh:message """
-    Node must have a valid rml:LogicalView description.
-    rml:LogicalView requires
-    - exactly one rml:viewOn property, with a rml:AbstractLogicalSource as its value.
-    - at least one rml:field property, with a rml:Field as its value.
-    """ ;
-    sh:property [ sh:description """
-        The source of the logical view. This is the logical source from which the logical view is derived.
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """
-        Exactly one rml:viewOn property must be specified for a rml:LogicalView, with a rml:AbstractLogicalSource as its value.
-        """ ;
-            sh:minCount 1 ;
-            sh:node <http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> ;
-            sh:path rml:viewOn ],
-        [ sh:description """
-        A field of the logical view.
-        """ ;
-            sh:message """
-        At least one rml:field property must be specified for a rml:LogicalView, with either an rml:ExpressionField or an rml:IterableField its value.
-        """ ;
-            sh:minCount 1 ;
-            sh:node <http://w3id.org/rml/shapes/FieldShape> ;
-            sh:path rml:field ],
-        [ sh:disjoint rml:field,
-                rml:viewOn ;
-            sh:path [ sh:zeroOrMorePath [ sh:inversePath [ sh:alternativePath ( rml:viewOn rml:field ) ] ] ] ],
-        [ sh:description """
-        A left join of the logical view.
-        """ ;
-            sh:message """
-        The value of a rml:leftJoin property for a rml:LogicalView must be a resource.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/LogicalViewJoinShape> ;
-            sh:path rml:leftJoin ],
-        [ sh:description """
-        An inner join of the logical view.
-        """ ;
-            sh:message """
-        The value of a rml:innerJoin property for a rml:LogicalView must be a resource.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/LogicalViewJoinShape> ;
-            sh:path rml:innerJoin ],
-        [ sh:description """
-        A structural annotation of the logical view.
-        """ ;
-            sh:message """
-       The value of a rml:structuralAnnotation property must be a resource.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/StructuralAnnotationShape> ;
-            sh:path rml:structuralAnnotation ],
-        [ sh:description """
-        Inclusion (and ForeignKey) annotations targeting this logical view
-        via rml:targetView. Reached via the inverse of rml:targetView, not
-        rml:structuralAnnotation -- an InclusionAnnotation is the SUBJECT
-        of rml:targetView, not this view's own value, so it isn't
-        otherwise reachable from here; without this property it would
-        never get checked at all.
-        """ ;
-            sh:message """
-        Every rml:InclusionAnnotation (or rml:ForeignKeyAnnotation) targeting this view via rml:targetView must also specify exactly one rml:targetFields property.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/InclusionAnnotationShape> ;
-            sh:path [ sh:inversePath rml:targetView ] ],
-        [ sh:disjoint rml:innerJoin,
-                rml:leftJoin ;
-            sh:path ( [ sh:zeroOrMorePath ( [ sh:inversePath rml:parentLogicalView ] [ sh:inversePath [ sh:alternativePath ( rml:leftJoin rml:innerJoin ) ] ] ) ] [ sh:inversePath rml:parentLogicalView ] ) ] ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:message "Two distinct fields in this view's effective field set (its own fields plus any introduced by leftJoin/innerJoin) share the same rml:fieldName." ;
-            sh:select """
-            PREFIX rml: <http://w3id.org/rml/>
-            SELECT DISTINCT $this
-            WHERE {
-                $this (rml:field|((rml:leftJoin|rml:innerJoin)/rml:field)) ?f1 .
-                $this (rml:field|((rml:leftJoin|rml:innerJoin)/rml:field)) ?f2 .
-                ?f1 rml:fieldName ?name .
-                ?f2 rml:fieldName ?name .
-                FILTER (?f1 != ?f2)
-            }
-        """ ] .
-
-<http://w3id.org/rml/shapes/RMLSubjectMapORPredicateObjectMapShape> a sh:NodeShape ;
-    sh:property [ sh:maxCount 1 ;
-            sh:path [ sh:alternativePath ( rml:graph rml:graphMap ) ] ],
-        [ sh:node <http://w3id.org/rml/shapes/RMLGraphMapShape> ;
-            sh:path rml:graphMap ],
-        [ sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:path rml:graph ] .
-
-<http://w3id.org/rml/shapes/StructuralAnnotationShape> a sh:NodeShape ;
-    rdfs:label "StructuralAnnotation" ;
-    rdfs:comment """\r
-    Structural annotations provide a mechanism to express relationships between logical views, as well as additional information about fields.\r
-    """ ;
-    sh:message """\r
-    Node must have a valid rml:StructuralAnnotationShape description.\r
-    All structural annotations of a logical view lv MUST have an on fields property (rml:onFields), linking the structural annotation to a list of field names occurring in lv.\r
-    rml:StructuralAnnotationShape requires:\r
-    - exactly one rml:onFields property.\r
-    """ ;
-    sh:property [ sh:description """\r
-        property onFields specifies the fields in LogicalView that are involved by the structural annotation. The semantics of this involvement depends on the specific annotation.\r
-        """ ;
-            sh:maxCount 1 ;
-            sh:message """\r
-        Exactly one rml:onFields property must be specified for each rml:StructuralAnnotation\r
-        """ ;
-            sh:minCount 1 ;
-            sh:path rml:onFields ] .
-
-<http://w3id.org/rml/shapes/RMLExpressionMapShape> a sh:NodeShape ;
-    rdfs:label "ExpressionMap" ;
-    sh:node <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> ;
-    sh:property [ rdfs:label "template/constant/reference" ;
-            rdfs:comment """
-            Only one of rml:template, rml:constant, or rml:reference is
-            allowed.
-        """ ;
-            sh:message """
-        Only one of rml:template, rml:constant, or rml:reference is allowed.
-        """ ;
-            sh:minCount 1 ;
-            sh:path [ sh:alternativePath _:N3b9b54b9e1994839ac50ca47a49c8aab ] ] .
-
-<http://w3id.org/rml/shapes/RMLTermMapShape> a sh:NodeShape ;
-    rdfs:label "TermMap" ;
-    rdfs:comment """
-    Represents a Term Map.
-    """ ;
-    sh:message """
-    Term Map is an Expression Map with optionally a term type specified.
-    """ ;
-    sh:node <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> ;
-    sh:or ( [ sh:node <http://w3id.org/rml/shapes/RMLGatherMapShape> ] [ sh:property [ rdfs:label "template/constant/reference" ;
-                        rdfs:comment """
-                Only one of rml:template, rml:constant, or rml:reference is
-                allowed.
-            """ ;
-                        sh:message """
-            Only one of rml:template, rml:constant, or rml:reference is allowed.
-            """ ;
-                        sh:minCount 1 ;
-                        sh:path [ sh:alternativePath _:N3b9b54b9e1994839ac50ca47a49c8aab ] ] ] [ sh:property [ sh:hasValue rml:BlankNode ;
-                        sh:path rml:termType ] ] ),
-        ( [ sh:property [ sh:maxCount 0 ;
-                        sh:path rml:constant ] ] [ sh:property [ sh:maxCount 0 ;
-                        sh:path rml:termType ] ] ) ;
-    sh:property [ rdfs:label "termType" ;
-            rdfs:comment """
-        An IRI indicating whether a generated term should be an IRI,
-        Blank Node, or a Literal.
-        """ ;
-            sh:in ( rml:IRI rml:UnsafeIRI rml:URI rml:UnsafeURI rml:Literal rml:BlankNode ) ;
-            sh:maxCount 1 ;
-            sh:message """
-        rml:termType must be either rml:IRI, rml:UnsafeIRI,
-        rml:URI, rml:UnsafeURI, rml:Literal, or rml:BlankNode for a Term Map.
-        May only be provided once.
-        """ ;
-            sh:nodeKind sh:IRI ;
-            sh:path rml:termType ],
-        [ rdfs:label "rml:logicalTarget" ;
-            rdfs:comment """
-        A Term Map MAY contain one or more rml:logicalTarget properties to
-        export all triples containing the generated term to different
-        targets.
-        """ ;
-            sh:message """
-        rml:logicalTarget must reference a valid RML Logical Target.
-        """ ;
-            sh:node <http://w3id.org/rml/shapes/RMLLogicalTargetShape> ;
-            sh:path rml:logicalTarget ] .
-
-_:N2a0cdeeb85874810a1470ae69be8bf06 rdf:first rml:reference ;
-    rdf:rest () .
-
-_:Nb8baf29a57c04a229312a501d643538a rdf:first rml:constant ;
-    rdf:rest _:N2a0cdeeb85874810a1470ae69be8bf06 .
-
-_:N3b9b54b9e1994839ac50ca47a49c8aab rdf:first rml:template ;
-    rdf:rest _:Nb8baf29a57c04a229312a501d643538a .
-
+_:nf971d602ca26417dbffe9ea5d8aa36a8b8 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n149c6f9e4fd1456bae5eca2faec97093b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/Append> .
+_:nb0c7dd39431146288dc3cb77f4c4b071b2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/targetFields> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b8 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/datatypeMap> .
+<http://w3id.org/rml/shapes/RMLChildMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb7 <http://www.w3.org/ns/shacl#path> _:n1b0a2a677c2749eaa9e7aa1292ae387eb8 .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <http://w3id.org/rml/baseIRI> .
+_:n8b314841b8f1402c8179c0abd21b17b0b7 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n03f056871c004dd3a9e490ad9643c2cbb1 <http://www.w3.org/ns/shacl#minCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/ExpressionFieldShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b7 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b8 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLFilePathShape> .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:na106ee62efcb43e7ac54f51c7b2a1faeb5 .
+<http://w3id.org/rml/shapes/FieldShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:ncc068b3a399f4ee3a7202cb35c2b26d8b5 .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <http://w3id.org/rml/subject> .
+_:nbc3ecc365ab04ca9971703f64202637db3 <http://www.w3.org/ns/shacl#description> "\r\n        A field of the logical view join.\r\n        " .
+_:N62063121a309428d89fc044ea2fdeda8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n8b314841b8f1402c8179c0abd21b17b0b19 .
+_:n8b314841b8f1402c8179c0abd21b17b0b23 <http://www.w3.org/ns/shacl#alternativePath> _:Ne3acfbae5c6c47c58f049cd58054107d .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb16 <http://www.w3.org/2000/01/rdf-schema#label> "object" .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:ncc068b3a399f4ee3a7202cb35c2b26d8b6 .
+_:n1411e73ead8e410390ba935a1aae3885b1 <http://www.w3.org/ns/shacl#message> "\n        rml:path must be provided exactly once as a string Literal.\n        " .
+_:nd391722810e340ac9414f6a00f3f3b0fb3 <http://www.w3.org/ns/shacl#disjoint> <http://w3id.org/rml/field> .
+_:n59f49f0be26f435080d9abf083ce0a3fb9 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/constant> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db5 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Declares an XML namespace usable in XPath references.\n        " .
+_:n59f49f0be26f435080d9abf083ce0a3fb18 <http://www.w3.org/ns/shacl#hasValue> <http://w3id.org/rml/BlankNode> .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/ns/shacl#sparql> _:nb95e36dfe2d14214b2b7a390db06555ab26 .
+<http://w3id.org/rml/shapes/RMLReferenceFormulationShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n59f49f0be26f435080d9abf083ce0a3fb6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n59f49f0be26f435080d9abf083ce0a3fb7 .
+_:nd391722810e340ac9414f6a00f3f3b0fb10 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/IterableFieldShape> .
+<http://w3id.org/rml/shapes/RMLObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n4972f8b390ee47f5aa35e2fa2cbc96d0b10 .
+_:n8b314841b8f1402c8179c0abd21b17b0b32 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/objectMap> .
+<http://w3id.org/rml/shapes/RMLXPathReferenceFormulationShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    A structured XPath reference formulation, used when XML namespaces need\n    to be declared for the references. rml:XPath without namespaces is used\n    otherwise.\n    " .
+_:n8b314841b8f1402c8179c0abd21b17b0b12 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        An IRI reference for use as subject for all generated RDF triples.\n        " .
+_:n59f49f0be26f435080d9abf083ce0a3fb12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n59f49f0be26f435080d9abf083ce0a3fb8 .
+_:nbc3ecc365ab04ca9971703f64202637db1 <http://www.w3.org/ns/shacl#node> <http://www.w3.org/ns/shacl#BlankNodeOrIRI> .
+<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLIterableShape> .
+_:nb0c7dd39431146288dc3cb77f4c4b071b1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLPredicateMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLTermMapShape> .
+_:nf106a32cee6e4b8091a0d24c209afc75b1 <http://www.w3.org/ns/shacl#message> "\n        rml:parentTriplesMap may only be provided once and must be an IRI\n        or Blank Node referring to a Triples Map.\n        " .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db7 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/namespaceURL> .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/UnsafeURI> .
+<http://w3id.org/rml/shapes/RMLStrategyShape> <http://www.w3.org/2000/01/rdf-schema#label> "Strategy" .
+_:n8b314841b8f1402c8179c0abd21b17b0b25 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n8b314841b8f1402c8179c0abd21b17b0b26 .
+<http://w3id.org/rml/shapes/RMLLogicalTargetShape> <http://www.w3.org/ns/shacl#property> _:n21ad341ad83e43e3b47c9d14fe5bf0c2b2 .
+<http://w3id.org/rml/shapes/RMLNamespaceShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    A rml:Namespace declares the prefix and URL for an XML namespace used in\n    XPath references.\n    " .
+_:n59f49f0be26f435080d9abf083ce0a3fb8 <http://www.w3.org/ns/shacl#property> _:n59f49f0be26f435080d9abf083ce0a3fb9 .
+_:nd391722810e340ac9414f6a00f3f3b0fb9 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/ExpressionFieldShape> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nf106a32cee6e4b8091a0d24c209afc75b1 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLTriplesMapShape> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b9 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLGatherMapShape> .
+_:nd391722810e340ac9414f6a00f3f3b0fb7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/viewOn> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb1 <http://www.w3.org/2000/01/rdf-schema#label> "parentMap/parent" .
+_:n59f49f0be26f435080d9abf083ce0a3fb5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n59f49f0be26f435080d9abf083ce0a3fb6 .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nf971d602ca26417dbffe9ea5d8aa36a8b5 .
+<http://w3id.org/rml/shapes/RMLFilePathShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db7 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        The URL identifying the XML namespace.\n        " .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b7 <http://www.w3.org/2000/01/rdf-schema#label> "languageMap" .
+<http://w3id.org/rml/shapes/RMLLogicalTargetShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb5 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLParentMapShape> .
+_:nb95e36dfe2d14214b2b7a390db06555ab8 <http://www.w3.org/ns/shacl#path> _:nb95e36dfe2d14214b2b7a390db06555ab18 .
+_:n1411e73ead8e410390ba935a1aae3885b1 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:n03f056871c004dd3a9e490ad9643c2cbb1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:null specifies how NULL or empty values are exposed by the data \n        source.\n        " .
+<http://w3id.org/rml/shapes/RMLLanguageMapShape> <http://www.w3.org/ns/shacl#message> "\n    rml:LanguageMap must specify an rml:template, rml:reference, or rml:constant\n    with the BCP47 name of the language as string.\n    " .
+_:n59f49f0be26f435080d9abf083ce0a3fb1 <http://www.w3.org/ns/shacl#in> _:n59f49f0be26f435080d9abf083ce0a3fb2 .
+_:naf45737c17c54955bb099a1b6d42540bb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:naf45737c17c54955bb099a1b6d42540bb2 .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b2 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        A Target MAY describe the serialization format with\n        rml:serialization to use when exporting RDF triples to a Target.\n        Defaults to N-Quads if unspecified.\n        " .
+_:N75cd6892bd67453db3a12db4925cc6cc <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLParentMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n4faadd2a985d4fc6b35e353da94df10fb6 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/graph> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db7 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nb95e36dfe2d14214b2b7a390db06555ab2 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLLogicalTargetShape> <http://www.w3.org/ns/shacl#property> _:n21ad341ad83e43e3b47c9d14fe5bf0c2b1 .
+_:ncba5e4eee39f4bfeb4a8d1861492f2f3b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        The source (rml:source) locates the input data source. It is a URI\n        that represents the data source where the data source is.\n        " .
+_:nf8ec2c37b7b74639ad91191739e57ee9b2 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n2e72720998a04bf7a3869c476879b7d1b1 <http://www.w3.org/ns/shacl#minCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLJoinShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n8b314841b8f1402c8179c0abd21b17b0b1 <http://www.w3.org/2000/01/rdf-schema#label> "logicalSource" .
+_:nb95e36dfe2d14214b2b7a390db06555ab3 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/LogicalViewJoinShape> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b2 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n2e72720998a04bf7a3869c476879b7d1b1 <http://www.w3.org/ns/shacl#path> _:n2e72720998a04bf7a3869c476879b7d1b2 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b9 <http://www.w3.org/2001/XMLSchema#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb6 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:n6e259576dee647e68e40ee38fe848448b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/field> .
+_:n8b314841b8f1402c8179c0abd21b17b0b29 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n8b314841b8f1402c8179c0abd21b17b0b30 .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/RMLFilePathShape> <http://www.w3.org/ns/shacl#property> _:n1411e73ead8e410390ba935a1aae3885b2 .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb7 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLObjectMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents an Object Map.\n    " .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb12 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+<http://w3id.org/rml/shapes/RMLRefObjectMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "RefObjectMap" .
+<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n1b0a2a677c2749eaa9e7aa1292ae387eb7 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nd391722810e340ac9414f6a00f3f3b0fb12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nd391722810e340ac9414f6a00f3f3b0fb10 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b9 <http://www.w3.org/2000/01/rdf-schema#label> "language" .
+_:n8b314841b8f1402c8179c0abd21b17b0b14 <http://www.w3.org/ns/shacl#description> "\n        Base IRI to use for generating RDF triples or quads.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/subjectMap> .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b1 <http://www.w3.org/ns/shacl#in> _:ncc068b3a399f4ee3a7202cb35c2b26d8b2 .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b2 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b8 <http://www.w3.org/ns/shacl#message> "\n        one or more rml:gather properties are needed, each pointing to a\n        RML Term Map.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b11 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLSubjectMapShape> .
+_:naf45737c17c54955bb099a1b6d42540bb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n1411e73ead8e410390ba935a1aae3885b4 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLMappingDirectoryShape> .
+_:nd391722810e340ac9414f6a00f3f3b0fb1 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:n1411e73ead8e410390ba935a1aae3885b3 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLCurrentWorkingDirectoryShape> .
+<http://w3id.org/rml/shapes/RMLJoinShape> <http://www.w3.org/ns/shacl#property> _:nff38e38b9aa34c9393b2c79b84c7ab0cb11 .
+_:nb95e36dfe2d14214b2b7a390db06555ab1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb5 <http://www.w3.org/ns/shacl#message> "\n        rml:predicateMap must be an IRI or blank node and be provided once.\n        " .
+_:n1411e73ead8e410390ba935a1aae3885b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:Nd4f05970c2bf4195920486df16a5522c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nb95e36dfe2d14214b2b7a390db06555ab27 .
+_:n59f49f0be26f435080d9abf083ce0a3fb14 <http://www.w3.org/ns/shacl#property> _:n59f49f0be26f435080d9abf083ce0a3fb15 .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Expression Map.\n    " .
+_:n1411e73ead8e410390ba935a1aae3885b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:path specifies the file path, relative to rml:root if\n        provided, or absolute otherwise.\n        " .
+_:n149c6f9e4fd1456bae5eca2faec97093b1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n149c6f9e4fd1456bae5eca2faec97093b2 .
+_:n8b314841b8f1402c8179c0abd21b17b0b18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b8 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/gather> .
+_:nb4073b1eaaaa4c6d8eaa751651009706b1 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLReferenceFormulationShape> .
+_:n1411e73ead8e410390ba935a1aae3885b2 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLReferenceFormulationShape> <http://www.w3.org/ns/shacl#or> _:n587f4b80e9c5414e8fee30a7a9e9da1db3 .
+<http://w3id.org/rml/shapes/LogicalViewJoinShape> <http://www.w3.org/ns/shacl#property> _:nbc3ecc365ab04ca9971703f64202637db1 .
+<http://w3id.org/rml/shapes/RMLSubjectMapORPredicateObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n4faadd2a985d4fc6b35e353da94df10fb5 .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b1 <http://www.w3.org/2000/01/rdf-schema#label> "strategy" .
+_:ncba5e4eee39f4bfeb4a8d1861492f2f3b1 <http://www.w3.org/2000/01/rdf-schema#label> "rml:source" .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:na106ee62efcb43e7ac54f51c7b2a1faeb3 .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/UnsafeURI> .
+<http://w3id.org/rml/shapes/RMLXPathReferenceFormulationShape> <http://www.w3.org/2000/01/rdf-schema#label> "XPath Reference Formulation" .
+_:N83e3c3b9812d459babc2c2fa348e6583 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:ncba5e4eee39f4bfeb4a8d1861492f2f3b2 .
+_:nb4073b1eaaaa4c6d8eaa751651009706b2 <http://www.w3.org/2000/01/rdf-schema#comment> "\r\n        The logical iterator (rml:iterator) defines the iteration loop used to \r\n        map the data of the input source. Depends on the reference formulation\r\n        if an iterator is necessary.  \r\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b13 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#BlankNodeOrIRI> .
+_:n8b314841b8f1402c8179c0abd21b17b0b24 <http://www.w3.org/ns/shacl#alternativePath> _:Nd2204d8ff2d346b1bdce7a1283b8bd3c .
+<http://w3id.org/rml/shapes/RMLSourceShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b3 <http://www.w3.org/2000/01/rdf-schema#label> "rml:logicalTarget" .
+_:n8b314841b8f1402c8179c0abd21b17b0b11 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/subjectMap> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b8 <http://www.w3.org/2000/01/rdf-schema#label> "gather" .
+_:nb95e36dfe2d14214b2b7a390db06555ab24 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/viewOn> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb11 <http://www.w3.org/ns/shacl#message> "\n        rml:childMap must point to a rml:ChildMap specifying the\n        child of the Literal.\n        " .
+_:nb31bc0e4a2414395ab00c127f735f089b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nb31bc0e4a2414395ab00c127f735f089b7 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b9 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/language> .
+<http://w3id.org/rml/shapes/RMLPredicateMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Predicate Map.\n    " .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb6 <http://www.w3.org/ns/shacl#message> "\n        rml:predicate must be an IRI and be provided once.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b19 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n8b314841b8f1402c8179c0abd21b17b0b20 .
+_:n8b314841b8f1402c8179c0abd21b17b0b16 <http://www.w3.org/ns/shacl#alternativePath> _:n8b314841b8f1402c8179c0abd21b17b0b17 .
+_:naf45737c17c54955bb099a1b6d42540bb6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#message> "\n    Expression Map must have one of rml:template, rml:constant, or\n    rml:reference, unless rml:termType is rml:BlankNode with no expression.\n    " .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db6 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/namespacePrefix> .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/termType> .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b3 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        A Term Map MAY contain one or more rml:logicalTarget properties to\n        export all triples containing the generated term to different\n        targets.\n        " .
+_:n59f49f0be26f435080d9abf083ce0a3fb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/UnsafeIRI> .
+_:n149c6f9e4fd1456bae5eca2faec97093b1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/Read> .
+_:nb31bc0e4a2414395ab00c127f735f089b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/URI> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n587f4b80e9c5414e8fee30a7a9e9da1db2 .
+_:n8b314841b8f1402c8179c0abd21b17b0b13 <http://www.w3.org/2000/01/rdf-schema#label> "predicateObjectMap" .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b7 <http://www.w3.org/ns/shacl#minCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLExpressionMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b10 <http://www.w3.org/2000/01/rdf-schema#label> "datatype" .
+_:n59f49f0be26f435080d9abf083ce0a3fb15 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nf971d602ca26417dbffe9ea5d8aa36a8b4 .
+_:nb4073b1eaaaa4c6d8eaa751651009706b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\r\n        The reference formulation (rml:referenceFormulation) defines how to\r\n        reference to elements of the data of the input source.\r\n        " .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/gatherAs> .
+_:nb0c7dd39431146288dc3cb77f4c4b071b2 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n8b314841b8f1402c8179c0abd21b17b0b13 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        A Predicate Object Map element to generate a (predicate, object) pair.\n        " .
+_:nbc3ecc365ab04ca9971703f64202637db1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb1 <http://www.w3.org/ns/shacl#in> _:na106ee62efcb43e7ac54f51c7b2a1faeb2 .
+_:ncba5e4eee39f4bfeb4a8d1861492f2f3b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLParentMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "ParentMap" .
+_:n4faadd2a985d4fc6b35e353da94df10fb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLSourceTargetShape> <http://www.w3.org/ns/shacl#xone> _:nf8ec2c37b7b74639ad91191739e57ee9b9 .
+_:nb31bc0e4a2414395ab00c127f735f089b7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/BlankNode> .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/termType> .
+_:nb95e36dfe2d14214b2b7a390db06555ab15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nb95e36dfe2d14214b2b7a390db06555ab16 .
+_:nbc3ecc365ab04ca9971703f64202637db1 <http://www.w3.org/ns/shacl#description> "\r\n        The parent logical view of the logical view join.\r\n        " .
+_:nd391722810e340ac9414f6a00f3f3b0fb4 <http://www.w3.org/ns/shacl#zeroOrMorePath> _:nd391722810e340ac9414f6a00f3f3b0fb5 .
+_:nf106a32cee6e4b8091a0d24c209afc75b2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/joinCondition> .
+<http://w3id.org/rml/shapes/RMLPredicateMapShape> <http://www.w3.org/ns/shacl#property> _:na106ee62efcb43e7ac54f51c7b2a1faeb1 .
+<http://w3id.org/rml/shapes/RMLNamespaceShape> <http://www.w3.org/ns/shacl#property> _:n587f4b80e9c5414e8fee30a7a9e9da1db7 .
+<http://w3id.org/rml/shapes/RMLObjectMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLTermMapShape> .
+<http://w3id.org/rml/shapes/RMLStrategyShape> <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:nd391722810e340ac9414f6a00f3f3b0fb3 <http://www.w3.org/ns/shacl#path> _:nd391722810e340ac9414f6a00f3f3b0fb4 .
+_:n2e72720998a04bf7a3869c476879b7d1b3 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/template> .
+<http://w3id.org/rml/shapes/RMLObjectMapShape> <http://www.w3.org/ns/shacl#message> "\n    Object Map must generate a IRI, Blank Node, or Literal which has optionally\n    a language tag or datatype.\n    " .
+_:n1411e73ead8e410390ba935a1aae3885b2 <http://www.w3.org/ns/shacl#message> "\n        rml:root must be rml:CurrentWorkingDirectory, rml:MappingDirectory,\n        or a string Literal, and may be provided at most once.\n        " .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#property> _:n2e72720998a04bf7a3869c476879b7d1b1 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b7 <http://www.w3.org/ns/shacl#message> "\n        rml:languageMap must point to a rml:LanguageMap specifying the \n        language tag of the string Literal.\n        " .
+_:nbc3ecc365ab04ca9971703f64202637db3 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nf8ec2c37b7b74639ad91191739e57ee9b10 .
+_:nbc3ecc365ab04ca9971703f64202637db3 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/field> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nff38e38b9aa34c9393b2c79b84c7ab0cb10 .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb11 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Specifies the child of the object component for joining.\n        " .
+_:naf45737c17c54955bb099a1b6d42540bb5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/gather> .
+_:n2e72720998a04bf7a3869c476879b7d1b5 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n59f49f0be26f435080d9abf083ce0a3fb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n59f49f0be26f435080d9abf083ce0a3fb5 .
+_:n03f056871c004dd3a9e490ad9643c2cbb1 <http://www.w3.org/2000/01/rdf-schema#label> "rml:null" .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb8 <http://www.w3.org/ns/shacl#alternativePath> _:n1b0a2a677c2749eaa9e7aa1292ae387eb9 .
+_:nbc3ecc365ab04ca9971703f64202637db1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/parentLogicalView> .
+_:n1411e73ead8e410390ba935a1aae3885b8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nb31bc0e4a2414395ab00c127f735f089b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nb31bc0e4a2414395ab00c127f735f089b4 .
+_:nb95e36dfe2d14214b2b7a390db06555ab3 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/leftJoin> .
+_:n8b314841b8f1402c8179c0abd21b17b0b1 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> .
+<http://w3id.org/rml/shapes/RMLTermMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Term Map.\n    " .
+<http://w3id.org/rml/shapes/RMLCurrentWorkingDirectoryShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n66a7573eeae5472492098bee3158952eb1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/constant> .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#targetClass> <http://w3id.org/rml/TriplesMap> .
+<http://w3id.org/rml/shapes/RMLIterableShape> <http://www.w3.org/ns/shacl#property> _:nb4073b1eaaaa4c6d8eaa751651009706b2 .
+_:n8b314841b8f1402c8179c0abd21b17b0b20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n8b314841b8f1402c8179c0abd21b17b0b16 .
+<http://w3id.org/rml/shapes/RMLTermMapShape> <http://www.w3.org/ns/shacl#or> _:Nde30a383d9cf4a1aa352df2c93d05b7c .
+_:n1411e73ead8e410390ba935a1aae3885b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n1411e73ead8e410390ba935a1aae3885b3 .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/BlankNode> .
+<http://w3id.org/rml/shapes/RMLSubjectMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLSubjectMapORPredicateObjectMapShape> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:language/rml:languageMap and rml:datatype/rml:datatypeMap\n        may only be provided once and not at the same time.\n        " .
+_:nb95e36dfe2d14214b2b7a390db06555ab27 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLLogicalViewShape> .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#property> _:n2e72720998a04bf7a3869c476879b7d1b3 .
+_:n8b314841b8f1402c8179c0abd21b17b0b33 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b8 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Specifies the datatype of the object component for the generated \n        RDF triples.\n        " .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb16 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Specifies the object for the generated RDF triples.\n        " .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/parentMap> .
+_:n4faadd2a985d4fc6b35e353da94df10fb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/graphMap> .
+_:nb31bc0e4a2414395ab00c127f735f089b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/class> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb5 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Specifies the parent of the object component for joining.\n        " .
+<http://w3id.org/rml/shapes/RMLDatatypeMapShape> <http://www.w3.org/ns/shacl#message> "\n    rml:DatatypeMap must specify an rml:template, rml:reference, or rml:constant\n    with the IRI of the datatype.\n    " .
+_:n59f49f0be26f435080d9abf083ce0a3fb11 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/termType> .
+<http://w3id.org/rml/shapes/RMLJoinShape> <http://www.w3.org/ns/shacl#property> _:nff38e38b9aa34c9393b2c79b84c7ab0cb1 .
+<http://w3id.org/rml/shapes/RMLNamespaceShape> <http://www.w3.org/2000/01/rdf-schema#label> "Namespace" .
+<http://w3id.org/rml/shapes/RMLPredicateMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n65852d54fe0841c5902c96267f13c1b8b1 <http://www.w3.org/2000/01/rdf-schema#label> "rml:mode" .
+<http://w3id.org/rml/shapes/IterableFieldShape> <http://www.w3.org/ns/shacl#not> <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
+_:nb95e36dfe2d14214b2b7a390db06555ab19 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nb95e36dfe2d14214b2b7a390db06555ab17 .
+_:nb31bc0e4a2414395ab00c127f735f089b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        The subject value generated will be asserted as an instance of this\n        RDFS class.\n        " .
+<http://w3id.org/rml/shapes/LogicalViewJoinShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/LeafExpressionFieldShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/ExpressionFieldShape> .
+<http://w3id.org/rml/shapes/RMLLanguageMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "LanguageMap" .
+_:nb95e36dfe2d14214b2b7a390db06555ab4 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/innerJoin> .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nb0c7dd39431146288dc3cb77f4c4b071b1 <http://www.w3.org/ns/shacl#description> "\r\n        property targetView specifies the LogicalView target of the InclusionAnnotation annotation.\r\n        " .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/URI> .
+_:n8b314841b8f1402c8179c0abd21b17b0b10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/subject> .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#property> _:n2e72720998a04bf7a3869c476879b7d1b5 .
+<http://w3id.org/rml/shapes/RMLParentMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b7 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db7 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:nb95e36dfe2d14214b2b7a390db06555ab20 <http://www.w3.org/ns/shacl#path> _:nb95e36dfe2d14214b2b7a390db06555ab21 .
+<http://w3id.org/rml/shapes/RMLObjectMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/IRI> .
+_:nbc3ecc365ab04ca9971703f64202637db2 <http://www.w3.org/ns/shacl#message> "\r\n        At least one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.\r\n        " .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b1 <http://www.w3.org/ns/shacl#minCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/root> .
+<http://w3id.org/rml/shapes/RMLTermMapShape> <http://www.w3.org/ns/shacl#property> _:n59f49f0be26f435080d9abf083ce0a3fb1 .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b2 <http://www.w3.org/ns/shacl#in> _:nf971d602ca26417dbffe9ea5d8aa36a8b3 .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        The target (rml:target) locates the output target. It is a URI\n        that represents the target where it must export generated RDF triples\n        to.\n        " .
+_:nb95e36dfe2d14214b2b7a390db06555ab20 <http://www.w3.org/ns/shacl#disjoint> <http://w3id.org/rml/field> .
+_:nb4073b1eaaaa4c6d8eaa751651009706b2 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n65852d54fe0841c5902c96267f13c1b8b1 <http://www.w3.org/ns/shacl#minCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n8b314841b8f1402c8179c0abd21b17b0b11 <http://www.w3.org/ns/shacl#message> "\n        rml:SubjectMap must be an IRI or blank node.\n        " .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb6 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b2 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLJoinShape> <http://www.w3.org/ns/shacl#property> _:nff38e38b9aa34c9393b2c79b84c7ab0cb5 .
+_:nb95e36dfe2d14214b2b7a390db06555ab4 <http://www.w3.org/ns/shacl#message> "\n        The value of a rml:innerJoin property for a rml:LogicalView must be a resource.\n        " .
+<http://w3id.org/rml/shapes/RMLIterableShape> <http://www.w3.org/ns/shacl#property> _:nb4073b1eaaaa4c6d8eaa751651009706b1 .
+_:N5bb8883a52984829bda04e79e0bf7921 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:naf45737c17c54955bb099a1b6d42540bb5 .
+_:nb4073b1eaaaa4c6d8eaa751651009706b2 <http://www.w3.org/2000/01/rdf-schema#label> "rml:iterator" .
+_:n2e72720998a04bf7a3869c476879b7d1b3 <http://www.w3.org/ns/shacl#message> "\n        rml:template must be a string with well-formed brace delimiters:\n        every unescaped '{' must be closed by an unescaped '}' with no\n        unescaped braces in between, and every literal '{', '}', or '\\'\n        (both inside and outside reference expressions) must be\n        backslash-escaped.\n        " .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/RMLParentMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Parent Map.\n    " .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b2 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b3 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/logicalTarget> .
+<http://w3id.org/rml/shapes/RMLLogicalSourceShape> <http://www.w3.org/ns/shacl#property> _:ncba5e4eee39f4bfeb4a8d1861492f2f3b1 .
+<http://w3id.org/rml/shapes/RMLNamespaceShape> <http://www.w3.org/ns/shacl#property> _:n587f4b80e9c5414e8fee30a7a9e9da1db6 .
+_:n8b314841b8f1402c8179c0abd21b17b0b20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n1b0a2a677c2749eaa9e7aa1292ae387eb4 .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b2 <http://www.w3.org/ns/shacl#message> "\n        One rml:gatherAs is required.\n        " .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db6 <http://www.w3.org/ns/shacl#message> "\n        rml:namespacePrefix must be provided exactly once as a string\n        Literal.\n        " .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb7 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/InclusionAnnotationShape> <http://www.w3.org/ns/shacl#property> _:nb0c7dd39431146288dc3cb77f4c4b071b1 .
+<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n1b0a2a677c2749eaa9e7aa1292ae387eb16 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb11 <http://www.w3.org/ns/shacl#or> _:n1b0a2a677c2749eaa9e7aa1292ae387eb14 .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "TriplesMap" .
+_:n035b37fbcb414938bd22d260a38f20fab2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLExpressionMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n1411e73ead8e410390ba935a1aae3885b1 <http://www.w3.org/2000/01/rdf-schema#label> "rml:path" .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb12 <http://www.w3.org/2000/01/rdf-schema#label> "child" .
+<http://w3id.org/rml/shapes/RMLGraphMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLTermMapShape> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b2 <http://www.w3.org/2000/01/rdf-schema#label> "rml:encoding" .
+<http://w3id.org/rml/shapes/RMLGraphMapShape> <http://www.w3.org/ns/shacl#property> _:ncc068b3a399f4ee3a7202cb35c2b26d8b1 .
+_:n4faadd2a985d4fc6b35e353da94df10fb5 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/graphMap> .
+<http://w3id.org/rml/shapes/RMLFilePathShape> <http://www.w3.org/ns/shacl#property> _:n1411e73ead8e410390ba935a1aae3885b1 .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#or> _:n8b314841b8f1402c8179c0abd21b17b0b5 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb7 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Either an rml:object or rml:objectMap must be provided, not multiple.\n        " .
+<http://w3id.org/rml/shapes/RMLDatatypeMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Datatype Map.\n    " .
+_:nb95e36dfe2d14214b2b7a390db06555ab26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#SPARQLConstraint> .
+<http://w3id.org/rml/shapes/RMLGatherMapShape> <http://www.w3.org/ns/shacl#property> _:nf971d602ca26417dbffe9ea5d8aa36a8b1 .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/ns/shacl#property> _:n2e72720998a04bf7a3869c476879b7d1b4 .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/IRI> .
+_:nb4073b1eaaaa4c6d8eaa751651009706b1 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#BlankNodeOrIRI> .
+_:n6e259576dee647e68e40ee38fe848448b1 <http://www.w3.org/ns/shacl#maxCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/InclusionAnnotationShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/IterableFieldShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLIterableShape> .
+_:n1411e73ead8e410390ba935a1aae3885b2 <http://www.w3.org/ns/shacl#xone> _:n1411e73ead8e410390ba935a1aae3885b6 .
+_:n59f49f0be26f435080d9abf083ce0a3fb2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/IRI> .
+<http://w3id.org/rml/shapes/RMLXPathReferenceFormulationShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/ns/shacl#property> _:nb95e36dfe2d14214b2b7a390db06555ab8 .
+_:n2e72720998a04bf7a3869c476879b7d1b2 <http://www.w3.org/ns/shacl#alternativePath> _:N4b3d729b46824c07b675db89d0be45cf .
+_:n2e72720998a04bf7a3869c476879b7d1b4 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        A property for indicating whether a term map is a constant-valued term \n        map.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b13 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> .
+<http://w3id.org/rml/shapes/RMLIterableShape> <http://www.w3.org/ns/shacl#message> "\r\n    Iterable must specify how to generate logical iterations on a data source.\r\n    " .
+_:nbc3ecc365ab04ca9971703f64202637db2 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/ns/shacl#property> _:nb95e36dfe2d14214b2b7a390db06555ab6 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb7 <http://www.w3.org/ns/shacl#message> "\n        Either an rml:object or rml:objectMap must be provided, not multiple\n        " .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db6 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/URI> .
+_:N62063121a309428d89fc044ea2fdeda8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nf106a32cee6e4b8091a0d24c209afc75b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Specifies the Triples Map element corresponding to the parent data\n        source of the foreign key constraint.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b30 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nb95e36dfe2d14214b2b7a390db06555ab12 <http://www.w3.org/ns/shacl#alternativePath> _:nb95e36dfe2d14214b2b7a390db06555ab13 .
+<http://w3id.org/rml/shapes/FieldShape> <http://www.w3.org/2000/01/rdf-schema#label> "Field" .
+_:n4faadd2a985d4fc6b35e353da94df10fb1 <http://www.w3.org/ns/shacl#path> _:n4faadd2a985d4fc6b35e353da94df10fb2 .
+<http://w3id.org/rml/shapes/RMLRefObjectMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Reference Object Map.\n    " .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b3 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLLogicalTargetShape> .
+_:nb95e36dfe2d14214b2b7a390db06555ab13 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/leftJoin> .
+_:nb95e36dfe2d14214b2b7a390db06555ab2 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/FieldShape> .
+_:n03f056871c004dd3a9e490ad9643c2cbb1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/null> .
+<http://w3id.org/rml/shapes/RMLIterableShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/UnsafeIRI> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        At least one rml:predicate or rml:predicateMap must be provided.\n        " .
+_:n1411e73ead8e410390ba935a1aae3885b5 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+<http://w3id.org/rml/shapes/LogicalViewJoinShape> <http://www.w3.org/2000/01/rdf-schema#label> "LogicalViewJoin" .
+_:nd391722810e340ac9414f6a00f3f3b0fb12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#message> "\n    Triples Map requires exactly one rml:subject or one rml:subjectMap and zero\n    or more rml:predicateObjectMaps.\n    " .
+_:nb4073b1eaaaa4c6d8eaa751651009706b2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/iterator> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n4972f8b390ee47f5aa35e2fa2cbc96d0b4 .
+_:n2e72720998a04bf7a3869c476879b7d1b1 <http://www.w3.org/ns/shacl#message> "\n        Only one of rml:template, rml:constant, or rml:reference is allowed.\n        " .
+_:nb4073b1eaaaa4c6d8eaa751651009706b2 <http://www.w3.org/ns/shacl#message> "\r\n        rml:iterator specifies the iterator to iterate over\r\n        the data source, and may be provided at most once.\r\n        " .
+<http://w3id.org/rml/shapes/FieldShape> <http://www.w3.org/ns/shacl#property> _:nd391722810e340ac9414f6a00f3f3b0fb3 .
+_:n8b314841b8f1402c8179c0abd21b17b0b30 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n8b314841b8f1402c8179c0abd21b17b0b28 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b9 <http://www.w3.org/ns/shacl#pattern> "^((?:(en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang))|((?:([A-Za-z]{2,3}(-(?:[A-Za-z]{3}(-[A-Za-z]{3}){0,2}))?)|[A-Za-z]{4})(-(?:[A-Za-z]{4}))?(-(?:[A-Za-z]{2}|[0-9]{3}))?(-(?:[A-Za-z0-9]{5,8}|[0-9][A-Za-z0-9]{3}))*(-(?:[0-9A-WY-Za-wy-z](-[A-Za-z0-9]{2,8})+))*(-(?:x(-[A-Za-z0-9]{1,8})+))?)|(?:x(-[A-Za-z0-9]{1,8})+))$" .
+_:nb95e36dfe2d14214b2b7a390db06555ab24 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nb95e36dfe2d14214b2b7a390db06555ab25 .
+_:nb95e36dfe2d14214b2b7a390db06555ab14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/innerJoin> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb12 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/child> .
+_:N2ce7800b47d449c39fd6fc8f91b61dbf <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/reference> .
+<http://w3id.org/rml/shapes/RMLXPathReferenceFormulationShape> <http://www.w3.org/ns/shacl#message> "\n    A structured XPath reference formulation must be typed\n    rml:XPathReferenceFormulation, and MAY specify zero or more\n    rml:namespace properties.\n    " .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:ncc068b3a399f4ee3a7202cb35c2b26d8b4 .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db6 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        The prefix used for the XML namespace.\n        " .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n03f056871c004dd3a9e490ad9643c2cbb1 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:n6e259576dee647e68e40ee38fe848448b1 <http://www.w3.org/ns/shacl#description> "\r\n        A leaf expression field is an expression field without nested fields.\r\n        " .
+_:Nde30a383d9cf4a1aa352df2c93d05b7c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n59f49f0be26f435080d9abf083ce0a3fb14 .
+_:n8b314841b8f1402c8179c0abd21b17b0b7 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Either a rml:subject, rml:subjectMap is required, not multiple.\n        " .
+_:n59f49f0be26f435080d9abf083ce0a3fb15 <http://www.w3.org/ns/shacl#message> "\n            Only one of rml:template, rml:constant, or rml:reference is allowed.\n            " .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b7 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/allowEmptyListAndContainer> .
+_:n59f49f0be26f435080d9abf083ce0a3fb7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n149c6f9e4fd1456bae5eca2faec97093b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n149c6f9e4fd1456bae5eca2faec97093b6 .
+_:n1411e73ead8e410390ba935a1aae3885b7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n1411e73ead8e410390ba935a1aae3885b4 .
+_:N83e3c3b9812d459babc2c2fa348e6583 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n2e72720998a04bf7a3869c476879b7d1b3 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:nb31bc0e4a2414395ab00c127f735f089b1 <http://www.w3.org/2000/01/rdf-schema#label> "class" .
+_:n8b314841b8f1402c8179c0abd21b17b0b25 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n8b314841b8f1402c8179c0abd21b17b0b23 .
+_:nf8ec2c37b7b74639ad91191739e57ee9b1 <http://www.w3.org/ns/shacl#minCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb7 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n56f5c96ed82b4c40b4d259057cb96951b1 <http://www.w3.org/ns/shacl#message> "\n        Only one of rml:template, rml:constant, or rml:reference is allowed.\n        " .
+<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLSourceShape> <http://www.w3.org/ns/shacl#message> "\n    RML Source accepts one or multiple rml:null, one rml:compression,\n    and one rml:encoding. All of them are optional.\n    " .
+_:Nd2204d8ff2d346b1bdce7a1283b8bd3c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/template> .
+_:n8b314841b8f1402c8179c0abd21b17b0b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n8b314841b8f1402c8179c0abd21b17b0b6 .
+_:n1411e73ead8e410390ba935a1aae3885b1 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:naf45737c17c54955bb099a1b6d42540bb2 <http://www.w3.org/ns/shacl#zeroOrMorePath> <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> .
+<http://w3id.org/rml/shapes/FieldShape> <http://www.w3.org/ns/shacl#property> _:nd391722810e340ac9414f6a00f3f3b0fb1 .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db6 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n59f49f0be26f435080d9abf083ce0a3fb15 <http://www.w3.org/2000/01/rdf-schema#label> "template/constant/reference" .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb1 <http://www.w3.org/ns/shacl#path> _:n1b0a2a677c2749eaa9e7aa1292ae387eb2 .
+_:ncba5e4eee39f4bfeb4a8d1861492f2f3b1 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLSourceShape> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb5 <http://www.w3.org/ns/shacl#message> "\n        rml:parentMap must point to a rml:ParentMap specifying the \n        parent tag of the string Literal.\n        " .
+_:nb4073b1eaaaa4c6d8eaa751651009706b1 <http://www.w3.org/2000/01/rdf-schema#label> "rml:referenceFormulation" .
+_:n2e72720998a04bf7a3869c476879b7d1b5 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/reference> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db2 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLXPathReferenceFormulationShape> .
+<http://w3id.org/rml/shapes/FieldShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\r\n    A field is a construct that gives a name to data derived from an abstract logical source.\r\n    " .
+_:nd391722810e340ac9414f6a00f3f3b0fb2 <http://www.w3.org/ns/shacl#message> "\r\n        The value of a rml:field property for a rml:Field must be a resource.\r\n        " .
+_:nb95e36dfe2d14214b2b7a390db06555ab2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/field> .
+<http://w3id.org/rml/shapes/RMLObjectMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "ObjectMap" .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/objectMap> .
+_:nd391722810e340ac9414f6a00f3f3b0fb8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b1 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+<http://w3id.org/rml/shapes/RMLGraphMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "GraphMap" .
+<http://w3id.org/rml/shapes/RMLTermMapShape> <http://www.w3.org/ns/shacl#message> "\n    Term Map is an Expression Map with optionally a term type specified.\n    " .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n8b314841b8f1402c8179c0abd21b17b0b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        A logical source is any source that is mapped to RDF triples.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b35 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n8b314841b8f1402c8179c0abd21b17b0b27 .
+_:nb0c7dd39431146288dc3cb77f4c4b071b2 <http://www.w3.org/ns/shacl#description> "\r\n        property targetFields specifies the Fields target of the InclusionAnnotation.\r\n        " .
+_:nb95e36dfe2d14214b2b7a390db06555ab1 <http://www.w3.org/ns/shacl#description> "\n        The source of the logical view. This is the logical source from which the logical view is derived.\n        " .
+_:Nc56f639faa05454da25107510963ab0b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/constant> .
+<http://w3id.org/rml/shapes/RMLTermMapShape> <http://www.w3.org/ns/shacl#or> _:n59f49f0be26f435080d9abf083ce0a3fb12 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n1b0a2a677c2749eaa9e7aa1292ae387eb12 .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db5 <http://www.w3.org/ns/shacl#message> "\n        rml:namespace must reference a valid RML Namespace.\n        " .
+<http://w3id.org/rml/shapes/RMLModeShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n4972f8b390ee47f5aa35e2fa2cbc96d0b6 .
+_:nb95e36dfe2d14214b2b7a390db06555ab13 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nb95e36dfe2d14214b2b7a390db06555ab14 .
+_:n59f49f0be26f435080d9abf083ce0a3fb9 <http://www.w3.org/ns/shacl#maxCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nd391722810e340ac9414f6a00f3f3b0fb2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/field> .
+_:nd391722810e340ac9414f6a00f3f3b0fb1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/fieldName> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b1 <http://www.w3.org/2000/01/rdf-schema#label> "languageMap/datatypeMap/language/datatype" .
+_:nd391722810e340ac9414f6a00f3f3b0fb7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nd391722810e340ac9414f6a00f3f3b0fb8 .
+<http://w3id.org/rml/shapes/RMLGraphMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Graph Map.\n    " .
+<http://w3id.org/rml/shapes/RMLLogicalSourceShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    A logical source is any source that is mapped to RDF triples.\n    " .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/ns/shacl#property> _:nb95e36dfe2d14214b2b7a390db06555ab20 .
+_:n4faadd2a985d4fc6b35e353da94df10fb2 <http://www.w3.org/ns/shacl#alternativePath> _:n4faadd2a985d4fc6b35e353da94df10fb3 .
+_:N7f62284027334594bef3125681e03e8a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b2 <http://www.w3.org/ns/shacl#alternativePath> _:n4972f8b390ee47f5aa35e2fa2cbc96d0b3 .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/ns/shacl#property> _:nb95e36dfe2d14214b2b7a390db06555ab3 .
+_:n8b314841b8f1402c8179c0abd21b17b0b26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n8b314841b8f1402c8179c0abd21b17b0b24 .
+_:nb95e36dfe2d14214b2b7a390db06555ab18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nb95e36dfe2d14214b2b7a390db06555ab9 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b8 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLDatatypeMapShape> .
+_:n4faadd2a985d4fc6b35e353da94df10fb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n4faadd2a985d4fc6b35e353da94df10fb4 .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/ns/shacl#property> _:nb95e36dfe2d14214b2b7a390db06555ab1 .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b2 <http://www.w3.org/2000/01/rdf-schema#label> "gatherAs" .
+<http://w3id.org/rml/shapes/RMLSubjectMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLTermMapShape> .
+_:N7f62284027334594bef3125681e03e8a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n8b314841b8f1402c8179c0abd21b17b0b34 .
+_:n8b314841b8f1402c8179c0abd21b17b0b34 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n8b314841b8f1402c8179c0abd21b17b0b35 .
+<http://w3id.org/rml/shapes/RMLCurrentWorkingDirectoryShape> <http://www.w3.org/ns/shacl#hasValue> <http://w3id.org/rml/CurrentWorkingDirectory> .
+_:n66a7573eeae5472492098bee3158952eb2 <http://www.w3.org/ns/shacl#select> "\n                PREFIX rml: <http://w3id.org/rml/>\n                SELECT $this\n                WHERE {\n                    $this rml:constant ?value .\n                    FILTER (lang(?value) != \"\")\n                }\n            " .
+<http://w3id.org/rml/shapes/FieldShape> <http://www.w3.org/ns/shacl#xone> _:nd391722810e340ac9414f6a00f3f3b0fb11 .
+<http://w3id.org/rml/shapes/InclusionAnnotationShape> <http://www.w3.org/ns/shacl#message> "\r\n    Node must have a valid rml:InclusionAnnotation description.\r\n    Each InclusionAnnotation annotation requires (additionally to the inherited `rml:onFields` property):\r\n    - Exactly one `rml:targetView` property\r\n    - Exactly one `rml:targetFields` property.\r\n    " .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b2 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLFormatShape> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/StructuralAnnotationShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n59f49f0be26f435080d9abf083ce0a3fb12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n59f49f0be26f435080d9abf083ce0a3fb13 .
+_:ne13c8b1c609d4fcfbf510ed85df402fdb1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLChildMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#property> _:n8b314841b8f1402c8179c0abd21b17b0b14 .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/parent> .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#property> _:n8b314841b8f1402c8179c0abd21b17b0b1 .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/2000/01/rdf-schema#label> "LogicalView" .
+_:n035b37fbcb414938bd22d260a38f20fab1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n035b37fbcb414938bd22d260a38f20fab2 .
+_:nb95e36dfe2d14214b2b7a390db06555ab10 <http://www.w3.org/ns/shacl#inversePath> <http://w3id.org/rml/parentLogicalView> .
+_:nb0c7dd39431146288dc3cb77f4c4b071b2 <http://www.w3.org/ns/shacl#message> "\r\n        Exactly one rml:targetFields property must be specified for each rml:InclusionAnnotation.\r\n        " .
+_:nb31bc0e4a2414395ab00c127f735f089b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/UnsafeURI> .
+<http://w3id.org/rml/shapes/RMLJoinShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Join.\n    " .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b7 <http://www.w3.org/2000/01/rdf-schema#label> "allowEmptyListAndContainer" .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/datatypeMap> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/StructuralAnnotationShape> <http://www.w3.org/ns/shacl#property> _:ne13c8b1c609d4fcfbf510ed85df402fdb1 .
+_:nb95e36dfe2d14214b2b7a390db06555ab3 <http://www.w3.org/ns/shacl#description> "\n        A left join of the logical view.\n        " .
+_:n65852d54fe0841c5902c96267f13c1b8b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:mode specifies in which mode the target is opened such as read-only,\n        write-only, both, etc.\n        " .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb16 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/object> .
+_:n59f49f0be26f435080d9abf083ce0a3fb1 <http://www.w3.org/ns/shacl#message> "\n        rml:termType must be either rml:IRI, rml:UnsafeIRI,\n        rml:URI, rml:UnsafeURI, rml:Literal, or rml:BlankNode for a Term Map.\n        May only be provided once.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b31 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/predicateMap> .
+_:nb95e36dfe2d14214b2b7a390db06555ab14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n56f5c96ed82b4c40b4d259057cb96951b1 <http://www.w3.org/ns/shacl#path> _:n56f5c96ed82b4c40b4d259057cb96951b2 .
+<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> <http://www.w3.org/ns/shacl#or> _:Nd4f05970c2bf4195920486df16a5522c .
+_:n8b314841b8f1402c8179c0abd21b17b0b28 <http://www.w3.org/ns/shacl#alternativePath> _:Ne2b2ce4c9685491ebb2132e2c8958cc9 .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b1 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLTargetShape> .
+_:nf106a32cee6e4b8091a0d24c209afc75b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nb4073b1eaaaa4c6d8eaa751651009706b2 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db6 <http://www.w3.org/2000/01/rdf-schema#label> "rml:namespacePrefix" .
+_:nb95e36dfe2d14214b2b7a390db06555ab23 <http://www.w3.org/ns/shacl#alternativePath> _:nb95e36dfe2d14214b2b7a390db06555ab24 .
+_:Ne85129e59abb4274a3957601bbfd279b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:N75cd6892bd67453db3a12db4925cc6cc .
+<http://w3id.org/rml/shapes/RMLLanguageMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n2e72720998a04bf7a3869c476879b7d1b4 <http://www.w3.org/2000/01/rdf-schema#label> "constant" .
+_:n2e72720998a04bf7a3869c476879b7d1b5 <http://www.w3.org/ns/shacl#message> "\n        rml:reference must be a string.\n        " .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb11 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        An ObjectMap element to generate the object component of the \n        (predicate, object) pair from a logical table row or iterator.\n        " .
+_:n2e72720998a04bf7a3869c476879b7d1b4 <http://www.w3.org/ns/shacl#message> "\n        rml:constant must be an IRI or Literal.\n        " .
+<http://w3id.org/rml/shapes/RMLTermMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "TermMap" .
+_:nf8ec2c37b7b74639ad91191739e57ee9b3 <http://www.w3.org/ns/shacl#property> _:nf8ec2c37b7b74639ad91191739e57ee9b4 .
+_:n65852d54fe0841c5902c96267f13c1b8b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nd391722810e340ac9414f6a00f3f3b0fb1 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb6 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Specifies the predicate for the generated triple from the logical table \n        row or iterator.\n        " .
+<http://w3id.org/rml/shapes/RMLLanguageMapShape> <http://www.w3.org/ns/shacl#property> _:n66a7573eeae5472492098bee3158952eb1 .
+_:n8b314841b8f1402c8179c0abd21b17b0b13 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/predicateObjectMap> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db7 <http://www.w3.org/ns/shacl#message> "\n        rml:namespaceURL must be provided exactly once as a Literal.\n        " .
+<http://w3id.org/rml/shapes/RMLJoinShape> <http://www.w3.org/ns/shacl#property> _:nff38e38b9aa34c9393b2c79b84c7ab0cb6 .
+_:naf45737c17c54955bb099a1b6d42540bb5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:naf45737c17c54955bb099a1b6d42540bb6 .
+_:nf8ec2c37b7b74639ad91191739e57ee9b1 <http://www.w3.org/ns/shacl#message> "\n        rml:compression must be provided as an IRI.\n        " .
+_:n59f49f0be26f435080d9abf083ce0a3fb5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/UnsafeURI> .
+_:ne13c8b1c609d4fcfbf510ed85df402fdb1 <http://www.w3.org/ns/shacl#description> "\r\n        property onFields specifies the fields in LogicalView that are involved by the structural annotation. The semantics of this involvement depends on the specific annotation.\r\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b12 <http://www.w3.org/2000/01/rdf-schema#label> "subject" .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb16 <http://www.w3.org/ns/shacl#message> "\n        rml:object must be an IRI and be provided once.\n        " .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b7 <http://www.w3.org/ns/shacl#message> "\n        Zero or one rml:allowEmptyListAndContainer is required with datatype\n        xsd:boolean.\n        " .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb6 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/parent> .
+_:n59f49f0be26f435080d9abf083ce0a3fb1 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/encoding> .
+<http://w3id.org/rml/shapes/RMLPredicateMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "PredicateMap" .
+_:nb95e36dfe2d14214b2b7a390db06555ab16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nb95e36dfe2d14214b2b7a390db06555ab11 .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db5 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/namespace> .
+_:n59f49f0be26f435080d9abf083ce0a3fb2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n59f49f0be26f435080d9abf083ce0a3fb3 .
+<http://w3id.org/rml/shapes/RMLJoinShape> <http://www.w3.org/2000/01/rdf-schema#label> "Join" .
+<http://w3id.org/rml/shapes/FieldShape> <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#BlankNodeOrIRI> .
+_:nb95e36dfe2d14214b2b7a390db06555ab16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n587f4b80e9c5414e8fee30a7a9e9da1db4 .
+_:n59f49f0be26f435080d9abf083ce0a3fb16 <http://www.w3.org/ns/shacl#alternativePath> _:N4b3d729b46824c07b675db89d0be45cf .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:ncc068b3a399f4ee3a7202cb35c2b26d8b3 .
+<http://w3id.org/rml/shapes/RMLLanguageMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Language Map.\n    " .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b9 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Language tag for the object.\n        " .
+_:n59f49f0be26f435080d9abf083ce0a3fb1 <http://www.w3.org/2000/01/rdf-schema#label> "termType" .
+<http://w3id.org/rml/shapes/RMLXPathReferenceFormulationShape> <http://www.w3.org/ns/shacl#property> _:n587f4b80e9c5414e8fee30a7a9e9da1db5 .
+<http://w3id.org/rml/shapes/RMLObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n4972f8b390ee47f5aa35e2fa2cbc96d0b8 .
+_:nf106a32cee6e4b8091a0d24c209afc75b2 <http://www.w3.org/2000/01/rdf-schema#label> "joinCondition" .
+_:nb95e36dfe2d14214b2b7a390db06555ab2 <http://www.w3.org/ns/shacl#description> "\n        A field of the logical view.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b17 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n8b314841b8f1402c8179c0abd21b17b0b18 .
+<http://w3id.org/rml/shapes/ExpressionFieldShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n59f49f0be26f435080d9abf083ce0a3fb6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/Literal> .
+<http://w3id.org/rml/shapes/InclusionAnnotationShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\r\n    The InclusionAnnotaton annotation (rml:InclusionAnnotation) is analogous to the notion of inclusion dependency in databases.\r\n    " .
+<http://w3id.org/rml/shapes/RMLGatherMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "GatherMap" .
+_:ncba5e4eee39f4bfeb4a8d1861492f2f3b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/source> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b1 <http://www.w3.org/ns/shacl#path> _:n4972f8b390ee47f5aa35e2fa2cbc96d0b2 .
+_:nf8ec2c37b7b74639ad91191739e57ee9b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nb95e36dfe2d14214b2b7a390db06555ab8 <http://www.w3.org/ns/shacl#disjoint> <http://w3id.org/rml/leftJoin> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b8 <http://www.w3.org/2000/01/rdf-schema#label> "datatypeMap" .
+_:nb95e36dfe2d14214b2b7a390db06555ab26 <http://www.w3.org/ns/shacl#select> "\n            PREFIX rml: <http://w3id.org/rml/>\n            SELECT DISTINCT $this\n            WHERE {\n                $this (rml:field|((rml:leftJoin|rml:innerJoin)/rml:field)) ?f1 .\n                $this (rml:field|((rml:leftJoin|rml:innerJoin)/rml:field)) ?f2 .\n                ?f1 rml:fieldName ?name .\n                ?f2 rml:fieldName ?name .\n                FILTER (?f1 != ?f2)\n            }\n        " .
+<http://w3id.org/rml/shapes/InclusionAnnotationShape> <http://www.w3.org/2000/01/rdf-schema#label> "InclusionAnnotation" .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n59f49f0be26f435080d9abf083ce0a3fb1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        An IRI indicating whether a generated term should be an IRI,\n        Blank Node, or a Literal.\n        " .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb12 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+<http://w3id.org/rml/shapes/RMLDatatypeMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLTermMapShape> .
+_:nb95e36dfe2d14214b2b7a390db06555ab20 <http://www.w3.org/ns/shacl#disjoint> <http://w3id.org/rml/viewOn> .
+<http://w3id.org/rml/shapes/RMLFormatShape> <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:nbc3ecc365ab04ca9971703f64202637db1 <http://www.w3.org/ns/shacl#message> "\r\n        Exactly one rml:parentLogicalView property must be specified for a rml:LogicalViewJoin, with a resource as its value.\r\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b11 <http://www.w3.org/2000/01/rdf-schema#label> "subjectMap" .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b1 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLStrategyShape> .
+_:nbc3ecc365ab04ca9971703f64202637db2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/joinCondition> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/datatype> .
+<http://w3id.org/rml/shapes/RMLSubjectMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Subject Map.\n    " .
+<http://w3id.org/rml/shapes/RMLFormatShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:nb0c7dd39431146288dc3cb77f4c4b071b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb5 <http://www.w3.org/2000/01/rdf-schema#label> "parentMap" .
+<http://w3id.org/rml/shapes/RMLNamespaceShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/RMLTermMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLExpressionMapShape> <http://www.w3.org/ns/shacl#property> _:n56f5c96ed82b4c40b4d259057cb96951b1 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb2 <http://www.w3.org/ns/shacl#alternativePath> _:n1b0a2a677c2749eaa9e7aa1292ae387eb3 .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/childMap> .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/ns/shacl#property> _:nb95e36dfe2d14214b2b7a390db06555ab5 .
+_:n8b314841b8f1402c8179c0abd21b17b0b3 <http://www.w3.org/ns/shacl#path> _:n8b314841b8f1402c8179c0abd21b17b0b25 .
+_:nf8ec2c37b7b74639ad91191739e57ee9b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/compression> .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/serialization> .
+_:n8b314841b8f1402c8179c0abd21b17b0b14 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+<http://w3id.org/rml/shapes/RMLSourceShape> <http://www.w3.org/ns/shacl#property> _:n03f056871c004dd3a9e490ad9643c2cbb1 .
+<http://w3id.org/rml/shapes/RMLLogicalSourceShape> <http://www.w3.org/ns/shacl#message> "\n    RML Logical Source requires one rml:source and requires everyting\n    an Abstract Logical Source requires.\n    " .
+<http://w3id.org/rml/shapes/RMLLogicalTargetShape> <http://www.w3.org/ns/shacl#message> "\n    RML Logical Target requires one rml:target.\n    " .
+<http://w3id.org/rml/shapes/RMLObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n4972f8b390ee47f5aa35e2fa2cbc96d0b7 .
+_:n8b314841b8f1402c8179c0abd21b17b0b7 <http://www.w3.org/2000/01/rdf-schema#label> "subjectMap/subject" .
+_:nb95e36dfe2d14214b2b7a390db06555ab1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/viewOn> .
+<http://w3id.org/rml/shapes/RMLExpressionMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "ExpressionMap" .
+_:n1411e73ead8e410390ba935a1aae3885b1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n1411e73ead8e410390ba935a1aae3885b2 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:root defines the root against which a relative rml:path is\n        resolved: rml:CurrentWorkingDirectory, rml:MappingDirectory, or an\n        absolute path string Literal. Defaults to\n        rml:CurrentWorkingDirectory if not specified.\n        " .
+<http://w3id.org/rml/shapes/RMLSourceShape> <http://www.w3.org/2000/01/rdf-schema#label> "RML Source" .
+_:n8b314841b8f1402c8179c0abd21b17b0b12 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/subject> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Triples Map.\n    " .
+<http://w3id.org/rml/shapes/RMLLogicalTargetShape> <http://www.w3.org/2000/01/rdf-schema#label> "RML Logical Target" .
+_:n2e72720998a04bf7a3869c476879b7d1b4 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/constant> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b7 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLLanguageMapShape> .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb1 <http://www.w3.org/ns/shacl#message> "\n        rml:termType for Predicate Map can only be a rml:IRI, rml:UnsafeIRI,\n        rml:URI, or rml:UnsafeURI;\n        " .
+_:nb4073b1eaaaa4c6d8eaa751651009706b1 <http://www.w3.org/ns/shacl#message> "\r\n        rml:referenceFormulation must be a blank node or IRI specifying the\r\n        reference formulation on how to reference elements of a data source,\r\n        and may be provided at most once.\r\n        " .
+_:nb31bc0e4a2414395ab00c127f735f089b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/UnsafeIRI> .
+<http://w3id.org/rml/shapes/RMLLogicalSourceShape> <http://www.w3.org/2000/01/rdf-schema#label> "RML Logical Source" .
+<http://w3id.org/rml/shapes/RMLLogicalSourceShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/RMLSubjectMapShape> <http://www.w3.org/ns/shacl#property> _:nb31bc0e4a2414395ab00c127f735f089b2 .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b1 <http://www.w3.org/ns/shacl#message> "\n        rml:termType must be an rml:IRI, rml:UnsafeIRI, rml:URI,\n        rml:UnsafeURI, or rml:BlankNode for a Graph Map.\n        " .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/UnsafeIRI> .
+_:n56f5c96ed82b4c40b4d259057cb96951b1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n035b37fbcb414938bd22d260a38f20fab2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/cartesianProduct> .
+_:n8b314841b8f1402c8179c0abd21b17b0b27 <http://www.w3.org/ns/shacl#alternativePath> _:n8b314841b8f1402c8179c0abd21b17b0b31 .
+<http://w3id.org/rml/shapes/RMLTargetShape> <http://www.w3.org/2000/01/rdf-schema#label> "RML Target" .
+_:nd391722810e340ac9414f6a00f3f3b0fb6 <http://www.w3.org/ns/shacl#alternativePath> _:nd391722810e340ac9414f6a00f3f3b0fb7 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb5 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/predicateMap> .
+_:nb95e36dfe2d14214b2b7a390db06555ab5 <http://www.w3.org/ns/shacl#message> "\n       The value of a rml:structuralAnnotation property must be a resource.\n        " .
+_:nf8ec2c37b7b74639ad91191739e57ee9b2 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:encoding specifies the encoding to use when accessing the data \n        source. By default, UTF-8 is used.\n        " .
+_:n56f5c96ed82b4c40b4d259057cb96951b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n            Only one of rml:template, rml:constant, or rml:reference is\n            allowed.\n        " .
+<http://w3id.org/rml/shapes/RMLSubjectMapShape> <http://www.w3.org/ns/shacl#property> _:nb31bc0e4a2414395ab00c127f735f089b1 .
+_:n59f49f0be26f435080d9abf083ce0a3fb18 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/termType> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b1 <http://www.w3.org/ns/shacl#minCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLLogicalTargetShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    A logical target is any target to where generated RDF triples are exported\n    to.\n    " .
+<http://w3id.org/rml/shapes/IterableFieldShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n8b314841b8f1402c8179c0abd21b17b0b2 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/LogicalViewJoinShape> <http://www.w3.org/ns/shacl#property> _:nbc3ecc365ab04ca9971703f64202637db2 .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb11 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLChildMapShape> .
+_:n8b314841b8f1402c8179c0abd21b17b0b26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLSourceTargetShape> <http://www.w3.org/ns/shacl#property> _:nf8ec2c37b7b74639ad91191739e57ee9b1 .
+_:nb0c7dd39431146288dc3cb77f4c4b071b2 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n1b0a2a677c2749eaa9e7aa1292ae387eb13 .
+_:nf8ec2c37b7b74639ad91191739e57ee9b4 <http://www.w3.org/ns/shacl#path> _:nf8ec2c37b7b74639ad91191739e57ee9b5 .
+_:nf8ec2c37b7b74639ad91191739e57ee9b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:compression specifies the compression algorithm to use when\n        accessing the data source. By default, no compression is applied.\n        " .
+_:Nde30a383d9cf4a1aa352df2c93d05b7c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:Ne85129e59abb4274a3957601bbfd279b .
+<http://w3id.org/rml/shapes/FieldShape> <http://www.w3.org/ns/shacl#message> "\r\n    Node must have a valid rml:Field description.\r\n    rml:Field requires a rml:fieldName and may have zero or more rml:field properties.\r\n    Furthermore, subclass rml:ExpressionField requires what an rml:ExpressionMap requires, subclass rml:IterableField requires what an rml:Iterable requires,.\r\n    " .
+_:n8b314841b8f1402c8179c0abd21b17b0b34 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/predicateObjectMap> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb7 <http://www.w3.org/ns/shacl#path> _:nff38e38b9aa34c9393b2c79b84c7ab0cb8 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b8 <http://www.w3.org/ns/shacl#message> "\n        rml:datatypeMap must point to a rml:DatatypeMap specifying the\n        datatype of the Literal.\n        " .
+_:N667a332fc0d0470b8450e405f3e337b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/reference> .
+_:Ne3acfbae5c6c47c58f049cd58054107d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/subjectMap> .
+<http://w3id.org/rml/shapes/RMLNamespaceShape> <http://www.w3.org/ns/shacl#message> "\n    A Namespace requires exactly one rml:namespacePrefix and exactly one\n    rml:namespaceURL.\n    " .
+_:nbc3ecc365ab04ca9971703f64202637db3 <http://www.w3.org/ns/shacl#message> "\r\n        At least one rml:field property must be specified for a rml:LogicalViewJoin, with a leaf expression field as its value.\r\n        " .
+<http://w3id.org/rml/shapes/RMLIterableShape> <http://www.w3.org/2000/01/rdf-schema#label> "Iterable" .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n4972f8b390ee47f5aa35e2fa2cbc96d0b5 .
+<http://w3id.org/rml/shapes/RMLGatherMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n149c6f9e4fd1456bae5eca2faec97093b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n8b314841b8f1402c8179c0abd21b17b0b8 <http://www.w3.org/ns/shacl#alternativePath> _:n8b314841b8f1402c8179c0abd21b17b0b9 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb11 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/objectMap> .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b3 <http://www.w3.org/ns/shacl#message> "\n        rml:logicalTarget must reference a valid RML Logical Target.\n        " .
+_:n59f49f0be26f435080d9abf083ce0a3fb11 <http://www.w3.org/ns/shacl#maxCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n8b314841b8f1402c8179c0abd21b17b0b13 <http://www.w3.org/ns/shacl#message> "\n        rml:PredicateObjectMap must be an IRI or blank node.\n        " .
+_:nbc3ecc365ab04ca9971703f64202637db1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:ncba5e4eee39f4bfeb4a8d1861492f2f3b1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLParentMapShape> <http://www.w3.org/ns/shacl#message> "\n    rml:ParentMap must specify a literal referencing data in the parent data\n    source.\n    " .
+_:n8b314841b8f1402c8179c0abd21b17b0b12 <http://www.w3.org/ns/shacl#message> "\n        rml:subject must be an IRI or blank node.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n035b37fbcb414938bd22d260a38f20fab1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/append> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nf8ec2c37b7b74639ad91191739e57ee9b8 .
+<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n1b0a2a677c2749eaa9e7aa1292ae387eb11 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b10 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:n59f49f0be26f435080d9abf083ce0a3fb7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/BlankNode> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b8 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        RML Term Maps to gather in the collection or container.\n        " .
+_:naf45737c17c54955bb099a1b6d42540bb6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:naf45737c17c54955bb099a1b6d42540bb3 .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b1 <http://www.w3.org/ns/shacl#message> "\n        Zero or one rml:strategy is required.\n        " .
+_:ne13c8b1c609d4fcfbf510ed85df402fdb1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n4972f8b390ee47f5aa35e2fa2cbc96d0b9 .
+<http://w3id.org/rml/shapes/RMLSubjectMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:nb95e36dfe2d14214b2b7a390db06555ab26 <http://www.w3.org/ns/shacl#message> "Two distinct fields in this view's effective field set (its own fields plus any introduced by leftJoin/innerJoin) share the same rml:fieldName." .
+_:nb95e36dfe2d14214b2b7a390db06555ab1 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> .
+_:ncba5e4eee39f4bfeb4a8d1861492f2f3b2 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLLogicalSourceShape> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db6 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db7 <http://www.w3.org/2000/01/rdf-schema#label> "rml:namespaceURL" .
+_:N2ce7800b47d449c39fd6fc8f91b61dbf <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nf8ec2c37b7b74639ad91191739e57ee9b7 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb1 <http://www.w3.org/2000/01/rdf-schema#label> "predicate/predicateMap" .
+_:N85ef76aa3d9d4eefb303686daa43dc11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/datatypeMap> .
+_:n6e259576dee647e68e40ee38fe848448b1 <http://www.w3.org/ns/shacl#message> "\r\n        A leaf expression field has no nested fields.\r\n        " .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n1b0a2a677c2749eaa9e7aa1292ae387eb15 .
+_:nb31bc0e4a2414395ab00c127f735f089b2 <http://www.w3.org/ns/shacl#message> "\n        rml:termType must be a rml:IRI, rml:UnsafeIRI, rml:URI,\n        rml:UnsafeURI, or rml:BlankNode for a Subject Map.\n        " .
+_:n59f49f0be26f435080d9abf083ce0a3fb1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/termType> .
+_:ncc068b3a399f4ee3a7202cb35c2b26d8b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b2 <http://www.w3.org/2000/01/rdf-schema#label> "rml:serialization" .
+_:n65852d54fe0841c5902c96267f13c1b8b1 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLModeShape> .
+_:n66a7573eeae5472492098bee3158952eb2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#SPARQLConstraint> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n587f4b80e9c5414e8fee30a7a9e9da1db1 .
+_:n2e72720998a04bf7a3869c476879b7d1b5 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        A reference rml:reference is used to refer to a column in case of \n        databases, a record in case of CSV or TSV data source, an element in \n        case of XML data source, an object in case of a JSON data source, etc.\n\n        A reference must be a valid identifier, considering the reference \n        formulation (rml:referenceFormulation) specified. The reference can be\n        an absolute path, or a path relative to the iterator specified at the \n        logical source. \n        " .
+_:n2e72720998a04bf7a3869c476879b7d1b3 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        A template (format string) to specify how to generate a value for a \n        subject, predicate, or object, using one or more columns from a logical\n        table row or iterator.\n        " .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb6 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Specifies the parent of the object component for joining.\n        " .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b1 <http://www.w3.org/2000/01/rdf-schema#label> "rml:target" .
+<http://w3id.org/rml/shapes/RMLDatatypeMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:nd391722810e340ac9414f6a00f3f3b0fb1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n56f5c96ed82b4c40b4d259057cb96951b2 <http://www.w3.org/ns/shacl#alternativePath> _:N4b3d729b46824c07b675db89d0be45cf .
+_:n4faadd2a985d4fc6b35e353da94df10fb1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/InclusionAnnotationShape> <http://www.w3.org/ns/shacl#property> _:nb0c7dd39431146288dc3cb77f4c4b071b2 .
+_:n59f49f0be26f435080d9abf083ce0a3fb1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n2e72720998a04bf7a3869c476879b7d1b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n            Only one of rml:template, rml:constant, or rml:reference is\n            allowed.\n        " .
+<http://w3id.org/rml/shapes/RMLLanguageMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLExpressionMapShape> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nf8ec2c37b7b74639ad91191739e57ee9b3 .
+_:nd391722810e340ac9414f6a00f3f3b0fb11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nd391722810e340ac9414f6a00f3f3b0fb12 .
+_:ne13c8b1c609d4fcfbf510ed85df402fdb1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/onFields> .
+_:N4b3d729b46824c07b675db89d0be45cf <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:Nc56f639faa05454da25107510963ab0b .
+_:n1411e73ead8e410390ba935a1aae3885b2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/root> .
+_:nb31bc0e4a2414395ab00c127f735f089b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nb31bc0e4a2414395ab00c127f735f089b5 .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<http://w3id.org/rml/shapes/RMLTermMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db5 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLNamespaceShape> .
+_:nb95e36dfe2d14214b2b7a390db06555ab19 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "PredicateObjectMap" .
+<http://w3id.org/rml/shapes/RMLRefObjectMapShape> <http://www.w3.org/ns/shacl#message> "\n    rml:RefObjectMap must specify a rml:parentTriplesMap and zero or more \n    rml:joinConditions.\n    " .
+<http://w3id.org/rml/shapes/RMLObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n4972f8b390ee47f5aa35e2fa2cbc96d0b1 .
+_:nb95e36dfe2d14214b2b7a390db06555ab18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nb95e36dfe2d14214b2b7a390db06555ab19 .
+_:nb95e36dfe2d14214b2b7a390db06555ab5 <http://www.w3.org/ns/shacl#description> "\n        A structural annotation of the logical view.\n        " .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db1 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:nb0c7dd39431146288dc3cb77f4c4b071b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/targetView> .
+_:nb95e36dfe2d14214b2b7a390db06555ab7 <http://www.w3.org/ns/shacl#inversePath> <http://w3id.org/rml/targetView> .
+_:n149c6f9e4fd1456bae5eca2faec97093b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/AppendRead> .
+_:Ne3acfbae5c6c47c58f049cd58054107d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:N7f62284027334594bef3125681e03e8a .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b7 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#boolean> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb5 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/parentMap> .
+<http://w3id.org/rml/shapes/RMLChildMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Child Map.\n    " .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#property> _:n8b314841b8f1402c8179c0abd21b17b0b13 .
+_:nbc3ecc365ab04ca9971703f64202637db2 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLJoinShape> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb1 <http://www.w3.org/ns/shacl#message> "\n        At least one rml:predicate or rml:predicateMap must be provided.\n        " .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt> .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    A logical view (rml:LogicalView) is a type of abstract logical source that is derived from another abstract logical source by defining fields with data from said abstract logical source.\n    " .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLSourceShape> <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#BlankNodeOrIRI> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b10 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Datatype for the object.\n        " .
+_:n65852d54fe0841c5902c96267f13c1b8b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/mode> .
+_:nf106a32cee6e4b8091a0d24c209afc75b2 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLJoinShape> .
+_:n59f49f0be26f435080d9abf083ce0a3fb13 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/StructuralAnnotationShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\r\n    Structural annotations provide a mechanism to express relationships between logical views, as well as additional information about fields.\r\n    " .
+_:n8b314841b8f1402c8179c0abd21b17b0b35 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n1411e73ead8e410390ba935a1aae3885b5 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:n8b314841b8f1402c8179c0abd21b17b0b2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/logicalSource> .
+_:n8b314841b8f1402c8179c0abd21b17b0b7 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n1411e73ead8e410390ba935a1aae3885b2 <http://www.w3.org/2000/01/rdf-schema#label> "rml:root" .
+_:n2e72720998a04bf7a3869c476879b7d1b5 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+<http://w3id.org/rml/shapes/StructuralAnnotationShape> <http://www.w3.org/ns/shacl#message> "\r\n    Node must have a valid rml:StructuralAnnotationShape description.\r\n    All structural annotations of a logical view lv MUST have an on fields property (rml:onFields), linking the structural annotation to a list of field names occurring in lv.\r\n    rml:StructuralAnnotationShape requires:\r\n    - exactly one rml:onFields property.\r\n    " .
+_:n8b314841b8f1402c8179c0abd21b17b0b7 <http://www.w3.org/ns/shacl#path> _:n8b314841b8f1402c8179c0abd21b17b0b8 .
+<http://w3id.org/rml/shapes/LeafExpressionFieldShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\r\n    A leaf expression field is an expression field without nested fields.\r\n    " .
+<http://w3id.org/rml/shapes/RMLIterableShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\r\n    An abstract construct to describe data access and iteration for a data source.\r\n    " .
+_:nb95e36dfe2d14214b2b7a390db06555ab6 <http://www.w3.org/ns/shacl#path> _:nb95e36dfe2d14214b2b7a390db06555ab7 .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b2 <http://www.w3.org/ns/shacl#message> "\n        rml:serialization must be an IRI from the W3C formats namespace,\n        and may be provided at most once.\n        " .
+<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n1b0a2a677c2749eaa9e7aa1292ae387eb5 .
+<http://w3id.org/rml/shapes/RMLRefObjectMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:nb31bc0e4a2414395ab00c127f735f089b2 <http://www.w3.org/ns/shacl#in> _:nb31bc0e4a2414395ab00c127f735f089b3 .
+_:n8b314841b8f1402c8179c0abd21b17b0b7 <http://www.w3.org/ns/shacl#message> "\n        Either a rml:subject, rml:subjectMap is required, not multiple.\n        " .
+<http://w3id.org/rml/shapes/RMLSubjectMapShape> <http://www.w3.org/ns/shacl#message> "\n    Subject Map must generate a resource representing the subject of\n    an RDF triple.\n    " .
+_:nb95e36dfe2d14214b2b7a390db06555ab25 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/field> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb12 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLObjectMapShape> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb8 <http://www.w3.org/ns/shacl#alternativePath> _:nff38e38b9aa34c9393b2c79b84c7ab0cb9 .
+<http://w3id.org/rml/shapes/RMLRefObjectMapShape> <http://www.w3.org/ns/shacl#property> _:nf106a32cee6e4b8091a0d24c209afc75b1 .
+_:n1411e73ead8e410390ba935a1aae3885b8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n1411e73ead8e410390ba935a1aae3885b5 .
+_:nf8ec2c37b7b74639ad91191739e57ee9b2 <http://www.w3.org/ns/shacl#message> "\n        rml:encoding must be provided as an IRI.\n        " .
+_:nd391722810e340ac9414f6a00f3f3b0fb2 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/FieldShape> .
+<http://w3id.org/rml/shapes/RMLChildMapShape> <http://www.w3.org/ns/shacl#message> "\n    rml:ChildMap must specify a literal referencing data in the child data\n    source.\n    " .
+_:nb95e36dfe2d14214b2b7a390db06555ab2 <http://www.w3.org/ns/shacl#message> "\n        At least one rml:field property must be specified for a rml:LogicalView, with either an rml:ExpressionField or an rml:IterableField its value.\n        " .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLChildMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "ChildMap" .
+_:n8b314841b8f1402c8179c0abd21b17b0b18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/parentMap> .
+_:n03f056871c004dd3a9e490ad9643c2cbb1 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:nd391722810e340ac9414f6a00f3f3b0fb8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/field> .
+_:na106ee62efcb43e7ac54f51c7b2a1faeb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:na106ee62efcb43e7ac54f51c7b2a1faeb4 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb5 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLPredicateMapShape> .
+_:n8b314841b8f1402c8179c0abd21b17b0b33 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n8b314841b8f1402c8179c0abd21b17b0b29 .
+<http://w3id.org/rml/shapes/LeafExpressionFieldShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n1411e73ead8e410390ba935a1aae3885b7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n1411e73ead8e410390ba935a1aae3885b8 .
+_:n8b314841b8f1402c8179c0abd21b17b0b14 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:N85ef76aa3d9d4eefb303686daa43dc11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:N62063121a309428d89fc044ea2fdeda8 .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <http://w3id.org/rml/predicateObjectMap> .
+_:n8b314841b8f1402c8179c0abd21b17b0b31 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n8b314841b8f1402c8179c0abd21b17b0b32 .
+_:n8b314841b8f1402c8179c0abd21b17b0b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n8b314841b8f1402c8179c0abd21b17b0b2 .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#property> _:n8b314841b8f1402c8179c0abd21b17b0b11 .
+<http://w3id.org/rml/shapes/RMLPredicateMapShape> <http://www.w3.org/ns/shacl#message> "\n    Predicate Object Map must generate an IRI representing the predicate of an\n    RDF triple.\n    " .
+_:Nc56f639faa05454da25107510963ab0b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:N2ce7800b47d449c39fd6fc8f91b61dbf .
+_:n1411e73ead8e410390ba935a1aae3885b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/path> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag> .
+_:n8b314841b8f1402c8179c0abd21b17b0b14 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/baseIRI> .
+<http://w3id.org/rml/shapes/RMLMappingDirectoryShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n03f056871c004dd3a9e490ad9643c2cbb1 <http://www.w3.org/ns/shacl#message> "\n        rml:source must be provided as a string Literal.\n        " .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb2 <http://www.w3.org/ns/shacl#alternativePath> _:nff38e38b9aa34c9393b2c79b84c7ab0cb3 .
+_:n66a7573eeae5472492098bee3158952eb2 <http://www.w3.org/ns/shacl#message> "rml:constant of a LanguageMap must be a plain string, not a language-tagged literal." .
+_:nb95e36dfe2d14214b2b7a390db06555ab25 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#property> _:n8b314841b8f1402c8179c0abd21b17b0b7 .
+_:n149c6f9e4fd1456bae5eca2faec97093b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n149c6f9e4fd1456bae5eca2faec97093b3 .
+<http://w3id.org/rml/shapes/RMLGraphMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b2 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:gatherAs specifies how to gather the collection e.g. a rdf:Alt,\n        rdf:List, rdf:Bag, or rdf:Seq.\n        " .
+_:nb95e36dfe2d14214b2b7a390db06555ab5 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/structuralAnnotation> .
+_:nb95e36dfe2d14214b2b7a390db06555ab4 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/LogicalViewJoinShape> .
+_:nb95e36dfe2d14214b2b7a390db06555ab21 <http://www.w3.org/ns/shacl#zeroOrMorePath> _:nb95e36dfe2d14214b2b7a390db06555ab22 .
+_:naf45737c17c54955bb099a1b6d42540bb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b9 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:nf106a32cee6e4b8091a0d24c209afc75b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/parentTriplesMap> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b1 <http://www.w3.org/2000/01/rdf-schema#label> "rml:compression" .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb11 <http://www.w3.org/2000/01/rdf-schema#label> "objectMap" .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb12 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Specifies the child of the object component for joining.\n        " .
+<http://w3id.org/rml/shapes/RMLDatatypeMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "DatatypeMap" .
+_:n66a7573eeae5472492098bee3158952eb1 <http://www.w3.org/ns/shacl#sparql> _:n66a7573eeae5472492098bee3158952eb2 .
+<http://w3id.org/rml/shapes/RMLGatherMapShape> <http://www.w3.org/ns/shacl#property> _:nf971d602ca26417dbffe9ea5d8aa36a8b8 .
+<http://w3id.org/rml/shapes/RMLRefObjectMapShape> <http://www.w3.org/ns/shacl#property> _:nf106a32cee6e4b8091a0d24c209afc75b2 .
+<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> <http://www.w3.org/ns/shacl#message> "\r\n    rml:AbstractLogicalSource must specify how to generate logical iterations on a data source for a triples map.\r\n    " .
+<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLSubjectMapORPredicateObjectMapShape> .
+<http://w3id.org/rml/shapes/RMLTargetShape> <http://www.w3.org/ns/shacl#property> _:n65852d54fe0841c5902c96267f13c1b8b1 .
+<http://w3id.org/rml/shapes/LogicalViewJoinShape> <http://www.w3.org/ns/shacl#message> "\r\n    Node must have a valid rml:LogicalViewJoin description.\r\n    rml:LogicalViewJoin requires:\r\n    - exactly one rml:parentLogicalView property.\r\n    - one or more rml:joinCondition properties.\r\n    - one or more rml:field properties.\r\n    Furthermore, rml:Field requires what an rml:ExpressionMap requires.\r\n    " .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:strategy specifies the collection strategy to use: rml:append\n        or rml:cartesianProduct. rml:append is the default strategy.\n        " .
+<http://w3id.org/rml/shapes/RMLStrategyShape> <http://www.w3.org/ns/shacl#in> _:n035b37fbcb414938bd22d260a38f20fab1 .
+<http://w3id.org/rml/shapes/InclusionAnnotationShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/StructuralAnnotationShape> .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#property> _:n8b314841b8f1402c8179c0abd21b17b0b12 .
+_:Nd4f05970c2bf4195920486df16a5522c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:N83e3c3b9812d459babc2c2fa348e6583 .
+_:nb95e36dfe2d14214b2b7a390db06555ab22 <http://www.w3.org/ns/shacl#inversePath> _:nb95e36dfe2d14214b2b7a390db06555ab23 .
+_:n8b314841b8f1402c8179c0abd21b17b0b29 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/objectMap> .
+<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Predicate Object Map.\n    " .
+<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n1b0a2a677c2749eaa9e7aa1292ae387eb6 .
+_:nb31bc0e4a2414395ab00c127f735f089b1 <http://www.w3.org/ns/shacl#message> "\n        rml:class must be an IRI and may be specified multiple times.\n        " .
+_:n149c6f9e4fd1456bae5eca2faec97093b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/Write> .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/ns/shacl#property> _:nb95e36dfe2d14214b2b7a390db06555ab4 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb6 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/predicate> .
+_:nb95e36dfe2d14214b2b7a390db06555ab11 <http://www.w3.org/ns/shacl#inversePath> _:nb95e36dfe2d14214b2b7a390db06555ab12 .
+<http://w3id.org/rml/shapes/RMLTargetShape> <http://www.w3.org/ns/shacl#message> "\n    RML Target accepts one rml:compression, and one rml:encoding.\n    All of them are optional.\n    " .
+_:N4b3d729b46824c07b675db89d0be45cf <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/template> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb5 <http://www.w3.org/2000/01/rdf-schema#label> "predicateMap" .
+_:n149c6f9e4fd1456bae5eca2faec97093b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n149c6f9e4fd1456bae5eca2faec97093b5 .
+_:nb31bc0e4a2414395ab00c127f735f089b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nb31bc0e4a2414395ab00c127f735f089b6 .
+_:nb31bc0e4a2414395ab00c127f735f089b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/IRI> .
+_:n4faadd2a985d4fc6b35e353da94df10fb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/graph> .
+<http://w3id.org/rml/shapes/RMLSubjectMapORPredicateObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n4faadd2a985d4fc6b35e353da94df10fb1 .
+<http://w3id.org/rml/shapes/RMLSubjectMapORPredicateObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n4faadd2a985d4fc6b35e353da94df10fb6 .
+<http://w3id.org/rml/shapes/RMLJoinShape> <http://www.w3.org/ns/shacl#message> "\n    rml:Join must specify exactly one rml:parent/rml:parentMap \n    and rml:child/rml:childMap.\n    " .
+_:nb95e36dfe2d14214b2b7a390db06555ab6 <http://www.w3.org/ns/shacl#description> "\n        Inclusion (and ForeignKey) annotations targeting this logical view\n        via rml:targetView. Reached via the inverse of rml:targetView, not\n        rml:structuralAnnotation -- an InclusionAnnotation is the SUBJECT\n        of rml:targetView, not this view's own value, so it isn't\n        otherwise reachable from here; without this property it would\n        never get checked at all.\n        " .
+<http://w3id.org/rml/shapes/RMLSubjectMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "SubjectMap" .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/ns/shacl#property> _:nb95e36dfe2d14214b2b7a390db06555ab2 .
+_:Ne2b2ce4c9685491ebb2132e2c8958cc9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/languageMap> .
+_:nd391722810e340ac9414f6a00f3f3b0fb11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nd391722810e340ac9414f6a00f3f3b0fb9 .
+_:n2e72720998a04bf7a3869c476879b7d1b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <http://w3id.org/rml/subjectMap> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb5 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        A PredicateMap element to generate the predicate component of the \n        (predicate, object) pair from a logical table row or iterator.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b19 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/joinCondition> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb7 <http://www.w3.org/2000/01/rdf-schema#label> "childMap/child" .
+_:n59f49f0be26f435080d9abf083ce0a3fb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n59f49f0be26f435080d9abf083ce0a3fb4 .
+_:nf106a32cee6e4b8091a0d24c209afc75b1 <http://www.w3.org/2000/01/rdf-schema#label> "parentTriplesMap" .
+_:nd391722810e340ac9414f6a00f3f3b0fb2 <http://www.w3.org/ns/shacl#description> "\r\n        A child field of the field.\r\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b3 <http://www.w3.org/ns/shacl#maxCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLSourceShape> <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLSourceTargetShape> .
+_:nd391722810e340ac9414f6a00f3f3b0fb1 <http://www.w3.org/ns/shacl#message> "\r\n        Exactly one rml:fieldName property must be specified for a rml:Field, with a string as its value.\r\n        " .
+_:n59f49f0be26f435080d9abf083ce0a3fb10 <http://www.w3.org/ns/shacl#property> _:n59f49f0be26f435080d9abf083ce0a3fb11 .
+_:n59f49f0be26f435080d9abf083ce0a3fb15 <http://www.w3.org/2000/01/rdf-schema#comment> "\n                Only one of rml:template, rml:constant, or rml:reference is\n                allowed.\n            " .
+_:Nd2204d8ff2d346b1bdce7a1283b8bd3c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:N667a332fc0d0470b8450e405f3e337b2 .
+_:n149c6f9e4fd1456bae5eca2faec97093b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/WriteRead> .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db5 <http://www.w3.org/2000/01/rdf-schema#label> "rml:namespace" .
+_:nb95e36dfe2d14214b2b7a390db06555ab17 <http://www.w3.org/ns/shacl#inversePath> <http://w3id.org/rml/parentLogicalView> .
+_:nb95e36dfe2d14214b2b7a390db06555ab6 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/InclusionAnnotationShape> .
+<http://w3id.org/rml/shapes/RMLJoinShape> <http://www.w3.org/ns/shacl#property> _:nff38e38b9aa34c9393b2c79b84c7ab0cb7 .
+_:naf45737c17c54955bb099a1b6d42540bb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:naf45737c17c54955bb099a1b6d42540bb4 .
+_:N667a332fc0d0470b8450e405f3e337b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb13 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLRefObjectMapShape> .
+_:N5bb8883a52984829bda04e79e0bf7921 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:N85ef76aa3d9d4eefb303686daa43dc11 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb6 <http://www.w3.org/2000/01/rdf-schema#label> "predicate" .
+_:n2e72720998a04bf7a3869c476879b7d1b1 <http://www.w3.org/2000/01/rdf-schema#label> "template/constant/reference" .
+_:n59f49f0be26f435080d9abf083ce0a3fb17 <http://www.w3.org/ns/shacl#property> _:n59f49f0be26f435080d9abf083ce0a3fb18 .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb11 <http://www.w3.org/2000/01/rdf-schema#label> "childMap" .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db6 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b4 <http://www.w3.org/ns/shacl#maxCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLTargetShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:nb0c7dd39431146288dc3cb77f4c4b071b1 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLLogicalViewShape> .
+_:nd391722810e340ac9414f6a00f3f3b0fb1 <http://www.w3.org/ns/shacl#description> "\r\n        The name of the field.\r\n        " .
+_:nb31bc0e4a2414395ab00c127f735f089b2 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/termType> .
+_:nb95e36dfe2d14214b2b7a390db06555ab9 <http://www.w3.org/ns/shacl#zeroOrMorePath> _:nb95e36dfe2d14214b2b7a390db06555ab15 .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb1 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:parent/rml:parentMap may only be provided once and \n        not at the same time.\n        " .
+_:nb31bc0e4a2414395ab00c127f735f089b1 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:n8b314841b8f1402c8179c0abd21b17b0b17 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/childMap> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b2 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:n2e72720998a04bf7a3869c476879b7d1b3 <http://www.w3.org/2000/01/rdf-schema#label> "template" .
+<http://w3id.org/rml/shapes/RMLSourceTargetShape> <http://www.w3.org/ns/shacl#property> _:nf8ec2c37b7b74639ad91191739e57ee9b2 .
+_:Ne2b2ce4c9685491ebb2132e2c8958cc9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:N5bb8883a52984829bda04e79e0bf7921 .
+<http://w3id.org/rml/shapes/LeafExpressionFieldShape> <http://www.w3.org/2000/01/rdf-schema#label> "Leaf Expression Field" .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#List> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb11 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/childMap> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nff38e38b9aa34c9393b2c79b84c7ab0cb4 .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb6 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:n56f5c96ed82b4c40b4d259057cb96951b1 <http://www.w3.org/2000/01/rdf-schema#label> "template/constant/reference" .
+<http://w3id.org/rml/shapes/RMLTermMapShape> <http://www.w3.org/ns/shacl#property> _:n21ad341ad83e43e3b47c9d14fe5bf0c2b3 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb11 <http://www.w3.org/ns/shacl#message> "\n        rml:objectMap must be an IRI or blank node and be provided once.\n        " .
+<http://w3id.org/rml/shapes/FieldShape> <http://www.w3.org/ns/shacl#property> _:nd391722810e340ac9414f6a00f3f3b0fb2 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b7 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Specified the language map for the object component for the \n        generated RDF triples.\n        " .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <http://w3id.org/rml/logicalSource> .
+_:nd391722810e340ac9414f6a00f3f3b0fb1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:n8b314841b8f1402c8179c0abd21b17b0b12 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#BlankNodeOrIRI> .
+<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\r\n    A sub-class of iterable that can be associated with a triples map such that a data source can be mapped to RDF triples.\r\n    " .
+_:n59f49f0be26f435080d9abf083ce0a3fb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/URI> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:nf971d602ca26417dbffe9ea5d8aa36a8b6 .
+<http://w3id.org/rml/shapes/RMLAbstractLogicalSourceShape> <http://www.w3.org/2000/01/rdf-schema#label> "Abstract Logical Source" .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b10 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/datatype> .
+_:n8b314841b8f1402c8179c0abd21b17b0b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/logicalSource> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/path> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b2 <http://www.w3.org/ns/shacl#minCount> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb6 <http://www.w3.org/2000/01/rdf-schema#label> "parent" .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b1 <http://www.w3.org/ns/shacl#message> "\n        rml:target must be provided to locate the target. rml:target must \n        be provided exactly once as an URI.\n        " .
+_:nb4073b1eaaaa4c6d8eaa751651009706b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLMappingDirectoryShape> <http://www.w3.org/ns/shacl#hasValue> <http://w3id.org/rml/MappingDirectory> .
+<http://w3id.org/rml/shapes/RMLAbstractExpressionMapShape> <http://www.w3.org/2000/01/rdf-schema#label> "ExpressionMap" .
+<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:nf8ec2c37b7b74639ad91191739e57ee9b5 <http://www.w3.org/ns/shacl#alternativePath> _:nf8ec2c37b7b74639ad91191739e57ee9b6 .
+<http://w3id.org/rml/shapes/LogicalViewJoinShape> <http://www.w3.org/ns/shacl#property> _:nbc3ecc365ab04ca9971703f64202637db3 .
+_:nd391722810e340ac9414f6a00f3f3b0fb5 <http://www.w3.org/ns/shacl#inversePath> _:nd391722810e340ac9414f6a00f3f3b0fb6 .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/child> .
+_:n2e72720998a04bf7a3869c476879b7d1b3 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b8 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#BlankNodeOrIRI> .
+<http://w3id.org/rml/shapes/LeafExpressionFieldShape> <http://www.w3.org/ns/shacl#property> _:n6e259576dee647e68e40ee38fe848448b1 .
+_:n8b314841b8f1402c8179c0abd21b17b0b14 <http://www.w3.org/ns/shacl#message> "\n        rml:baseIRI must be an IRI.\n        " .
+<http://w3id.org/rml/shapes/RMLModeShape> <http://www.w3.org/ns/shacl#in> _:n149c6f9e4fd1456bae5eca2faec97093b1 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/languageMap> .
+<http://w3id.org/rml/shapes/RMLTargetShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    A target describes access to a data target. Any data access description\n    is allowed, but rml:Target provides additional properties to complete\n    such descriptions.\n    " .
+_:n587f4b80e9c5414e8fee30a7a9e9da1db7 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nb95e36dfe2d14214b2b7a390db06555ab4 <http://www.w3.org/ns/shacl#description> "\n        An inner join of the logical view.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b1 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq> .
+<http://w3id.org/rml/shapes/RMLGatherMapShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    Represents a Gather Map.\n    " .
+<http://w3id.org/rml/shapes/RMLTriplesMapShape> <http://www.w3.org/ns/shacl#targetObjectsOf> <http://w3id.org/rml/parentTriplesMap> .
+<http://w3id.org/rml/shapes/RMLStrategyShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb1 <http://www.w3.org/ns/shacl#path> _:nff38e38b9aa34c9393b2c79b84c7ab0cb2 .
+<http://w3id.org/rml/shapes/LogicalViewJoinShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\r\n    A LogicalViewJoin is an operation that adapts the logical iterations of one logical view (the child logical view) with fields from another logical view (the parent logical view).\r\n    " .
+_:nb95e36dfe2d14214b2b7a390db06555ab8 <http://www.w3.org/ns/shacl#disjoint> <http://w3id.org/rml/innerJoin> .
+_:nff38e38b9aa34c9393b2c79b84c7ab0cb7 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        rml:child/rml:childMap may only be provided once and \n        not at the same time.\n        " .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb11 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#BlankNodeOrIRI> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n1b0a2a677c2749eaa9e7aa1292ae387eb10 .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b7 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        Defines the behavior when the collection is empty. True will generate\n        a rdf:nil for a RDF collection or a resource with no members for an RDF\n        container. False will not generate any collection or container.\n        Default is false.\n        " .
+_:n65852d54fe0841c5902c96267f13c1b8b1 <http://www.w3.org/ns/shacl#message> "\n        rml:mode must be specified by any of the modes from rml:Mode class.\n        " .
+_:Ne85129e59abb4274a3957601bbfd279b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nf971d602ca26417dbffe9ea5d8aa36a8b9 .
+_:n8b314841b8f1402c8179c0abd21b17b0b32 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n8b314841b8f1402c8179c0abd21b17b0b33 .
+<http://w3id.org/rml/shapes/RMLGatherMapShape> <http://www.w3.org/ns/shacl#property> _:nf971d602ca26417dbffe9ea5d8aa36a8b2 .
+_:nb4073b1eaaaa4c6d8eaa751651009706b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/referenceFormulation> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb7 <http://www.w3.org/2000/01/rdf-schema#label> "object/objectMap" .
+_:n8b314841b8f1402c8179c0abd21b17b0b1 <http://www.w3.org/ns/shacl#message> "\n        Exactly one rml:logicalSource is required to access the data source.\n        " .
+_:n4faadd2a985d4fc6b35e353da94df10fb5 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/RMLGraphMapShape> .
+_:nb95e36dfe2d14214b2b7a390db06555ab5 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/StructuralAnnotationShape> .
+<http://w3id.org/rml/shapes/RMLSubjectMapORPredicateObjectMapShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/predicateMap> .
+_:nb31bc0e4a2414395ab00c127f735f089b7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:n4faadd2a985d4fc6b35e353da94df10fb6 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#BlankNodeOrIRI> .
+_:n59f49f0be26f435080d9abf083ce0a3fb13 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n59f49f0be26f435080d9abf083ce0a3fb10 .
+<http://w3id.org/rml/shapes/RMLGatherMapShape> <http://www.w3.org/ns/shacl#property> _:nf971d602ca26417dbffe9ea5d8aa36a8b7 .
+_:n149c6f9e4fd1456bae5eca2faec97093b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/ReadWrite> .
+<http://w3id.org/rml/shapes/LeafExpressionFieldShape> <http://www.w3.org/ns/shacl#message> "\r\n    Node must have a valid rml:ExpressionField description.\r\n    " .
+<http://w3id.org/rml/shapes/RMLJoinShape> <http://www.w3.org/ns/shacl#property> _:nff38e38b9aa34c9393b2c79b84c7ab0cb12 .
+_:nf971d602ca26417dbffe9ea5d8aa36a8b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/strategy> .
+_:n2e72720998a04bf7a3869c476879b7d1b3 <http://www.w3.org/ns/shacl#pattern> "^(?:[^\\\\{}]|\\\\.|\\{(?:[^\\\\{}]|\\\\.)*\\})+$" .
+_:nb95e36dfe2d14214b2b7a390db06555ab1 <http://www.w3.org/ns/shacl#message> "\n        Exactly one rml:viewOn property must be specified for a rml:LogicalView, with a rml:AbstractLogicalSource as its value.\n        " .
+_:N75cd6892bd67453db3a12db4925cc6cc <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n59f49f0be26f435080d9abf083ce0a3fb17 .
+_:nf106a32cee6e4b8091a0d24c209afc75b1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://w3id.org/rml/shapes/RMLLogicalViewShape> <http://www.w3.org/ns/shacl#message> "\n    Node must have a valid rml:LogicalView description.\n    rml:LogicalView requires\n    - exactly one rml:viewOn property, with a rml:AbstractLogicalSource as its value.\n    - at least one rml:field property, with a rml:Field as its value.\n    " .
+<http://w3id.org/rml/shapes/RMLGatherMapShape> <http://www.w3.org/ns/shacl#message> "\n    Gather Map requires one rml:strategy, one rml:gatherAs, and a list of\n    Term Map with rml:gather.\n    " .
+_:n1411e73ead8e410390ba935a1aae3885b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n1411e73ead8e410390ba935a1aae3885b7 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:ncba5e4eee39f4bfeb4a8d1861492f2f3b1 <http://www.w3.org/ns/shacl#message> "\n        rml:source must be provided to locate the data source.\n        rml:source must be provided exactly once as an URI.\n        " .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/language> .
+<http://w3id.org/rml/shapes/StructuralAnnotationShape> <http://www.w3.org/2000/01/rdf-schema#label> "StructuralAnnotation" .
+<http://w3id.org/rml/shapes/RMLSourceShape> <http://www.w3.org/2000/01/rdf-schema#comment> "\n    A source describes access to a data source. Any data access description\n    is allowed, but rml:Source provides additional properties to complete\n    such descriptions.\n    " .
+_:nbc3ecc365ab04ca9971703f64202637db2 <http://www.w3.org/ns/shacl#description> "\r\n        A join condition of the logical view join.\r\n        " .
+_:nb95e36dfe2d14214b2b7a390db06555ab1 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:nb95e36dfe2d14214b2b7a390db06555ab15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:nb95e36dfe2d14214b2b7a390db06555ab10 .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/predicate> .
+_:n21ad341ad83e43e3b47c9d14fe5bf0c2b1 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/target> .
+_:n1b0a2a677c2749eaa9e7aa1292ae387eb9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://w3id.org/rml/object> .
+_:ne13c8b1c609d4fcfbf510ed85df402fdb1 <http://www.w3.org/ns/shacl#message> "\r\n        Exactly one rml:onFields property must be specified for each rml:StructuralAnnotation\r\n        " .
+_:n59f49f0be26f435080d9abf083ce0a3fb15 <http://www.w3.org/ns/shacl#path> _:n59f49f0be26f435080d9abf083ce0a3fb16 .
+_:nb0c7dd39431146288dc3cb77f4c4b071b1 <http://www.w3.org/ns/shacl#message> "\r\n        Exactly one rml:targetView property must be specified for each rml:InclusionAnnotation.\r\n        " .
+<http://w3id.org/rml/shapes/RMLPredicateObjectMapShape> <http://www.w3.org/ns/shacl#property> _:n1b0a2a677c2749eaa9e7aa1292ae387eb1 .
+_:n4972f8b390ee47f5aa35e2fa2cbc96d0b7 <http://www.w3.org/ns/shacl#path> <http://w3id.org/rml/languageMap> .
+_:n8b314841b8f1402c8179c0abd21b17b0b9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n8b314841b8f1402c8179c0abd21b17b0b10 .
+_:nbc3ecc365ab04ca9971703f64202637db3 <http://www.w3.org/ns/shacl#node> <http://w3id.org/rml/shapes/LeafExpressionFieldShape> .
+<http://w3id.org/rml/shapes/RMLGraphMapShape> <http://www.w3.org/ns/shacl#message> "\n    rml:GraphMap must specify an rml:template, rml:reference or rml:constant\n    with the IRI of the Named Graph.\n    " .
+_:n149c6f9e4fd1456bae5eca2faec97093b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n149c6f9e4fd1456bae5eca2faec97093b4 .
+_:n8b314841b8f1402c8179c0abd21b17b0b11 <http://www.w3.org/2000/01/rdf-schema#comment> "\n        A Subject Map element to generate a subject for generated RDF triples.\n        " .
+_:n2e72720998a04bf7a3869c476879b7d1b5 <http://www.w3.org/2000/01/rdf-schema#label> "reference" .
+_:n66a7573eeae5472492098bee3158952eb1 <http://www.w3.org/ns/shacl#pattern> "^((?:(en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang))|((?:([A-Za-z]{2,3}(-(?:[A-Za-z]{3}(-[A-Za-z]{3}){0,2}))?)|[A-Za-z]{4})(-(?:[A-Za-z]{4}))?(-(?:[A-Za-z]{2}|[0-9]{3}))?(-(?:[A-Za-z0-9]{5,8}|[0-9][A-Za-z0-9]{3}))*(-(?:[0-9A-WY-Za-wy-z](-[A-Za-z0-9]{2,8})+))*(-(?:x(-[A-Za-z0-9]{1,8})+))?)|(?:x(-[A-Za-z0-9]{1,8})+))$" .
+_:n8b314841b8f1402c8179c0abd21b17b0b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n8b314841b8f1402c8179c0abd21b17b0b3 .
+_:nb95e36dfe2d14214b2b7a390db06555ab6 <http://www.w3.org/ns/shacl#message> "\n        Every rml:InclusionAnnotation (or rml:ForeignKeyAnnotation) targeting this view via rml:targetView must also specify exactly one rml:targetFields property.\n        " .
+_:n8b314841b8f1402c8179c0abd21b17b0b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:nb95e36dfe2d14214b2b7a390db06555ab3 <http://www.w3.org/ns/shacl#message> "\n        The value of a rml:leftJoin property for a rml:LogicalView must be a resource.\n        " .
+<http://w3id.org/rml/shapes/RMLSourceTargetShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
